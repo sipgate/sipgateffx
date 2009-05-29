@@ -1,4 +1,6 @@
 var debug = true;
+var sgffx;
+
 var url = {	"history" : "/user/calls.php",
 			"credit" : "/user/kontoaufladen.php",
 			"voicemail" : "/user/voicemail.php",
@@ -28,7 +30,19 @@ var sipgateffx = {
     // initialization code
     this.initialized = true;
     this.strings = document.getElementById("sipgateffx-strings");
-
+	
+	try {
+		// this is needed to generally allow usage of components in javascript
+		netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
+	
+		sgffx = Components.classes['@api.sipgate.net/sipgateffx;1']
+	                                    .getService().wrappedJSObject;
+		
+	} catch (anError) {
+		dump("ERROR: " + anError);
+		return;
+	}
+	
 	// set language:
 	try { 
 		if (navigator.language.match(/de/) == "de") {
@@ -229,15 +243,19 @@ var sipgateffx = {
 	},  
 	
   _rpcCall: function(request, callbackResult, callbackError) {
-		if(samuraiAuth.username == null || samuraiAuth.password == null) {
-			this.getSamuraiAuth();
-			if(samuraiAuth.username == null || samuraiAuth.password == null) {
+  		var user = sgffx.username;
+		var pass = sgffx.password;
+		
+		if(user == null || pass == null) {
+			var retVal = sgffx.getSamuraiAuth();
+			if(retVal.username == null || retVal.password == null) {
 				dump("could not be authorized\n");
 				return;
 			}
+			
+			user = retVal.username;
+			pass = retVal.password;			
 		}
-  		var user = samuraiAuth.username;
-		var pass = samuraiAuth.password;
 	  
 		//PffXmlHttpReq( aUrl, aType, aContent, aDoAuthBool, aUser, aPass) 
 		var theCall = new PffXmlHttpReq(samuraiServer, "POST", request, true, user, pass);
@@ -470,7 +488,7 @@ var sipgateffx = {
 			var passwordManager = Components.classes["@mozilla.org/login-manager;1"].getService(Components.interfaces.nsILoginManager);
   
 			var hostname = 'http://www.sipgate.de';
-			var formSubmitURL = 'https://secure.sipgate.de/user/index.php';
+			var formSubmitURL = 'https://secure.sipgate.de';
 			var httprealm = null;
 			
 			var passwords = passwordManager.findLogins({}, hostname, formSubmitURL, httprealm);

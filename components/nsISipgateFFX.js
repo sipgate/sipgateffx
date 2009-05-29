@@ -5,8 +5,8 @@ function SipgateFFX() {
 	this.samuraiAuth = {"hostname" : "chrome://sipgateffx",
 			"formSubmitURL" : null,
 			"httprealm" : 'sipgate Account Login',
-			"username" : '',
-			"password" : ''
+			"username" : null,
+			"password" : null
 			};	
 }
 
@@ -15,6 +15,22 @@ SipgateFFX.prototype = {
   classID:          Components.ID("{BCC44C3C-B5E8-4566-8556-0D9230C7B4F9}"),
   contractID:       "@api.sipgate.net/sipgateffx;1",
   QueryInterface: XPCOMUtils.generateQI(), //[Components.interfaces.nsISipgateFFX]),
+  
+	get password() {
+		if(this.samuraiAuth.password) {
+			return this.samuraiAuth.password;
+		} else {
+			return null;
+		}
+	},
+    
+	get username() {
+		if(this.samuraiAuth.username) {
+			return this.samuraiAuth.username;
+		} else {
+			return null;
+		}
+	},
   
 	getSamuraiAuth: function() {
 		// Login Manager exists so this is Firefox 3
