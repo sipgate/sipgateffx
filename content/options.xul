@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<!DOCTYPE prefwindow SYSTEM "chrome://sipgateffx/locale/prefwindow.dtd">
+
+<prefwindow id="sipgateffxPreferences" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" title="&prefwindow.title;">
+	
+	<script src="options.js"/>
+	
+  <prefpane id="pane1" label="&pane1.title;">
+    <preferences>
+    <!--
+      <preference id="username" name="extensions.sipgateffx.username" type="unichar"/>
+      <preference id="password" name="extensions.sipgateffx.password" type="unichar"/>
+    -->
+      <preference id="autologin" name="extensions.sipgateffx.autologin" type="bool"/>
+    </preferences>
+
+	<groupbox align="center">
+		<hbox>
+			<label accesskey="U" control="username">Username</label>
+			<textbox id="username"/>
+		</hbox>
+		
+		<hbox>
+			<label accesskey="P" control="password">Password</label>
+			<textbox id="password" type="password"/>
+		</hbox>
+		
+		<checkbox id="autologin" preference="autologin" label="Auto-Login" accesskey="A"/>
+	</groupbox>
+	
+  </prefpane>
+  
+  
+</prefwindow>

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet href="chrome://sipgateffx/skin/overlay.css" type="text/css"?>
+<!DOCTYPE overlay SYSTEM "chrome://sipgateffx/locale/sipgateffx.dtd">
+<overlay id="sipgateffx-overlay"
+         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+  <script src="xmlrpc.js"/>
+  <script src="overlay.js"/>
+ 
+  <stringbundleset id="stringbundleset">
+    <stringbundle id="sipgateffx-strings" src="chrome://sipgateffx/locale/sipgateffx.properties"/>
+  </stringbundleset>
+
+  
+  <menupopup id="menu_ToolsPopup">
+    <menuitem id="sipgateffx-hello" label="&sipgateffx.label;" 
+              oncommand="sipgateffx.onMenuItemCommand(event);"/>
+  </menupopup>
+  
+  
+  <popup id="contentAreaContextMenu">
+    <menuitem id="context-sipgateffx" label="&sipgateffxContext.label;"
+              accesskey="&sipgateffxContext.accesskey;"
+              insertafter="context-stop"
+              oncommand="sipgateffx.onMenuItemCommand(event)"/>
+  </popup>
+  
+  
+	  <toolbarpalette id="BrowserToolbarPalette">
+		  <toolbarbutton id="sipgateffx-toolbar-button"
+			label="&sipgateffxToolbar.label;"
+			tooltiptext="&sipgateffxToolbar.tooltip;"
+			oncommand="sipgateffx.onToolbarButtonCommand()"
+			class="toolbarbutton-1 chromeclass-toolbar-additional"/>
+	  </toolbarpalette>
+
+	<statusbar id="status-bar">
+		<statusbarpanel class="statusbarpanel-iconic" id="sipgateffx_statusbar_noauth" contextmenu="sipgatemenu" style="cursor: pointer;" >
+			<hbox align="center" hidden="false" id="sipgateffx_loggedout">
+				<image src="chrome://sipgateffx/skin/icon_sipgate_inactive.gif" />
+				<label value="&sipgateffxStatusbar.InfoNoAuth.label;" style="color: red;" />
+			</hbox>
+			
+			<hbox align="center" hidden="true" id="sipgateffx_loggedin">
+				<image src="chrome://sipgateffx/skin/icon_sipgate_active.gif" />
+				<label id="BalanceText" />
+			</hbox>
+
+			<command id="sipgatecmd_pollbalance" oncommand="sipgateffx.onStatusbarCommand('pollBalance')"/>
+			<command id="sipgatecmd_openPrefs" oncommand="sipgateffx.onStatusbarCommand('openPrefs')"/>
+			<command id="sipgatecmd_toggledial" oncommand="sipgateffx.onStatusbarCommand('toggleClick2Dial');"/>
+			<command id="sipgatecmd_showHistory" oncommand="sipgateffx.onStatusbarCommand('showSitePage','history');"/>
+			<command id="sipgatecmd_showFax" oncommand="sipgateffx.onStatusbarCommand('showSitePage','fax');"/>
+			<command id="sipgatecmd_showShop" oncommand="sipgateffx.onStatusbarCommand('showSitePage','shop');"/>
+			<command id="sipgatecmd_showItemized" oncommand="sipgateffx.onStatusbarCommand('showSitePage','itemized');"/>
+
+			<command id="sipgatecmd_showCredit" oncommand="sipgateffx.onStatusbarCommand('showSitePage','credit');"/>
+			<command id="sipgatecmd_showVoiceMail" oncommand="sipgateffx.onStatusbarCommand('showSitePage','voicemail');"/>
+			<command id="sipgatecmd_showPhoneBook" oncommand="sipgateffx.onStatusbarCommand('showSitePage','phonebook');"/>
+			<command id="sipgatecmd_showSmsForm" oncommand="sipgateffx.onStatusbarCommand('showSitePage','smsform');"/>
+
+			<command id="sipgatecmd_logon" oncommand="sipgateffx.onStatusbarCommand('logon');"/>
+			<command id="sipgatecmd_logoff" oncommand="sipgateffx.onStatusbarCommand('logoff');"/>
+		
+			<popupset>
+				<menupopup id="sipgatemenu">
+					<menuitem label="&showcredit.menuitem;" accesskey="&showcredit.key;" 
+						 id="showcreditmenuitem" command="sipgatecmd_showCredit" />
+					<menuitem label="&showvoicemail.menuitem;" accesskey="&showvoicemail.key;"
+						id="showvoicemailmenuitem" command="sipgatecmd_showVoiceMail" />
+					<menuitem label="&showphonebook.menuitem;" accesskey="&showphonebook.key;"
+						id="showphonebookmenuitem" command="sipgatecmd_showPhoneBook"   />
+					<menuitem label="&showsmsform.menuitem;" accesskey="&showsmsform.key;"
+						id="showsmsformmenuitem" command="sipgatecmd_showSmsForm" />
+					<menuitem label="&showhistory.menuitem;" accesskey="&showhistory.key;"
+						id="showhistorymenuitem" command="sipgatecmd_showHistory" />
+					<menuitem label="&showfax.menuitem;" accesskey="&showfax.key;"
+						id="showfaxmenuitem" command="sipgatecmd_showFax" />
+					<menuitem label="&showshop.menuitem;" accesskey="&showshop.key;"
+						id="showshopmenuitem" command="sipgatecmd_showShop" />
+					<menuitem label="&showitemized.menuitem;" accesskey="&showitemized.key;"
+						id="showitemizedmenuitem" command="sipgatecmd_showItemized" />
+						
+					<menuseparator id="separator1" />
+					
+					<menuitem label="&getbalance.menuitem;" accesskey="&getbalance.key;" command="sipgatecmd_pollbalance" />
+
+					<menuitem label="&showprefs.menuitem;" accesskey="&showprefs.key;" command="sipgatecmd_openPrefs" />
+	 
+					<menuitem id="dialactivate" label="&dialactivate.menuitem;" accesskey="&dialactivate.key;"
+						command="sipgatecmd_toggledial" /> 
+					<menuitem id="dialdeactivate" label="&dialdeactivate.menuitem;" accesskey="&dialdeactivate.key;"
+						command="sipgatecmd_toggledial" /> 
+
+					<menuseparator id="separator2" />
+					<menuitem id="item_logon" label="Login" accesskey="n" command="sipgatecmd_logon" />
+					<menuitem id="item_logoff" label="&logoff.menuitem;" accesskey="&logoff.key;" command="sipgatecmd_logoff" />
+				</menupopup>
+			</popupset>		
+		</statusbarpanel>
+	</statusbar>
+
+
+</overlay>

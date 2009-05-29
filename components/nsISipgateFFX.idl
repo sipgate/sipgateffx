@@ -1,0 +1,7 @@
+#include "nsISupports.idl"
+
+[scriptable, uuid(BCC44C3C-B5E8-4566-8556-0D9230C7B4F9)]
+interface nsISipgateFFX : nsISupports
+{
+  string hello();
+};

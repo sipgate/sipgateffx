@@ -1,0 +1,34 @@
+<!ENTITY sipgateffx.label "Your localized menuitem">
+<!ENTITY sipgateffxContext.label "Diese Rufnummer anrufen">
+<!ENTITY sipgateffxContext.accesskey "Y">
+<!ENTITY sipgateffxToolbar.label "Your Toolbar Button">
+<!ENTITY sipgateffxToolbar.tooltip "This is your toolbar button!">
+<!ENTITY sipgateffxStatusbar.InfoNoAuth.label "nicht angemeldet">
+
+<!ENTITY showprefs.menuitem "Einstellungen">
+<!ENTITY getbalance.menuitem "Kontostand abfragen">
+<!ENTITY showhistory.menuitem "Anrufliste anzeigen">
+<!ENTITY showcredit.menuitem "Konto aufladen">
+<!ENTITY showvoicemail.menuitem "Sprachnachrichten abrufen">
+<!ENTITY showphonebook.menuitem "Kontakte anzeigen">
+<!ENTITY showsmsform.menuitem "SMS versenden">
+<!ENTITY showfax.menuitem "FAX senden/abrufen">
+<!ENTITY showshop.menuitem "Online-Shop">
+<!ENTITY showitemized.menuitem "Einzelverbindungsnachweis">
+<!ENTITY dialactivate.menuitem "'Click2Dial' aktivieren">
+<!ENTITY dialdeactivate.menuitem "'Click2Dial' deaktivieren">
+<!ENTITY logoff.menuitem "Abmelden">
+
+<!ENTITY showprefs.key "E">
+<!ENTITY getbalance.key "K">
+<!ENTITY showhistory.key "A">
+<!ENTITY showcredit.key "o">
+<!ENTITY showvoicemail.key "S">
+<!ENTITY showphonebook.key "t">
+<!ENTITY showsmsform.key "v">
+<!ENTITY showfax.key "F">
+<!ENTITY showshop.key "l">
+<!ENTITY showitemized.key "z">
+<!ENTITY dialactivate.key "a">
+<!ENTITY dialdeactivate.key "d">
+<!ENTITY logoff.key "b">
