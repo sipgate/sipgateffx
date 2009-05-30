@@ -83,6 +83,7 @@ var sipgateffx = {
 		if(sgffx.getPref("extensions.sipgateffx.autologin","bool")) {
 			this.login();
 		}
+				
 	},
 
 	onUnload: function() {
@@ -337,6 +338,11 @@ var sipgateffx = {
     document.getElementById("context-sipgateffx").hidden = !gContextMenu.isTextSelected;
   },
   
+  onToolbarButtonCommand: function(e) {
+    // just reuse the function above.  you can change this, obviously!
+    sipgateffx.onMenuItemCommand(e);
+  }, 
+    
   onMenuItemCommand: function(e) {
 	// borrowed from http://mxr.mozilla.org/firefox/source/browser/base/content/browser.js#4683
 	var focusedWindow = document.commandDispatcher.focusedWindow;
@@ -367,10 +373,39 @@ var sipgateffx = {
                                 this.strings.getString("helloMessage"));
 	*/
   },
-  onToolbarButtonCommand: function(e) {
-    // just reuse the function above.  you can change this, obviously!
-    sipgateffx.onMenuItemCommand(e);
-  }, 
+
+	toggleClick2Dial: function() {
+		const tagsOfInterest = [ "a", "abbr", "acronym", "address", "applet", "b", "bdo", "big", "blockquote", "body", "caption",
+        "center", "cite", "code", "dd", "del", "div", "dfn", "dt", "em", "fieldset", "font", "form", "h1", "h2", "h3",
+        "h4", "h5", "h6", "i", "iframe", "ins", "kdb", "li", "object", "pre", "p", "q", "samp", "small", "span",
+        "strike", "s", "strong", "sub", "sup", "td", "th", "tt", "u", "var" ];
+
+		var xpath = "//text()[(parent::" + tagsOfInterest.join(" or parent::") + ")]";
+		var candidates = content.document.evaluate(xpath, content.document, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
+		var numberRegex = /(^|[\s])((\+[1-9]\d)|(00[1-9]\d)|(0[^0]|([(\[][ \t\f]*[\d \t\f]+[ \t\f]*[)\]])))((((([ \t\f]*[(\[][ \t\f]*[\d \t\f]+[)\]][ \t\f]*)|([\d \t\f]{1,}[\.]?)))|(\(\d{3,}\)))[/]?(([ \t\f]*[\[(][\-\d \t\f]{3,}[\])][ \t\f]*)|([\-\d \t\f]{3,}))+)|(\+[1-9][\.\d]{4,})([\s]|$)/;
+	
+		for ( var cand = null, i = 0; (cand = candidates.snapshotItem(i)); i++)
+		{		
+			var nodeText = cand.nodeValue;
+			nodeText = nodeText.replace(/^\s+|\s+$|[\xC2-\xFF]*/g, '');
+			if (nodeText.match(numberRegex) != null) {
+				var numberText = numberRegex.exec(cand.nodeValue)[0];
+				var formatednumberText = numberText.replace(/\D/g, '');
+				dump(nodeText + " -- \n");
+			
+				var newNodeClick2DialIcon = document.createElement("A");
+				newNodeClick2DialIcon.style.border = "1px solid #000000";
+				newNodeClick2DialIcon.style.margin = "0px 5px 0px 0px";
+				newNodeClick2DialIcon.setAttribute('href', "tel:" + formatednumberText);
+				newNodeClick2DialIcon.setAttribute('title', "sipgate Click2Dial");
+				newNodeClick2DialIcon.appendChild(document.createTextNode(numberText));
+
+				cand.parentNode.replaceChild(newNodeClick2DialIcon, cand);
+				dump(nodeText + "\n");
+			}
+		}
+
+	},
   
 	websiteSessionValid: function() {
 		var oHttpRequest = Components.classes["@mozilla.org/xmlextras/xmlhttprequest;1"]
@@ -570,6 +605,10 @@ var sipgateffx = {
 												
 		case 'logoff':
 				this.logoff();
+				break;
+				
+		case 'toggleClick2Dial':
+				this.toggleClick2Dial();
 				break;
 				
 		default:
