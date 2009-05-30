@@ -57,7 +57,7 @@
 			<command id="sipgatecmd_showCredit" oncommand="sipgateffx.onStatusbarCommand('showSitePage','credit');"/>
 			<command id="sipgatecmd_showVoiceMail" oncommand="sipgateffx.onStatusbarCommand('showSitePage','voicemail');"/>
 			<command id="sipgatecmd_showPhoneBook" oncommand="sipgateffx.onStatusbarCommand('showSitePage','phonebook');"/>
-			<command id="sipgatecmd_showSmsForm" oncommand="sipgateffx.onStatusbarCommand('showSitePage','smsform');"/>
+			<command id="sipgatecmd_showSmsForm" oncommand="sipgateffx.onStatusbarCommand('sendSMS');"/>
 
 			<command id="sipgatecmd_logon" oncommand="sipgateffx.onStatusbarCommand('logon');"/>
 			<command id="sipgatecmd_logoff" oncommand="sipgateffx.onStatusbarCommand('logoff');"/>

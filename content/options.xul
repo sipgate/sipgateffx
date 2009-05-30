@@ -13,21 +13,32 @@
       <preference id="password" name="extensions.sipgateffx.password" type="unichar"/>
     -->
       <preference id="autologin" name="extensions.sipgateffx.autologin" type="bool"/>
+      <preference id="polling" name="extensions.sipgateffx.polling" type="bool"/>
+      <preference id="parsenumbers" name="extensions.sipgateffx.parsenumbers" type="bool"/>
+      <preference id="click2dial" name="extensions.sipgateffx.click2dial" type="bool"/>
     </preferences>
 
-	<groupbox align="center">
-		<hbox>
-			<label accesskey="U" control="username">Username</label>
-			<textbox id="username"/>
-		</hbox>
-		
-		<hbox>
-			<label accesskey="P" control="password">Password</label>
-			<textbox id="password" type="password"/>
-		</hbox>
-		
-		<checkbox id="autologin" preference="autologin" label="Auto-Login" accesskey="A"/>
-	</groupbox>
+	<hbox>
+		<groupbox align="center">
+			<hbox>
+				<label accesskey="U" control="username">Username</label>
+				<textbox id="username"/>
+			</hbox>
+			
+			<hbox>
+				<label accesskey="P" control="password">Password</label>
+				<textbox id="password" type="password"/>
+			</hbox>
+			
+			<checkbox id="autologin" preference="autologin" label="Auto-Login" accesskey="A"/>
+		</groupbox>
+
+		<groupbox align="left">
+			<checkbox id="polling" preference="polling" label="Polling enabled" accesskey="p"/>
+			<checkbox id="parsenumbers" preference="parsenumbers" label="Parse phone numbers to TEL-URIs" accesskey="n"/>
+			<checkbox id="click2dial" preference="click2dial" label="Click2Dial on TEL-URIs" accesskey="c"/>
+		</groupbox>
+	</hbox>	
 	
   </prefpane>
   

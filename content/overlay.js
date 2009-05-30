@@ -22,66 +22,71 @@ var urlSessionLogout = "https://secure.sipgate.de/user/slogout.php"; // safe def
 var urlSessionCheck = "https://secure.sipgate.de/user/status.php"; // safe default
 var samuraiServer = "https://samurai.sipgate.net/RPC2";
 var isLoggedIn = false;
-var recommendedIntervals = {};
+var recommendedIntervals = {"samurai.BalanceGet": 60
+			};
 var clientLang;
+var sipgateffx_this;
 			
 var sipgateffx = {
-  onLoad: function() {
-    // initialization code
-    this.initialized = true;
-    this.strings = document.getElementById("sipgateffx-strings");
-	
-	try {
-		// this is needed to generally allow usage of components in javascript
-		netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
-	
-		sgffx = Components.classes['@api.sipgate.net/sipgateffx;1']
-	                                    .getService().wrappedJSObject;
+	onLoad: function() {
+		// initialization code
+		this.initialized = true;
+		this.strings = document.getElementById("sipgateffx-strings");
+		sipgateffx_this = this;
 		
-	} catch (anError) {
-		dump("ERROR: " + anError);
-		return;
-	}
-	
-	// set language:
-	try { 
-		if (navigator.language.match(/de/) == "de") {
-			clientLang = "de";
-		} else {
+		this.getBalanceTimer = Components.classes["@mozilla.org/timer;1"].createInstance(Components.interfaces.nsITimer);
+
+		try {
+			// this is needed to generally allow usage of components in javascript
+			netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
+
+			sgffx = Components.classes['@api.sipgate.net/sipgateffx;1']
+											.getService().wrappedJSObject;
+			
+		} catch (anError) {
+			dump("ERROR: " + anError);
+			return;
+		}
+		
+		// set language:
+		try { 
+			if (navigator.language.match(/de/) == "de") {
+				clientLang = "de";
+			} else {
+				clientLang = "en"; 
+			}
+		} catch (lang_ex) {
+			dump("Error in detecting language! falling back to 'en' ...\n");
 			clientLang = "en"; 
 		}
-	} catch (lang_ex) {
-		dump("Error in detecting language! falling back to 'en' ...\n");
-		clientLang = "en"; 
-	}
-	
-	document.getElementById('showcreditmenuitem').setAttribute("hidden","true"); 
-	document.getElementById('showvoicemailmenuitem').setAttribute("hidden","true"); 
-	document.getElementById('showphonebookmenuitem').setAttribute("hidden","true"); 
-	document.getElementById('showsmsformmenuitem').setAttribute("hidden","true"); 
-	document.getElementById('showhistorymenuitem').setAttribute("hidden","true"); 
-	document.getElementById('showfaxmenuitem').setAttribute("hidden","true"); 
-	document.getElementById('showshopmenuitem').setAttribute("hidden","true"); 
-	document.getElementById('showitemizedmenuitem').setAttribute("hidden","true"); 
-	document.getElementById('dialactivate').setAttribute("hidden","true"); 
-	document.getElementById('dialdeactivate').setAttribute("hidden","true"); 
-	document.getElementById('item_logoff').setAttribute("hidden","true"); 
-	document.getElementById('separator1').setAttribute("hidden","true"); 
-	document.getElementById('separator2').setAttribute("hidden","true"); 
-	
-//	document.getElementById('item_logon').setAttribute("hidden","true"); 
-	
-	document.getElementById("contentAreaContextMenu")
-		.addEventListener("popupshowing", function(e) { this.showContextMenu(e); }, false);
+		
+		document.getElementById('showcreditmenuitem').setAttribute("hidden","true"); 
+		document.getElementById('showvoicemailmenuitem').setAttribute("hidden","true"); 
+		document.getElementById('showphonebookmenuitem').setAttribute("hidden","true"); 
+		document.getElementById('showsmsformmenuitem').setAttribute("hidden","true"); 
+		document.getElementById('showhistorymenuitem').setAttribute("hidden","true"); 
+		document.getElementById('showfaxmenuitem').setAttribute("hidden","true"); 
+		document.getElementById('showshopmenuitem').setAttribute("hidden","true"); 
+		document.getElementById('showitemizedmenuitem').setAttribute("hidden","true"); 
+		document.getElementById('dialactivate').setAttribute("hidden","true"); 
+		document.getElementById('item_logoff').setAttribute("hidden","true"); 
+		document.getElementById('separator1').setAttribute("hidden","true"); 
+		document.getElementById('separator2').setAttribute("hidden","true"); 
 
-	if(this.getPref("extensions.sipgateffx.autologin","bool")) {
-		this.login();
-	}
+		document.getElementById('dialdeactivate').setAttribute("hidden","true"); 
+		
+//		document.getElementById('item_logon').setAttribute("hidden","true"); 
+		
+		document.getElementById("contentAreaContextMenu")
+			.addEventListener("popupshowing", function(e) { sipgateffx_this.showContextMenu(e); }, false);
+		
+		if(sgffx.getPref("extensions.sipgateffx.autologin","bool")) {
+			this.login();
+		}
+	},
 
-  },
-
-  onUnload: function() {
-  },
+	onUnload: function() {
+	},
 
 	getBalance: function () {
 		if(!this.isLoggedIn()) {
@@ -119,19 +124,18 @@ var sipgateffx = {
 						document.getElementById('BalanceText').setAttribute("style", "cursor: pointer;");
 				}
 				
-				/*
-				if (sfobj.pollingEnabled) {
+				if (sgffx.getPref("extensions.sipgateffx.polling", "bool")) {
 						// set update timer
-						var delay;
-						if (typeof(recommendedPollingIntervals["samurai.BalanceGet"]) != "undefined") {
-								delay = recommendedPollingIntervals["samurai.BalanceGet"];
-						} else {
-								sfobj.log("no recommended polling-interval found for "+ctxt);
-								delay = gDefaultInterval;
-						}
-						balancePollingSetTimer(delay);
+						var delay = recommendedIntervals["samurai.BalanceGet"];
+					 
+						sipgateffx_this.getBalanceTimer.initWithCallback(
+							{ notify: function(timer) { sipgateffx_this.getBalance(); } },
+							delay * 1000,
+							Components.interfaces.nsITimer.TYPE_ONE_SHOT);
+						
+						dump("polling enabled. set to " + delay + " seconds\n");
 				}
-				*/			
+
 			}
 		};
 		
@@ -148,8 +152,6 @@ var sipgateffx = {
 		var request = bfXMLRPC.makeXML("samurai.RecommendedIntervalGet", [samuraiServer, params]);
 		dump(request + "\n");
 		
-		var bind = this;
-		
 		var result = function(ourParsedResponse, aXML) {
 			if(ourParsedResponse.StatusCode && ourParsedResponse.StatusCode == 200) {
 				if(ourParsedResponse.IntervalList.length > 0) {
@@ -160,7 +162,6 @@ var sipgateffx = {
 					}
 				}
 			}
-			bind.getBalance();
 		};
 		
 		this._rpcCall(request, result);		
@@ -174,8 +175,6 @@ var sipgateffx = {
 		var request = bfXMLRPC.makeXML("system.serverInfo", [samuraiServer]); //, {'neu': 'irgendwas', 'alt': 'wasanderes'}]);
 		dump(request);
 		
-		var bind = this;
-		
 		var result = function(ourParsedResponse, aXML) {
 			if(ourParsedResponse.StatusCode && ourParsedResponse.StatusCode == 200) {
 			
@@ -188,7 +187,6 @@ var sipgateffx = {
 				document.getElementById('showshopmenuitem').setAttribute("hidden","false"); 
 				document.getElementById('showitemizedmenuitem').setAttribute("hidden","false"); 
 				document.getElementById('dialactivate').setAttribute("hidden","false"); 
-				document.getElementById('dialdeactivate').setAttribute("hidden","false"); 
 				document.getElementById('item_logoff').setAttribute("hidden","false"); 
 				document.getElementById('separator1').setAttribute("hidden","false"); 
 				document.getElementById('separator2').setAttribute("hidden","false"); 
@@ -201,7 +199,8 @@ var sipgateffx = {
 				isLoggedIn = true;
 				
 				dump("\n*** NOW logged in ***\n");
-				bind.getRecommendedIntervals();
+				sipgateffx_this.getRecommendedIntervals();
+				sipgateffx_this.getBalance();
 			}
 		};
 		
@@ -335,63 +334,44 @@ var sipgateffx = {
   showContextMenu: function(event) {
     // show or hide the menuitem based on what the context menu is on
     // see http://kb.mozillazine.org/Adding_items_to_menus
-    document.getElementById("context-sipgateffx").hidden = gContextMenu.onImage;
+    document.getElementById("context-sipgateffx").hidden = !gContextMenu.isTextSelected;
   },
+  
   onMenuItemCommand: function(e) {
+	// borrowed from http://mxr.mozilla.org/firefox/source/browser/base/content/browser.js#4683
+	var focusedWindow = document.commandDispatcher.focusedWindow;
+	var selection = focusedWindow.getSelection().toString();
+	var charLen = 160;
+
+	if (selection) {
+		if (selection.length > charLen) {
+			// only use the first charLen important chars. see bug 221361
+			var pattern = new RegExp("^(?:\\s*.){0," + charLen + "}");
+			pattern.test(selection);
+			selection = RegExp.lastMatch;
+		}
+
+		selection = selection.replace(/^\s+/, "")
+						  .replace(/\s+$/, "")
+						  .replace(/\s+/g, " ");
+
+		if (selection.length > charLen)
+			selection = selection.substr(0, charLen);
+	}
+   
+	window.openDialog('chrome://sipgateffx/content/sms.xul', 'sipgateSMS', 'chrome,centerscreen,resizable=yes,width=400,height=250,titlebar=yes,alwaysRaised=yes', selection);
+	/*
     var promptService = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
                                   .getService(Components.interfaces.nsIPromptService);
     promptService.alert(window, this.strings.getString("helloMessageTitle"),
                                 this.strings.getString("helloMessage"));
+	*/
   },
   onToolbarButtonCommand: function(e) {
     // just reuse the function above.  you can change this, obviously!
     sipgateffx.onMenuItemCommand(e);
   }, 
   
-  oPrefService: Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch),
-  
-	setPref: function (aName, aValue, aType) {
-		dump(aName);
-	  try{
-	    if(aType == "bool") {
-	      this.oPrefService.setBoolPref(aName, aValue);
-			} else if(aType == "int") {
-	      this.oPrefService.setIntPref(aName, aValue);
-			} else if(aType == "char") {
-	      this.oPrefService.setCharPref(aName, aValue);
-			}
-		this.log("preference '"+aName+"' ("+aType+") set to '"+aValue+"'");
-	  }
-	  catch(e){
-		dump(e);
-	  }
-	},
-	
-	/********************/
-
-	getPref: function (aName, aType) {
-	  try{
-	    var result;
-	    if(aType == "int") {
-	      result = this.oPrefService.getIntPref(aName);
-	    } else if(aType == "char") {
-	      result = this.oPrefService.getCharPref(aName);
-	    } else if(aType == "bool") {
-	      result = this.oPrefService.getBoolPref(aName);
-	    }
-	    return result;
-	  }
-	  catch(e){
-	    if(aType == "int") {
-	      return 0;
-	    }
-	    else if(aType == "char") {
-	      return null;
-	    }
-	  }
-	  return null;
-	},
-	
 	websiteSessionValid: function() {
 		var oHttpRequest = Components.classes["@mozilla.org/xmlextras/xmlhttprequest;1"]
 																 .getService(Components.interfaces.nsIJSXMLHttpRequest);
@@ -406,9 +386,9 @@ var sipgateffx = {
 	},	
 	
 	websiteSessionLogin: function() {
-		var user = this.getPref("extensions.sipgateffx.username", "char");
+		var user = sgffx.getPref("extensions.sipgateffx.username", "char");
 		dump(user);
-		var pass = this.getPref("extensions.sipgateffx.password", "char");
+		var pass = sgffx.getPref("extensions.sipgateffx.password", "char");
 		dump(pass);
 
 		var oHttpRequest = Components.classes["@mozilla.org/xmlextras/xmlhttprequest;1"]
@@ -574,6 +554,10 @@ var sipgateffx = {
 		
 		case 'openPrefs':
 				window.open('chrome://sipgateffx/content/options.xul', 'sipgatePrefs', 'chrome,centerscreen,resizable=no,titlebar=yes,dependent=no');
+				break;
+				
+		case 'sendSMS':
+				window.open('chrome://sipgateffx/content/sms.xul', 'sipgateSMS', 'chrome,centerscreen,resizable=yes,width=400,height=250,titlebar=yes,alwaysRaised=yes');
 				break;
 				
 		case 'pollBalance':

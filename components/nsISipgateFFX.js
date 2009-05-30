@@ -31,7 +31,49 @@ SipgateFFX.prototype = {
 			return null;
 		}
 	},
-  
+	
+	oPrefService: Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch),
+	
+	setPref: function (aName, aValue, aType) {
+		dump(aName);
+	  try{
+	    if(aType == "bool") {
+	      this.oPrefService.setBoolPref(aName, aValue);
+			} else if(aType == "int") {
+	      this.oPrefService.setIntPref(aName, aValue);
+			} else if(aType == "char") {
+	      this.oPrefService.setCharPref(aName, aValue);
+			}
+		this.log("preference '"+aName+"' ("+aType+") set to '"+aValue+"'");
+	  }
+	  catch(e){
+		dump(e);
+	  }
+	},
+	
+	getPref: function (aName, aType) {
+	  try{
+	    var result;
+	    if(aType == "int") {
+	      result = this.oPrefService.getIntPref(aName);
+	    } else if(aType == "char") {
+	      result = this.oPrefService.getCharPref(aName);
+	    } else if(aType == "bool") {
+	      result = this.oPrefService.getBoolPref(aName);
+	    }
+	    return result;
+	  }
+	  catch(e){
+	    if(aType == "int") {
+	      return 0;
+	    }
+	    else if(aType == "char") {
+	      return null;
+	    }
+	  }
+	  return null;
+	},	
+	
 	getSamuraiAuth: function() {
 		// Login Manager exists so this is Firefox 3
 		var passwordManager = Components.classes["@mozilla.org/login-manager;1"]
@@ -48,8 +90,6 @@ SipgateFFX.prototype = {
 		for (var i = 0; i < logins.length; i++) {
 			username = logins[i].username;
 			password = logins[i].password;
-			// dump(logins[i].username + "\n");
-			// dump(logins[i].password + "\n");
 			break;
 		}
 		
