@@ -10,6 +10,7 @@ function SipgateFFX() {
 		"username": null,
 		"password": null
 	};
+	this.samuraiServer = "https://samurai.sipgate.net/RPC2";
 }
 
 SipgateFFX.prototype = {
@@ -120,8 +121,98 @@ SipgateFFX.prototype = {
 			// This will only happen if there is no nsILoginManager component class
 			dump(ex);
 		}
-	}
+	},
+		
+	_rpcCall: function(request, callbackResult, callbackError) {
+	  		var user = this.username;
+			var pass = this.password;
+			
+			if(user == null || pass == null) {
+				var retVal = this.getSamuraiAuth();
+				if(retVal.username == null || retVal.password == null) {
+					dump("could not be authorized\n");
+					return;
+				}
+								
+				user = retVal.username;
+				pass = retVal.password;			
+			}
+		  
+			//PffXmlHttpReq( aUrl, aType, aContent, aDoAuthBool, aUser, aPass) 
+			var theCall = new PffXmlHttpReq(this.samuraiServer, "POST", request, true, user, pass);
 	
+			theCall.onResult = function (aText, aXML) { 
+				var re = /(\<\?\xml[0-9A-Za-z\D]*\?\>)/;
+				var newstr = aText.replace(re, "");
+	
+				try {
+					var e4xXMLObject = new XML(newstr);
+				} catch (e) {
+					alert("malformedXML");
+					return;
+				}
+				
+				if (e4xXMLObject.name() != 'methodResponse' ||
+					!(e4xXMLObject.params.param.value.length() == 1 ||
+					e4xXMLObject.fault.value.struct.length() == 1)) {
+					if (aText != '') {
+						alert("\nXML Response:"+aText);
+					}
+				}
+				
+				if (e4xXMLObject.params.param.value.length() == 1) {
+					ourParsedResponse = bfXMLRPC.XMLToObject(e4xXMLObject.params.param.value.children()[0]);
+				}
+				
+				if(e4xXMLObject.fault.children().length() > 0 ) {
+					ourParsedResponse = bfXMLRPC.XMLToObject( e4xXMLObject.fault.value.children()[0]);
+				}
+				
+				if(typeof(callbackResult) == 'function') {
+					callbackResult(ourParsedResponse, aXML);
+				} else  {
+					alert("Good Result:" + aText);
+					alert("Good Result:" + aXML);
+				}
+			};
+			
+			var errString = this.strings;
+			
+			theCall.onError = function (aStatusMsg, Msg) {
+				var errorMessage = '';
+	
+				if(typeof(callbackError) == 'function') {
+					callbackError(aStatusMsg, Msg);
+					return;
+				}
+	
+				switch (theCall.request.status) {
+					case 401:
+						errorMessage = "status.401";
+					break;
+					case 403:
+						errorMessage = "status.403";
+					break;
+					case 404:
+						errorMessage = "status.404";
+					break;
+					default:
+						errorMessage = Msg;
+					break;
+				}
+	
+				var promptService = Components.classes["@mozilla.org/embedcomp/prompt-service;1"].getService(Components.interfaces.nsIPromptService);
+				promptService.alert(window, errString.getString("helloMessageTitle"),
+											errString.getString(errorMessage));  
+												
+			};
+			
+			theCall.prepCall(); //Set up The call (open connection, etc.)
+			theCall.request.setRequestHeader("Content-Type", "text/xml");
+			theCall.makeCall(); //Make the call
+			theCall.request.overrideMimeType ('text/xml');  
+	  }
+	  
 };
 var components = [SipgateFFX];
 
