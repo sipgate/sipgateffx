@@ -51,32 +51,60 @@ var sipgateffx = {
 		// set language:
 		try { 
 			if (navigator.language.match(/de/) == "de") {
-				clientLang = "de";
+				sgffx.language = "de";
 			} else {
-				clientLang = "en"; 
+				sgffx.language = "en"; 
 			}
 		} catch (lang_ex) {
-			dump("Error in detecting language! falling back to 'en' ...\n");
-			clientLang = "en"; 
+			dump("Error in detecting language! Found: "+navigator.language.match(/de/)+". Falling back to 'en' ...\n");
+			sgffx.language = "en"; 
 		}
 		
-		document.getElementById('showcreditmenuitem').setAttribute("hidden","true"); 
-		document.getElementById('showvoicemailmenuitem').setAttribute("hidden","true"); 
-		document.getElementById('showphonebookmenuitem').setAttribute("hidden","true"); 
-		document.getElementById('showsmsformmenuitem').setAttribute("hidden","true"); 
-		document.getElementById('showhistorymenuitem').setAttribute("hidden","true"); 
-		document.getElementById('showfaxmenuitem').setAttribute("hidden","true"); 
-		document.getElementById('showshopmenuitem').setAttribute("hidden","true"); 
-		document.getElementById('showitemizedmenuitem').setAttribute("hidden","true"); 
-		document.getElementById('dialactivate').setAttribute("hidden","true"); 
-		document.getElementById('item_logoff').setAttribute("hidden","true"); 
-		document.getElementById('separator1').setAttribute("hidden","true"); 
-		document.getElementById('separator2').setAttribute("hidden","true"); 
+		var allElements = [
+			'showcreditmenuitem',
+			'pollbalance',
+			'showvoicemailmenuitem',
+			'showphonebookmenuitem',
+			'showsmsformmenuitem',
+			'showhistorymenuitem',
+			'showfaxmenuitem',
+			'showshopmenuitem',
+			'showitemizedmenuitem',
+			'dialactivate',
+			'item_logoff',
+			'separator1',
+			'separator2',
+			'dialdeactivate',
+			'item_logon',
 
-		document.getElementById('dialdeactivate').setAttribute("hidden","true"); 
+			'sipgateffx_loggedout',
+			'sipgateffx_loggedin',
+
+			'BalanceText'
+		];
+
+		for(var i = 0; i < allElements.length; i++)
+		{
+			sgffx.setXulObjectReference(allElements[i], document.getElementById(allElements[i]));
+		}
+
+		sgffx.setXulObjectVisibility('showcreditmenuitem', 0);
+		sgffx.setXulObjectVisibility('pollbalance', 0);
+		sgffx.setXulObjectVisibility('showvoicemailmenuitem', 0);
+		sgffx.setXulObjectVisibility('showphonebookmenuitem', 0);
+		sgffx.setXulObjectVisibility('showsmsformmenuitem', 0);
+		sgffx.setXulObjectVisibility('showhistorymenuitem', 0);
+		sgffx.setXulObjectVisibility('showfaxmenuitem', 0);
+		sgffx.setXulObjectVisibility('showshopmenuitem', 0);
+		sgffx.setXulObjectVisibility('showitemizedmenuitem', 0);
+		sgffx.setXulObjectVisibility('dialactivate', 0);
+		sgffx.setXulObjectVisibility('item_logoff', 0);
+		sgffx.setXulObjectVisibility('separator1', 0);
+		sgffx.setXulObjectVisibility('separator2', 0);
+		sgffx.setXulObjectVisibility('dialdeactivate', 0);
 		
-//		document.getElementById('item_logon').setAttribute("hidden","true"); 
-		
+		sgffx.setXulObjectVisibility('item_logon', 1);
+
 		document.getElementById("contentAreaContextMenu")
 			.addEventListener("popupshowing", function(e) { sipgateffx_this.showContextMenu(e); }, false);
 		
@@ -93,6 +121,9 @@ var sipgateffx = {
 		if(!this.isLoggedIn()) {
 			return;
 		}
+
+		sgffx.getBalance();
+return;
 		dump("\ngetBalance\n");	
 		
 		var request = bfXMLRPC.makeXML("samurai.BalanceGet", [samuraiServer]);
@@ -169,6 +200,8 @@ var sipgateffx = {
 	},
   
 	login: function() {
+		sgffx.login();
+return;
 		if(this.isLoggedIn()) {
 			return;
 		}
@@ -179,23 +212,25 @@ var sipgateffx = {
 		var result = function(ourParsedResponse, aXML) {
 			if(ourParsedResponse.StatusCode && ourParsedResponse.StatusCode == 200) {
 			
-				document.getElementById('showcreditmenuitem').setAttribute("hidden","false"); 
-				document.getElementById('showvoicemailmenuitem').setAttribute("hidden","false"); 
-				document.getElementById('showphonebookmenuitem').setAttribute("hidden","false"); 
-				document.getElementById('showsmsformmenuitem').setAttribute("hidden","false"); 
-				document.getElementById('showhistorymenuitem').setAttribute("hidden","false"); 
-				document.getElementById('showfaxmenuitem').setAttribute("hidden","false"); 
-				document.getElementById('showshopmenuitem').setAttribute("hidden","false"); 
-				document.getElementById('showitemizedmenuitem').setAttribute("hidden","false"); 
-				document.getElementById('dialactivate').setAttribute("hidden","false"); 
-				document.getElementById('item_logoff').setAttribute("hidden","false"); 
-				document.getElementById('separator1').setAttribute("hidden","false"); 
-				document.getElementById('separator2').setAttribute("hidden","false"); 
-				
-				document.getElementById('item_logon').setAttribute("hidden","true"); 			
+				sgffx.setXulObjectVisibility('showcreditmenuitem', 1);
+				sgffx.setXulObjectVisibility('pollbalance', 1);
+				sgffx.setXulObjectVisibility('showvoicemailmenuitem', 1);
+				sgffx.setXulObjectVisibility('showphonebookmenuitem', 1);
+				sgffx.setXulObjectVisibility('showsmsformmenuitem', 1);
+				sgffx.setXulObjectVisibility('showhistorymenuitem', 1);
+				sgffx.setXulObjectVisibility('showfaxmenuitem', 1);
+				sgffx.setXulObjectVisibility('showshopmenuitem', 1);
+				sgffx.setXulObjectVisibility('showitemizedmenuitem', 1);
+				sgffx.setXulObjectVisibility('dialactivate', 1);
+				sgffx.setXulObjectVisibility('item_logoff', 1);
+				sgffx.setXulObjectVisibility('separator1', 1);
+				sgffx.setXulObjectVisibility('separator2', 1);
+				sgffx.setXulObjectVisibility('dialdeactivate', 1);
+		
+				sgffx.setXulObjectVisibility('item_logon', 0);
 
-				document.getElementById('sipgateffx_loggedout').setAttribute("hidden","true"); 			
-				document.getElementById('sipgateffx_loggedin').setAttribute("hidden","false"); 			
+				sgffx.setXulObjectVisibility('sipgateffx_loggedout', 0);
+				sgffx.setXulObjectVisibility('sipgateffx_loggedin', 1);
 				
 				isLoggedIn = true;
 				
@@ -215,24 +250,26 @@ var sipgateffx = {
 
 		isLoggedIn = false;
 		
-		document.getElementById('showcreditmenuitem').setAttribute("hidden","true"); 
-		document.getElementById('showvoicemailmenuitem').setAttribute("hidden","true"); 
-		document.getElementById('showphonebookmenuitem').setAttribute("hidden","true"); 
-		document.getElementById('showsmsformmenuitem').setAttribute("hidden","true"); 
-		document.getElementById('showhistorymenuitem').setAttribute("hidden","true"); 
-		document.getElementById('showfaxmenuitem').setAttribute("hidden","true"); 
-		document.getElementById('showshopmenuitem').setAttribute("hidden","true"); 
-		document.getElementById('showitemizedmenuitem').setAttribute("hidden","true"); 
-		document.getElementById('dialactivate').setAttribute("hidden","true"); 
-		document.getElementById('dialdeactivate').setAttribute("hidden","true"); 
-		document.getElementById('item_logoff').setAttribute("hidden","true"); 
-		document.getElementById('separator1').setAttribute("hidden","true"); 
-		document.getElementById('separator2').setAttribute("hidden","true"); 
-
-		document.getElementById('sipgateffx_loggedout').setAttribute("hidden","false"); 
-		document.getElementById('sipgateffx_loggedin').setAttribute("hidden","true"); 			
+		sgffx.setXulObjectVisibility('showcreditmenuitem', 0);
+		sgffx.setXulObjectVisibility('pollbalance', 0);
+		sgffx.setXulObjectVisibility('showvoicemailmenuitem', 0);
+		sgffx.setXulObjectVisibility('showphonebookmenuitem', 0);
+		sgffx.setXulObjectVisibility('showsmsformmenuitem', 0);
+		sgffx.setXulObjectVisibility('showhistorymenuitem', 0);
+		sgffx.setXulObjectVisibility('showfaxmenuitem', 0);
+		sgffx.setXulObjectVisibility('showshopmenuitem', 0);
+		sgffx.setXulObjectVisibility('showitemizedmenuitem', 0);
+		sgffx.setXulObjectVisibility('dialactivate', 0);
+		sgffx.setXulObjectVisibility('item_logoff', 0);
+		sgffx.setXulObjectVisibility('separator1', 0);
+		sgffx.setXulObjectVisibility('separator2', 0);
+		sgffx.setXulObjectVisibility('dialdeactivate', 0);
 		
-		document.getElementById('item_logon').setAttribute("hidden","false");
+		sgffx.setXulObjectVisibility('item_logon', 1);
+
+		sgffx.setXulObjectVisibility('sipgateffx_loggedout', 1);
+		sgffx.setXulObjectVisibility('sipgateffx_loggedin', 0);
+		
 		dump("\n*** NOW logged off ***\n");		
 	},
 	

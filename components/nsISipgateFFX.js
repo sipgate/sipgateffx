@@ -1,8 +1,12 @@
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 Components.utils.import("resource://sipgateffx/xmlrpc.js");
 
+var xulObjReference = new Array();
+var _sgffx;
+
 function SipgateFFX() {
 	this.wrappedJSObject = this;
+	_sgffx = this;
 	this.samuraiAuth = {
 		"hostname": "chrome://sipgateffx",
 		"formSubmitURL": null,
@@ -10,7 +14,12 @@ function SipgateFFX() {
 		"username": null,
 		"password": null
 	};
+	this.recommendedIntervals = {"samurai.BalanceGet": 60, "samurai.RecommendedIntervalGet": 60 };
 	this.samuraiServer = "https://samurai.sipgate.net/RPC2";
+	this.clientLang = 'en';
+	this.getBalanceTimer = Components.classes["@mozilla.org/timer;1"].createInstance(Components.interfaces.nsITimer);
+	this.getRecommendedIntervalsTimer = Components.classes["@mozilla.org/timer;1"].createInstance(Components.interfaces.nsITimer);
+	this.isLoggedIn = false;
 }
 
 SipgateFFX.prototype = {
@@ -18,6 +27,7 @@ SipgateFFX.prototype = {
 	classID: Components.ID("{BCC44C3C-B5E8-4566-8556-0D9230C7B4F9}"),
 	contractID: "@api.sipgate.net/sipgateffx;1",
 	QueryInterface: XPCOMUtils.generateQI(),
+
 	get password() {
 		if (this.samuraiAuth.password) {
 			return this.samuraiAuth.password;
@@ -33,7 +43,20 @@ SipgateFFX.prototype = {
 			return null;
 		}
 	},
+
+	get language() {
+		return this.clientLang;
+	},
 	
+
+	set language(lang) {
+		if(lang == "de") {
+			return this.clientLang = "de";
+		} else {
+			return this.clientLang = "en";
+		}
+	},
+
 	oPrefService: Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch),
 	
 	setPref: function(aName, aValue, aType) {
@@ -121,6 +144,146 @@ SipgateFFX.prototype = {
 			// This will only happen if there is no nsILoginManager component class
 			dump(ex);
 		}
+	},
+
+	login: function() {
+		dump("*** sipgateffx: login *** BEGIN ***\n");	
+
+		if(this.isLoggedIn) {
+			dump("*** sipgateffx: login *** ALREADY LOGGED IN ***\n");	
+			return;
+		}
+
+		var result = function(ourParsedResponse, aXML) {
+			if(ourParsedResponse.StatusCode && ourParsedResponse.StatusCode == 200) {
+			
+				_sgffx.setXulObjectVisibility('showcreditmenuitem', 1);
+				_sgffx.setXulObjectVisibility('pollbalance', 1);
+				_sgffx.setXulObjectVisibility('showvoicemailmenuitem', 1);
+				_sgffx.setXulObjectVisibility('showphonebookmenuitem', 1);
+				_sgffx.setXulObjectVisibility('showsmsformmenuitem', 1);
+				_sgffx.setXulObjectVisibility('showhistorymenuitem', 1);
+				_sgffx.setXulObjectVisibility('showfaxmenuitem', 1);
+				_sgffx.setXulObjectVisibility('showshopmenuitem', 1);
+				_sgffx.setXulObjectVisibility('showitemizedmenuitem', 1);
+				_sgffx.setXulObjectVisibility('dialactivate', 1);
+				_sgffx.setXulObjectVisibility('item_logoff', 1);
+				_sgffx.setXulObjectVisibility('separator1', 1);
+				_sgffx.setXulObjectVisibility('separator2', 1);
+				_sgffx.setXulObjectVisibility('dialdeactivate', 1);
+		
+				_sgffx.setXulObjectVisibility('item_logon', 0);
+
+				_sgffx.setXulObjectVisibility('sipgateffx_loggedout', 0);
+				_sgffx.setXulObjectVisibility('sipgateffx_loggedin', 1);
+				
+				_sgffx.isLoggedIn = true;
+				
+				dump("*** NOW logged in ***\n");
+				_sgffx.getRecommendedIntervals();
+				_sgffx.getBalance();
+			}
+		};
+		
+		var request = bfXMLRPC.makeXML("system.serverInfo", [this.samuraiServer]);
+		dump(request);
+		
+		this._rpcCall(request, result);
+		dump("*** sipgateffx: login *** END ***\n");	
+	},
+  
+	getRecommendedIntervals: function () {
+		dump("*** sipgateffx: getRecommendedIntervals *** BEGIN ***\n");	
+		if(!this.isLoggedIn) {
+			dump("*** sipgateffx: getRecommendedIntervals *** USER NOT LOGGED IN ***\n");	
+			return;
+		}
+
+		var result = function(ourParsedResponse, aXML) {
+			if(ourParsedResponse.StatusCode && ourParsedResponse.StatusCode == 200) {
+				if(ourParsedResponse.IntervalList.length > 0) {
+					for (var i = 0; i < ourParsedResponse.IntervalList.length; i++) {
+						_sgffx.recommendedIntervals[ourParsedResponse.IntervalList[i].MethodName] = ourParsedResponse.IntervalList[i].RecommendedInterval;
+						dump(ourParsedResponse.IntervalList[i].MethodName + " = ");
+						dump(ourParsedResponse.IntervalList[i].RecommendedInterval + "\n");
+					}
+					if (_sgffx.getPref("extensions.sipgateffx.polling", "bool")) {
+						// set update timer
+						var delay = _sgffx.recommendedIntervals["samurai.RecommendedIntervalGet"];
+					 
+						_sgffx.getRecommendedIntervalsTimer.initWithCallback(
+							{ notify: function(timer) { _sgffx.getRecommendedIntervals(); } },
+							delay * 1000,
+							Components.interfaces.nsITimer.TYPE_ONE_SHOT);
+					
+						dump("getRecommendedIntervals: polling enabled. set to " + delay + " seconds\n");
+					}
+				}
+			}
+		};
+
+		var params = {'MethodList': ["samurai.RecommendedIntervalGet", "samurai.BalanceGet", "samurai.UmSummaryGet"]};
+
+		var request = bfXMLRPC.makeXML("samurai.RecommendedIntervalGet", [this.samuraiServer, params]);
+		dump(request + "\n");
+		
+		this._rpcCall(request, result);		
+		dump("*** sipgateffx: ngetRecommendedIntervals *** END ***\n");	
+	},
+
+	getBalance: function() {
+		dump("\n*** sipgateffx: getBalance *** BEGIN ***\n");	
+
+		var result = function(ourParsedResponse, aXML) {
+			if(ourParsedResponse.StatusCode && ourParsedResponse.StatusCode == 200) {
+
+				var balance = ourParsedResponse.CurrentBalance;
+				var currency = balance.Currency;
+				var balanceValueDouble = balance.TotalIncludingVat;
+				
+				var balanceValueString = balanceValueDouble;
+				
+				// dirty hack to localize floats:
+				if (_sgffx.clientLang == "de") {
+					// german floats use "," as delimiter for mantissa:
+					balanceValueString = balanceValueDouble.toFixed(2).toString();
+					balanceValueString = balanceValueString.replace(/\./,",");
+				} else {
+					balanceValueString = balanceValueDouble.toFixed(2).toString();
+				}
+
+				_sgffx.setXulObjectAttribute('BalanceText', "value", balanceValueString + " " + currency); 
+
+				// display the balance value:
+				if (balanceValueDouble < 5.0) { 
+					_sgffx.setXulObjectAttribute('BalanceText', "style", "cursor: pointer; color: red;");
+				} else {
+					_sgffx.setXulObjectAttribute('BalanceText', "style", "cursor: pointer;");
+				}
+				
+				if (_sgffx.getPref("extensions.sipgateffx.polling", "bool")) {
+					// set update timer
+					var delay = _sgffx.recommendedIntervals["samurai.BalanceGet"];
+				 
+					_sgffx.getBalanceTimer.initWithCallback(
+						{ notify: function(timer) { _sgffx.getBalance(); } },
+						delay * 1000,
+						Components.interfaces.nsITimer.TYPE_ONE_SHOT);
+					
+					dump("getBalance: polling enabled. set to " + delay + " seconds\n");
+				}
+
+			}
+		};
+
+		var request = bfXMLRPC.makeXML("samurai.BalanceGet", [this.samuraiServer]);
+		dump(request + "\n");
+		
+		this._rpcCall(request, result);
+
+		dump("\n*** sipgateffx: getBalance *** END ***\n");	
+	
+
 	},
 		
 	_rpcCall: function(request, callbackResult, callbackError) {
@@ -211,7 +374,43 @@ SipgateFFX.prototype = {
 			theCall.request.setRequestHeader("Content-Type", "text/xml");
 			theCall.makeCall(); //Make the call
 			theCall.request.overrideMimeType ('text/xml');  
-	  }
+	  },
+
+	setXulObjectReference: function(id, obj) {
+		if(typeof(xulObjReference[id]) != 'object') {
+			dump("xulObjReference to "+id+" not defined as Array\n");
+			xulObjReference[id] = new Array();
+		}
+		xulObjReference[id].push(obj);
+	},
+
+	setXulObjectVisibility: function(id, visible, forced) {
+		if(visible == 1) {
+			this.setXulObjectAttribute(id, "hidden", "false", forced);
+		} else {
+			this.setXulObjectAttribute(id, "hidden", "true", forced);
+		}
+	},
+
+	setXulObjectAttribute: function(id, attrib_name, new_value, forced) {
+		if(typeof(xulObjReference[id]) == 'object') {
+			var xulObj = xulObjReference[id];
+			for(var k = 0; k < xulObj.length; k++)
+			{
+				if(attrib_name == "src") {
+					xulObj[k] = xulObj[k].QueryInterface(Components.interfaces.nsIDOMXULImageElement);
+				} else {
+					xulObj[k] = xulObj[k].QueryInterface(Components.interfaces.nsIDOMXULElement);
+				}
+				dump("set attribute '" +attrib_name+ "' of '" +id+ "' to '" +new_value+ "'\n");
+				xulObj[k].setAttribute(attrib_name, new_value);
+			}
+		} else {
+			dump("No reference to XUL-Objects of "+id+"!\n");
+		}
+	},
+
+
 	  
 };
 var components = [SipgateFFX];

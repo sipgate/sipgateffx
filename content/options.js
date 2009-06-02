@@ -22,12 +22,21 @@ var sipgateffx_options = {
   onUnload: function() {
 	  var username = document.getElementById('username').value;
 	  var password = document.getElementById('password').value;
+	  
+	  if(username == '' || password == '') {
+	  	return;
+	  }
 
 	  var auth = sgffx.getSamuraiAuth();
 	  
 	  if(auth.username != username || auth.password != password) {
 		  sgffx.setSamuraiAuth(username, password);
 	  }
+
+	if(document.getElementById('autologin').value === true) {
+		sgffx.getBalance();
+	}
+
   }
 
 };

@@ -83,7 +83,7 @@
 						
 					<menuseparator id="separator1" />
 					
-					<menuitem label="&getbalance.menuitem;" accesskey="&getbalance.key;" command="sipgatecmd_pollbalance" />
+					<menuitem label="&getbalance.menuitem;" accesskey="&getbalance.key;" command="sipgatecmd_pollbalance" id="pollbalance" />
 
 					<menuitem label="&showprefs.menuitem;" accesskey="&showprefs.key;" command="sipgatecmd_openPrefs" />
 	 
