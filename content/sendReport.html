@@ -1,0 +1,90 @@
+<html>
+<!--
+
+    sipgate FFX - Firefox Extention for Mozilla Firefox Webbrowser
+    Copyright (C) 2006-2007 Indigo Networks GmbH, Germany
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of version 2 of the GNU General Public License
+    as published by the Free Software Foundation.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+    02110-1301, USA
+
+-->
+<head>
+<title>sipgateFFX status</title>
+</head>
+<body>
+<script type="text/javascript">
+try {
+	var logAsString;
+	var sfobj = Components.classes['@api.sipgate.net/sipgateffx;1']
+											.getService().wrappedJSObject;
+						  
+
+	var logArray = sfobj.logBufferDump().QueryInterface(Components.interfaces.nsISupportsArray);
+	logAsString = "username: " + sfobj.username + "\n";
+
+	logAsString += "\npreferences:\n";
+	oPrefService = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
+	countOfPrefServiceChildList = {};
+	prefServiceChildList = mylist = oPrefService.getChildList("extensions.sipgateffx", countOfPrefServiceChildList);
+
+	for (var j=0; j < countOfPrefServiceChildList.value; j++) {
+		var _prefName = prefServiceChildList[j];
+		var _prefTypeCode = oPrefService.getPrefType(_prefName);
+		var _prefValue;
+		if (_prefTypeCode == 0) {
+			_prefValue = "'' (PREF_INVALID)";
+		} else if (_prefTypeCode == 32) {
+			_prefValue = "'"+sfobj.getPref(_prefName, "char")+"' (PREF_STRING)";
+		} else if (_prefTypeCode == 64) {
+			_prefValue = "'"+sfobj.getPref(_prefName, "int")+"' (PREF_INT)";
+		} else if (_prefTypeCode == 128) {
+			_prefValue = "'"+sfobj.getPref(_prefName, "bool")+"' (PREF_BOOL)";
+		}
+
+		logAsString += _prefName+" -> "+_prefValue+"\n";
+	}
+
+	logAsString += "\nreport:\n";
+	for (var i=0; i < logArray.Count(); i++) {
+		logAsString += logArray.GetElementAt(i).QueryInterface(Components.interfaces.nsISupportsCString).toString()+"\n";
+	}
+
+	// create a temp-file:
+	var file = Components.classes["@mozilla.org/file/directory_service;1"].getService(Components.interfaces.nsIProperties).get("TmpD", Components.interfaces.nsIFile);
+	file.append("sipgateFFXstatusReport.txt");
+	file.createUnique(Components.interfaces.nsIFile.NORMAL_FILE_TYPE, 0664);
+	var foStream = Components.classes["@mozilla.org/network/file-output-stream;1"]
+    	                     .createInstance(Components.interfaces.nsIFileOutputStream);
+	foStream.init(file, 0x02 | 0x08 | 0x20, 0664, 0); // write, create, truncate
+	foStream.write(logAsString, logAsString.length);
+	foStream.close();
+	
+	logAsString = logAsString.replace(/</g, '&lt;');
+	logAsString = logAsString.replace(/>/g, '&gt;');	
+
+	if (sfobj.language == "de") {
+		document.write("Der Status von sipgateFFX wurde in die lokale Datei <PRE>" + file.path + "</PRE> protokolliert (klicken Sie <A HREF='file://" + file.path + "'>hier</A> um die Datei zu &ouml;ffnen).<BR><BR>\n");
+		document.write("Bitte schicken Sie diese Datei per E-Mail an: <a href=\"mailto:support@support.sipgate.de?subject=" + escape("Statusbericht sipgateFFX") + "\">support@support.sipgate.de</a><BR>\n");
+		document.write("<br><br>Das ist der Inhalt der Datei:<br><pre>" + logAsString + "</pre>")
+	} else {
+		document.write("The state of sipgateFFX was written to the file <PRE>" + file.path + "</PRE> on your computer (click <A HREF='file://" + file.path + "'>here</A> to open the file).<BR><BR>\n");
+		document.write("Please send this file via email to <a href=\"mailto:support@support.sipgate.de?subject=" + escape("Statusbericht sipgateFFX") + "\">support@support.sipgate.de</a><BR>\n");
+		document.write("<br><br>This is the content of that file:<br><pre>" + logAsString + "</pre>")
+	}
+
+} catch (e) {
+	alert(e);
+}
+</script>
+</body></html>

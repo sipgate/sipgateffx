@@ -9,15 +9,30 @@
 	ondialogcancel="return doCancel();">
 
 	<script src="sms.js"/>
-    
-    <groupbox>
-		<caption label="Number"/>
-		<textbox type="autocomplete" autocompletesearch="form-history" height="20px" />
-	</groupbox>
-    <groupbox>
-		<caption label="Text" id="sipgate_sms_text_header"/>
-		<textbox multiline="true" id="sipgate_sms_text" />
-		<label value="Scheduled"/>
-		<datepicker type="popup" />
-	</groupbox>
+
+	<vbox id="sipgate_sms">
+	    <groupbox>
+			<caption label="Number"/>
+			<textbox type="autocomplete" autocompletesearch="form-history"  id="sipgate_sms_number" height="20px" />
+		</groupbox>
+	    <groupbox>
+			<caption label="Text" id="sipgate_sms_text_header"/>
+			<textbox multiline="true" id="sipgate_sms_text" />
+		</groupbox>
+	    <groupbox>
+			<caption label="Scheduled"/>
+			<hbox>
+				<checkbox label="Send later" checked="false" id="sipgate_sms_schedule_check"/>
+				<datepicker type="popup" id="sipgate_sms_schedule_date" disabled="true" />
+				<timepicker id="sipgate_sms_schedule_time" disabled="true" hideseconds="true"/>			
+			</hbox>
+	    </groupbox>
+	</vbox>
+	<vbox id="sipgate_sms_sending" hidden="true">
+	    <groupbox>
+			<caption label="Sending"/>
+			<progressmeter mode="undetermined"/>
+	    </groupbox>
+	</vbox>
+	
 </dialog>

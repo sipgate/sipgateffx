@@ -19,9 +19,10 @@ var bfXMLRPC = {
         return '<?xml version="1.0" encoding="' + theBlogCharType + '" ?>' + xml.toXMLString();
 	},
 	
-	convertToXML: function(myParams) {
+	convertToXML: function(myParams, isValue) {
         var paramType = myParams.constructor.name;
         var paramTemp = null;
+
         switch (paramType){
             
           case "Number":
@@ -45,7 +46,7 @@ var bfXMLRPC = {
           case "Boolean"://0,1, true, false
             paramTemp = "<boolean>" + myParams + "</boolean>";
             break;
-            
+          /*  
           case "Date": //Date Object: var date = new Date();
             var theDate = this.iso8601Format(myParams).toString();
             var theErrorString = "NaNNaNNaNTNaN:NaN:NaN";
@@ -55,6 +56,16 @@ var bfXMLRPC = {
                 paramTemp = "<dateTime.iso8601></dateTime.iso8601>";
             }
             break;
+		*/            
+          case "Date": //Date Object: var date = new Date();
+            var theDate = this.mysqlDate(myParams).toString();
+            var theErrorString = "NaN-NaN-NaNTNaN:NaN:NaN";
+            if(theDate != theErrorString){
+                paramTemp = "<dateTime>" + theDate + "+00:00</dateTime>";
+            }else{
+                paramTemp = "<dateTime></dateTime>";
+            }
+            break;
             
           case "Array": //Array Object
             var tempVal = "<array><data>";
@@ -62,7 +73,7 @@ var bfXMLRPC = {
             for(var i = 0; i < myParams.length; i++)
             {
                 //dump("\n i: " + i + "\n")
-                tempVal += "<value>" + this.convertToXML(myParams[i]) + "</value>";
+                tempVal += this.convertToXML(myParams[i], true);
             }
             tempVal += "</data></array>";
             paramTemp = tempVal;
@@ -82,12 +93,12 @@ var bfXMLRPC = {
 	                    }
                     
 	                }else if(myParams[x].constructor.name == 'Date'){
-	                    var theDate = this.iso8601Format(myParams[x]).toString();
-	                    var theErrorString = "NaNNaNNaNTNaN:NaN:NaN";
+	                    var theDate = this.mysqlDate(myParams[x]).toString();
+	                    var theErrorString = "NaN-NaN-NaNTNaN:NaN:NaN";
 	                    if(theDate != theErrorString){
-	                        tempVal += "<member><name>" + x + "</name>" + "<value>" +"<dateTime.iso8601>" + theDate + "Z</dateTime.iso8601>" + "</value>" +"</member>";
+	                        tempVal += "<member><name>" + x + "</name>" + "<value>" +"<dateTime>" + theDate + "+00:00</dateTime>" + "</value>" +"</member>";
 	                    }else{
-	                        tempVal += "<member><name>" + x + "</name>" + "<value>" +"<dateTime.iso8601></dateTime.iso8601>" + "</value>" +"</member>";
+	                        tempVal += "<member><name>" + x + "</name>" + "<value>" +"<dateTime></dateTime>" + "</value>" +"</member>";
 	                    }
                     
 	                }else if(myParams[x].constructor.name == 'Number'){
@@ -110,7 +121,11 @@ var bfXMLRPC = {
             break;
             
         }
-            
+        
+		if(isValue) {
+			paramTemp = "<value>" + paramTemp + "</value>";
+		}
+		
         var paramObject = new XML(paramTemp);
         
         return paramObject;
@@ -233,6 +248,26 @@ var bfXMLRPC = {
 	    datetime += (seconds < 10 ? '0' + seconds : seconds);
 		
 		return datetime;
+	},
+	
+	mysqlDate: function(date) 
+	{
+	    var datetime = date.getUTCFullYear() + '-';
+	    var month = String(date.getUTCMonth() + 1);
+	    datetime += (month.length == 1 ?  '0' + month : month) + '-';
+	    var day = date.getUTCDate();
+	    datetime += (day < 10 ? '0' + day : day);
+	
+	    datetime += 'T';
+	
+	    var hour = date.getUTCHours();
+	    datetime += (hour < 10 ? '0' + hour : hour) + ':';
+	    var minutes = date.getUTCMinutes();
+	    datetime += (minutes < 10 ? '0' + minutes : minutes) + ':';
+	    var seconds = date.getUTCSeconds();
+	    datetime += (seconds < 10 ? '0' + seconds : seconds);
+		
+		return datetime;
 	}
 	
 };
@@ -312,9 +347,10 @@ function PffXmlHttpReq( aUrl, aType, aContent, aDoAuthBool, aUser, aPass) {
 	            if (request.status < 300) {
 	                onResult(request.responseText, request.responseXML);
 	            }else{
+					dump(request.responseText);
 	                try{
 	                    onError(request.statusMessage, request.responseText);
-	                } catch(e) { alert("Error running onError: " + e); }
+	                } catch(e) { dump("Error running onError: " + e); }
 	            } 
 	        }
 	    }
