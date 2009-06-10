@@ -28,6 +28,7 @@ function doOK() {
 			document.getElementById("sipgate_sms").setAttribute('hidden', 'false');
 			document.getElementById("sipgate_sms_sending").setAttribute('hidden', 'true');
 			sending = false;
+			sgffx.log((new XMLSerializer()).serializeToString(aXML));
 			alert('Sending failed!');
 		}
 	};
