@@ -18,8 +18,11 @@ function SipgateFFX() {
 		"samurai.BalanceGet": 60,
 		"samurai.RecommendedIntervalGet": 60
 	};
-//	this.samuraiServer = "https://api.sipgate.net/RPC2";
-	this.samuraiServer = "http://samurai01.dev.sipgate.net/RPC2";	
+	this.samuraiServer = {
+		"classic": "https://samurai.sipgate.net/RPC2",
+		"team": "https://api.sipgate.net/RPC2",
+		"dev": "http://samurai01.dev.sipgate.net/RPC2"
+	};
 	this.clientLang = 'en';
 	this.mLogBuffer = Components.classes["@mozilla.org/supports-array;1"].createInstance(Components.interfaces.nsISupportsArray);
 	this.mLogBufferMaxSize = 1000;
@@ -62,6 +65,10 @@ SipgateFFX.prototype = {
 		} else {
 			return this.clientLang = "en";
 		}
+	},
+	
+	get systemArea() {
+		return "team";
 	},
 	
 	oPrefService: Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch),
@@ -195,7 +202,7 @@ SipgateFFX.prototype = {
 			}
 		};
 		
-		var request = bfXMLRPC.makeXML("system.serverInfo", [this.samuraiServer]);
+		var request = bfXMLRPC.makeXML("system.serverInfo", [this.samuraiServer[this.systemArea]]);
 		this.log(request);
 		
 		this._rpcCall(request, result);
@@ -204,9 +211,33 @@ SipgateFFX.prototype = {
 	
 	logoff: function() {
 		if (!this.isLoggedIn) {
-			this.log("*** sipgateffx: getRecommendedIntervals *** USER NOT LOGGED IN ***");
+			this.log("*** sipgateffx: logoff *** USER NOT LOGGED IN ***");
 			return;
 		}		
+			
+		this.isLoggedIn = false;
+		
+		this.setXulObjectVisibility('showcreditmenuitem', 0);
+		this.setXulObjectVisibility('pollbalance', 0);
+		this.setXulObjectVisibility('showvoicemailmenuitem', 0);
+		this.setXulObjectVisibility('showphonebookmenuitem', 0);
+		this.setXulObjectVisibility('showsmsformmenuitem', 0);
+		this.setXulObjectVisibility('showhistorymenuitem', 0);
+		this.setXulObjectVisibility('showfaxmenuitem', 0);
+		this.setXulObjectVisibility('showshopmenuitem', 0);
+		this.setXulObjectVisibility('showitemizedmenuitem', 0);
+		this.setXulObjectVisibility('dialactivate', 0);
+		this.setXulObjectVisibility('item_logoff', 0);
+		this.setXulObjectVisibility('separator1', 0);
+		this.setXulObjectVisibility('separator2', 0);
+		this.setXulObjectVisibility('dialdeactivate', 0);
+		
+		this.setXulObjectVisibility('item_logon', 1);
+
+		this.setXulObjectVisibility('sipgateffx_loggedout', 1);
+		this.setXulObjectVisibility('sipgateffx_loggedin', 0);
+		
+		this.log("*** NOW logged off ***");
 	},
 	
 	getRecommendedIntervals: function() {
@@ -245,7 +276,7 @@ SipgateFFX.prototype = {
 			'MethodList': [new String("samurai.RecommendedIntervalGet"), new String("samurai.BalanceGet"), new String("samurai.UmSummaryGet")]
 		};
 		
-		var request = bfXMLRPC.makeXML("samurai.RecommendedIntervalGet", [this.samuraiServer, params]);
+		var request = bfXMLRPC.makeXML("samurai.RecommendedIntervalGet", [this.samuraiServer[this.systemArea], params]);
 		this.log(request);
 		
 		this._rpcCall(request, result);
@@ -313,7 +344,7 @@ SipgateFFX.prototype = {
 			}
 		};
 		
-		var request = bfXMLRPC.makeXML("samurai.BalanceGet", [this.samuraiServer]);
+		var request = bfXMLRPC.makeXML("samurai.BalanceGet", [this.samuraiServer[this.systemArea]]);
 		this.log(request + "");
 		
 		this._rpcCall(request, result);
@@ -341,7 +372,7 @@ SipgateFFX.prototype = {
 			}
 		};
 		
-		var request = bfXMLRPC.makeXML("samurai.OwnUriListGet", [this.samuraiServer]);
+		var request = bfXMLRPC.makeXML("samurai.OwnUriListGet", [this.samuraiServer[this.systemArea]]);
 		this.log(request + "");
 		
 		this._rpcCall(request, result);
@@ -365,7 +396,7 @@ SipgateFFX.prototype = {
 		}
 		
 		//PffXmlHttpReq( aUrl, aType, aContent, aDoAuthBool, aUser, aPass) 
-		var theCall = new PffXmlHttpReq(this.samuraiServer, "POST", request, true, user, pass);
+		var theCall = new PffXmlHttpReq(this.samuraiServer[this.systemArea], "POST", request, true, user, pass);
 		
 		theCall.onResult = function(aText, aXML) {
 			var re = /(\<\?\xml[0-9A-Za-z\D]*\?\>)/;

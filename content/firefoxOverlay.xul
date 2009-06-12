@@ -18,10 +18,14 @@
   
   
   <popup id="contentAreaContextMenu">
-    <menuitem id="context-sipgateffx" label="&sipgateffxContext.label;"
-              accesskey="&sipgateffxContext.accesskey;"
-              insertafter="context-stop"
-              oncommand="sipgateffx.onMenuItemCommand(event)"/>
+	<menuseparator id="context-sipgate-sep" insertbefore="context-sep-selectall"/>
+	<menu id="context-sipgateffx" label="sipgate" insertbefore="context-sep-selectall"  image="chrome://sipgateffx/skin/icon_sipgate_active.gif" class="menu-iconic">
+		<menupopup>
+		    <menuitem label="&sipgateffxContext.label;"
+		              accesskey="&sipgateffxContext.accesskey;"
+		              oncommand="sipgateffx.onMenuItemCommand(event)"/>
+		</menupopup>	           
+    </menu>
   </popup>
   
   

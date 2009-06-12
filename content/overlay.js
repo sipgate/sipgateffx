@@ -12,22 +12,9 @@ var url = {
 	"itemized": "/user/konto_einzel.php?show=all&timeperiod=simple&timeperiod_simpletimeperiod=",
 	"default": "/user/index.php"
 };
-var samuraiAuth = {
-	"hostname": "chrome://sipgateffx",
-	"formSubmitURL": null,
-	"httprealm": 'sipgate Account Login',
-	"username": '',
-	"password": ''
-};
 var urlSessionLogin = "https://secure.sipgate.de/user/slogin.php"; // safe default
 var urlSessionLogout = "https://secure.sipgate.de/user/slogout.php"; // safe default
 var urlSessionCheck = "https://secure.sipgate.de/user/status.php"; // safe default
-var samuraiServer = "https://samurai.sipgate.net/RPC2";
-var isLoggedIn = false;
-var recommendedIntervals = {
-	"samurai.BalanceGet": 60
-};
-var clientLang;
 var sipgateffx_this;
 
 var sipgateffx = {
@@ -123,40 +110,8 @@ var sipgateffx = {
 	},
 
 	logoff: function() {
-		if(!this.isLoggedIn()) {
-			return;
-		}
-
-		isLoggedIn = false;
-		
-		sgffx.setXulObjectVisibility('showcreditmenuitem', 0);
-		sgffx.setXulObjectVisibility('pollbalance', 0);
-		sgffx.setXulObjectVisibility('showvoicemailmenuitem', 0);
-		sgffx.setXulObjectVisibility('showphonebookmenuitem', 0);
-		sgffx.setXulObjectVisibility('showsmsformmenuitem', 0);
-		sgffx.setXulObjectVisibility('showhistorymenuitem', 0);
-		sgffx.setXulObjectVisibility('showfaxmenuitem', 0);
-		sgffx.setXulObjectVisibility('showshopmenuitem', 0);
-		sgffx.setXulObjectVisibility('showitemizedmenuitem', 0);
-		sgffx.setXulObjectVisibility('dialactivate', 0);
-		sgffx.setXulObjectVisibility('item_logoff', 0);
-		sgffx.setXulObjectVisibility('separator1', 0);
-		sgffx.setXulObjectVisibility('separator2', 0);
-		sgffx.setXulObjectVisibility('dialdeactivate', 0);
-		
-		sgffx.setXulObjectVisibility('item_logon', 1);
-
-		sgffx.setXulObjectVisibility('sipgateffx_loggedout', 1);
-		sgffx.setXulObjectVisibility('sipgateffx_loggedin', 0);
-		
-		dump("\n*** NOW logged off ***\n");		
+		sgffx.logoff();
 	},
-	
-	isLoggedIn: function() {
-		var val = isLoggedIn;
-		dump("\n isLoggedIn: " + val + "\n");
-		return val;
-	},  
 
 	showContextMenu: function(event) {
 		// show or hide the menuitem based on what the context menu is on
@@ -230,162 +185,16 @@ var sipgateffx = {
 		}
 	},
   
-	websiteSessionValid: function() {
-		var oHttpRequest = Components.classes["@mozilla.org/xmlextras/xmlhttprequest;1"]
-																 .getService(Components.interfaces.nsIJSXMLHttpRequest);
-		oHttpRequest.open("GET",urlSessionCheck,false);
-		oHttpRequest.send(null);
-		dump(oHttpRequest.responseText);
-		if (oHttpRequest.responseText.match(/^true$/)) {
-			return true;
-		} else {
-			return false;
-		}
-	},	
-	
-	websiteSessionLogin: function() {
-		var user = sgffx.getPref("extensions.sipgateffx.username", "char");
-		dump(user);
-		var pass = sgffx.getPref("extensions.sipgateffx.password", "char");
-		dump(pass);
-
-		var oHttpRequest = Components.classes["@mozilla.org/xmlextras/xmlhttprequest;1"]
-																 .getService(Components.interfaces.nsIJSXMLHttpRequest);
-		oHttpRequest.open("POST",urlSessionLogin,false);
-		oHttpRequest.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-		oHttpRequest.send("username="+user+"&password="+pass);
-		this.setAuthData(user, pass);
-		var result = oHttpRequest.responseText.match(/\d\d\d/).toString();
-		dump(result);
-		
-		return result;
-		
-	},
-	
-	setAuthData: function(user, pass) {
-		var oldAuthData = this.getAuthData();
-		if ("@mozilla.org/passwordmanager;1" in Components.classes) {
-			// Password Manager exists so this is not Firefox 3 (could be Firefox 2, Netscape, SeaMonkey, etc).
-			var oPwManager = Components.classes["@mozilla.org/passwordmanager;1"].getService(Components.interfaces.nsIPasswordManager);
-			if (oldAuthData != null) {
-				oPwManager.removeUser("sipgateFFX",oldAuthData.user);
-			}
-			
-			if (user && pass && user != "") {
-				oPwManager.addUser("sipgateFFX", user, pass);
-			}
-		}
-		else if ("@mozilla.org/login-manager;1" in Components.classes) {
-			var passwordManager = Components.classes["@mozilla.org/login-manager;1"].getService(Components.interfaces.nsILoginManager);
-								
-			var hostname = 'http://www.sipgate.de';
-			var formSubmitURL = 'https://secure.sipgate.de';
-			var httprealm = null;
-
-			if (oldAuthData != null) {
-				try {
-				   // Get Login Manager 
-				   var passwordManager = Components.classes["@mozilla.org/login-manager;1"]
-										 .getService(Components.interfaces.nsILoginManager);
-				 
-				   // Find users for this extension 
-				   var logins = passwordManager.findLogins({}, hostname, formSubmitURL, httprealm);
-					  
-				   for (var i = 0; i < logins.length; i++) {
-					  if (logins[i].username == oldAuthData.user) {
-						 passwordManager.removeLogin(logins[i]);
-						 break;
-					  }
-				   }
-				}
-				catch(ex) {
-				   // This will only happen if there is no nsILoginManager component class
-				   dump(ex);
-				}
-			}
-			if (user && pass && user != "") {
-				dump(user);
-				dump(pass);
-				try {
-					var nsLoginInfo = new Components.Constructor("@mozilla.org/login-manager/loginInfo;1",
-																 Components.interfaces.nsILoginInfo,
-																 "init");
-						  
-					var loginInfo = new nsLoginInfo(hostname, formSubmitURL, httprealm, user, pass, 'uname', 'passw');
-					passwordManager.addLogin(loginInfo);
-				} catch(ex) {
-				   // This will only happen if there is no nsILoginManager component class
-				   dump(ex);
-				}
-			}			
-		}
-	},
-	
-	getAuthData: function() {
-		if ("@mozilla.org/login-manager;1" in Components.classes) {
-			var passwordManager = Components.classes["@mozilla.org/login-manager;1"].getService(Components.interfaces.nsILoginManager);
-  
-			var hostname = 'http://www.sipgate.de';
-			var formSubmitURL = 'https://secure.sipgate.de';
-			var httprealm = null;
-			
-			var passwords = passwordManager.findLogins({}, hostname, formSubmitURL, httprealm);
-			if (passwords.length > 0) {
-			  for (var i = 0; i < passwords.length; i++) {
-				user = passwords[i].username;
-				password = passwords[i].password;
-
-				// XXX: why not call the service here to get password?
-				if (password === " ") {
-				  // XXX: empty password is " " for now due to ff3 change
-				  password = "";
-				}
-
-				return({'user': user, 'pass': password});
-			  }
-			} else {
-				dump("getting userauth from nsILoginManager failed!");
-				return null;			
-			}
-						
-		} else {
-			var oPwManager = Components.classes["@mozilla.org/passwordmanager;1"].getService(Components.interfaces.nsIPasswordManager);
-				
-			// ask the password manager for an enumerator:
-			var e = oPwManager.enumerator;
-			// step through each password in the password manager until we find the one we want:
-			while (e.hasMoreElements()) {
-				try {
-				  // get an nsIPassword object out of the password manager.
-					var pass = e.getNext().QueryInterface(Components.interfaces.nsIPassword);
-					if (pass.host == "sipgateFFX") {
-						// found it!
-						return(pass);
-					}
-				} catch (ex) {
-				// do something if decrypting the password failed
-					dump("getting userauth from passwordmanager failed! error:"+ex);
-					return null;
-				}
-			}
-			
-		}
-		// no aut-data found, so we switch to "not logged in state" to remain safe if needed:
-		dump("no userauth for 'sipgateFFX' found in passwordmanager!");
-		return null;
-	},
-	
 	onStatusbarCommand: function(action, param) {
 		switch (action) {
 			case 'showSitePage':
-				dump(param + "\n");
-				
-				if (!this.websiteSessionValid()) {
-					this.websiteSessionLogin();
-				}
-				
-				var protocol = 'http://';
-				var httpServer = 'www.sipgate.de';
+				if (!sgffx.isLoggedIn) {
+					sgffx.log("*** sipgateffx: showSitePage *** USER NOT LOGGED IN ***");
+					return;
+				}		
+
+				var protocol = 'https://';
+				var httpServer = 'secure.live.sipgate.de';
 				var siteURL = protocol + httpServer + url[param];
 				
 				if (param == "itemized") {
@@ -399,12 +208,28 @@ var sipgateffx = {
 					}
 					siteURL = siteURL + _postfix;
 				}
+
+				var dataString = 'username='+sgffx.username+'&password='+sgffx.password;
 				
+				// POST method requests must wrap the encoded text in a MIME stream
+				var stringStream = Components.classes["@mozilla.org/io/string-input-stream;1"].
+				                   createInstance(Components.interfaces.nsIStringInputStream);
+				stringStream.data = dataString;
+				
+				var postData = Components.classes["@mozilla.org/network/mime-input-stream;1"].
+				               createInstance(Components.interfaces.nsIMIMEInputStream);
+				postData.addHeader("Content-Type", "application/x-www-form-urlencoded");
+				postData.addContentLength = true;
+				postData.setData(stringStream);
+				
+				var referrer = null;  
+				var flags = Components.interfaces.nsIWebNavigation.LOAD_FLAGS_NONE;  
+
 				// open new tab or use already opened (by extension) tab:
 				if ((typeof(gBrowser.selectedTab.id) != "undefined") && (gBrowser.selectedTab.id == "TabBySipgateFirefoxExtensionStatusbarShortcut")) {
-					gBrowser.loadURI(siteURL);
+					gBrowser.loadURIWithFlags(siteURL, flags, referrer, null, postData);  
 				} else {
-					var theTab = gBrowser.addTab(siteURL);
+					var theTab = gBrowser.addTab(siteURL, referrer, null, postData);
 					gBrowser.selectedTab = theTab;
 					theTab.id = "TabBySipgateFirefoxExtensionStatusbarShortcut";
 				}
