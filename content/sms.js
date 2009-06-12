@@ -41,7 +41,6 @@ function doOK() {
 		date.setHours(time.hour);
 		date.setMinutes(time.minute);		
 		params.Schedule	= date;
-		dump(date);
 	}
 
 /*	
@@ -53,9 +52,9 @@ function doOK() {
 */
 	
 	Components.utils.import("resource://sipgateffx/xmlrpc.js");
-	
-	var request = bfXMLRPC.makeXML("samurai.SessionInitiate", [sgffx.samuraiServer, params]);
-	dump(request + "\n");
+
+	var request = bfXMLRPC.makeXML("samurai.SessionInitiate", [sgffx.samuraiServer[sgffx.systemArea], params]);
+	sgffx.log(request + "\n");
 
 	sending = true;	
 	sgffx._rpcCall(request, result);
@@ -88,6 +87,7 @@ var sipgateffx_sms = {
 				
 		if(typeof window.arguments != "undefined") {
 			document.getElementById("sipgate_sms_text").setAttribute('value', window.arguments[0]);
+			document.getElementById("sipgate_sms_number").setAttribute('value', window.arguments[1]);
 		}
 
 		document.getElementById("sipgate_sms_text").addEventListener("keyup", function(e) {

@@ -1,6 +1,8 @@
 <!ENTITY sipgateffx.label "Your localized menuitem">
-<!ENTITY sipgateffxContext.label "Als SMS senden">
-<!ENTITY sipgateffxContext.accesskey "M">
+<!ENTITY sipgateffxContextSendAsSMS.label "Als SMS senden">
+<!ENTITY sipgateffxContextSendAsSMS.accesskey "M">
+<!ENTITY sipgateffxContextSendTo.label "SMS senden">
+<!ENTITY sipgateffxContextCallTo.label "Anrufen">
 <!ENTITY sipgateffxToolbar.label "Your Toolbar Button">
 <!ENTITY sipgateffxToolbar.tooltip "This is your toolbar button!">
 <!ENTITY sipgateffxStatusbar.InfoNoAuth.label "nicht angemeldet">

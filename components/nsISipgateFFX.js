@@ -7,6 +7,7 @@ var _sgffx;
 function SipgateFFX() {
 	this.wrappedJSObject = this;
 	_sgffx = this;
+	this._strings = null;
 	this.samuraiAuth = {
 		"hostname": "chrome://sipgateffx",
 		"formSubmitURL": null,
@@ -23,11 +24,20 @@ function SipgateFFX() {
 		"team": "https://api.sipgate.net/RPC2",
 		"dev": "http://samurai01.dev.sipgate.net/RPC2"
 	};
+	
+	this.defaultExtension = {"voice": null, "text": null, "fax": null};
+	this.ownUriList = {"voice": [], "text": [], "fax": []};
+	
+	this.currentSessionID = null;	// session for click2dial (must be NULL if there is no active session)
+	this.currentSessionTime = null;
+	this.currentSessionData = {'to': '', 'from': ''};
+	
 	this.clientLang = 'en';
 	this.mLogBuffer = Components.classes["@mozilla.org/supports-array;1"].createInstance(Components.interfaces.nsISupportsArray);
 	this.mLogBufferMaxSize = 1000;
 	this.getBalanceTimer = Components.classes["@mozilla.org/timer;1"].createInstance(Components.interfaces.nsITimer);
 	this.getRecommendedIntervalsTimer = Components.classes["@mozilla.org/timer;1"].createInstance(Components.interfaces.nsITimer);
+	this.c2dTimer = Components.classes["@mozilla.org/timer;1"].createInstance(Components.interfaces.nsITimer);
 	this.curBalance = null;
 	this.isLoggedIn = false;
 }
@@ -68,7 +78,19 @@ SipgateFFX.prototype = {
 	},
 	
 	get systemArea() {
-		return "team";
+		return "dev";
+	},
+	
+	get strings() {
+		return this._strings;
+	},
+	
+	set strings(strings) {
+		//dumpJson(strings);
+		//this.log(strings.getString("helloMessageTitle"));
+		if(this._strings == null) {
+			this._strings = strings;
+		}
 	},
 	
 	oPrefService: Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch),
@@ -162,6 +184,124 @@ SipgateFFX.prototype = {
 			dump(ex);
 		}
 	},
+		
+	click2dial: function(to) {
+		var _TOS = 'voice'; 
+		
+		if(this.defaultExtension[_TOS] == null) {
+			alert('No default extension set for this action.');
+			return;
+		}
+		
+		if(this.currentSessionID != null) {
+			alert('click2dial is already running.');
+			return;
+		}
+		
+		var from = this.defaultExtension[_TOS];
+
+		this.log('### sipgateffx (click2dial): Starting from '+ from['alias'] +' ('+ from['extensionSipUri'] +') -> ' + to);
+		
+		this.currentSessionData = {'to': to, 'from': from['alias']};
+		
+		var params = { 
+			'LocalUri': from['extensionSipUri'],
+			'RemoteUri': "sip:"+ to +"\@sipgate.net",
+			'TOS': "voice",
+			'Content': ''		
+		};
+		
+		var result = function(ourParsedResponse, aXML) {
+			if (ourParsedResponse.StatusCode && ourParsedResponse.StatusCode == 200) {
+				_sgffx.currentSessionID = ourParsedResponse.SessionID;
+				_sgffx.currentSessionTime = new Date().getTime();
+				
+				_sgffx.log('### sipgateffx (click2dial): Initiating... (SessionID: ' + _sgffx.currentSessionID + ')');
+				
+				_sgffx.setXulObjectVisibility('sipgateffx_c2dStatus', 1);
+				_sgffx.setXulObjectAttribute('sipgateffx_c2dStatusText', "value", _sgffx.strings.getString('click2dial.status.NOT_YET_AVAILABLE'));
+		
+				_sgffx.c2dTimer.initWithCallback({
+					notify: function(timer) {
+						_sgffx.getClick2dialStatus();
+					}
+				}, 1000, Components.interfaces.nsITimer.TYPE_ONE_SHOT);
+								
+			} else {
+				alert('click2dial failed. Internal system error has occurred.');
+				_sgffx.currentSessionID = null;
+			}
+		};
+		
+		var request = bfXMLRPC.makeXML("samurai.SessionInitiate", [	this.samuraiServer[this.systemArea], params]);
+		this.log(request);
+		
+		this._rpcCall(request, result);
+	},
+	
+	getClick2dialStatus: function() {
+		if(this.currentSessionID == null) {
+			this.log('click2dial is not initiated.');
+			return;
+		}
+		
+		var endStati = ['FAILED', 'HUNGUP', 'CALL_1_BUSY', 'CALL_1_FAILED', "CALL_2_BUSY", 'CALL_2_FAILED'];
+		
+		var params = {'SessionID': this.currentSessionID};		
+
+		var result = function(ourParsedResponse, aXML) {
+			dumpJson(ourParsedResponse);
+
+			if (ourParsedResponse.StatusCode && ourParsedResponse.StatusCode == 200) {
+				
+				var state = ourParsedResponse.SessionStatus.toUpperCase().replace(/ /g,"_");
+				
+				// click2dial.status.
+				var key = "click2dial.status." + state;
+				
+				var text = '';
+				
+				if (state == 'ESTABLISHED') {
+					text = _sgffx.strings.getFormattedString(key, [parseInt((new Date().getTime() - _sgffx.currentSessionTime) / 1000)]);
+				} else {
+					text = _sgffx.strings.getString(key);
+				}
+				_sgffx.setXulObjectAttribute('sipgateffx_c2dStatusText', "value", text);
+				
+				if (endStati.indexOf(state) == -1) {
+					_sgffx.c2dTimer.initWithCallback({
+						notify: function(timer){
+							_sgffx.getClick2dialStatus();
+						}
+					}, 1000, Components.interfaces.nsITimer.TYPE_ONE_SHOT);
+				} else {
+					_sgffx.c2dTimer.initWithCallback({
+						notify: function(timer){
+							_sgffx.setXulObjectVisibility('sipgateffx_c2dStatus', 0);
+						}
+					}, 5000, Components.interfaces.nsITimer.TYPE_ONE_SHOT);
+				}
+	
+			} else {
+				var msg = '### sipgateffx (click2dial): FAILED';
+				if(ourParsedResponse.faultCode && ourParsedResponse.faultString) {
+					msg = msg + ' (faultCode: '+ourParsedResponse.faultCode+' / faultString: '+ourParsedResponse.faultString+')';
+					_sgffx.setXulObjectAttribute('sipgateffx_c2dStatusText', "value", ourParsedResponse.faultString);
+				}
+				_sgffx.log(msg);
+				_sgffx.c2dTimer.initWithCallback({
+					notify: function(timer){
+						_sgffx.setXulObjectVisibility('sipgateffx_c2dStatus', 0);
+					}
+				}, 5000, Components.interfaces.nsITimer.TYPE_ONE_SHOT);
+			}
+		};
+
+		var request = bfXMLRPC.makeXML("samurai.SessionStatusGet", [	this.samuraiServer[this.systemArea], params]);
+		// this.log(request);
+		
+		this._rpcCall(request, result);	
+	},
 	
 	login: function() {
 		this.log("*** sipgateffx: login *** BEGIN ***");
@@ -198,6 +338,7 @@ SipgateFFX.prototype = {
 				
 				_sgffx.log("*** NOW logged in ***");
 				_sgffx.getRecommendedIntervals();
+				_sgffx.getOwnUriList();
 				_sgffx.getBalance();
 			}
 		};
@@ -361,23 +502,37 @@ SipgateFFX.prototype = {
 			return;
 		}
 		
-		var result = function(ourParsedResponse, aXML) {
-			if (ourParsedResponse.StatusCode && ourParsedResponse.StatusCode == 200) {
-				if (ourParsedResponse.OwnUriList.length > 0) {
-					for (var i = 0; i < ourParsedResponse.OwnUriList.length; i++) {
-						_sgffx.log(ourParsedResponse.IntervalList[i].MethodName + " = ");
-						_sgffx.log(ourParsedResponse.IntervalList[i].RecommendedInterval + "");
-					}
-				}
-			}
-		};
+        var result = function(ourParsedResponse, aXML){
+            if (ourParsedResponse.StatusCode && ourParsedResponse.StatusCode == 200) {
+                if (ourParsedResponse.OwnUriList.length > 0) {
+                    for (var i = 0; i < ourParsedResponse.OwnUriList.length; i++) {
+                        //						this.defaultExtension
+                        for (var k = 0; k < ourParsedResponse.OwnUriList[i].TOS.length; k++) {
+                            var extensionInfo = {
+                                'UriAlias': ourParsedResponse.OwnUriList[i].UriAlias,
+                                'DefaultUri': ourParsedResponse.OwnUriList[i].DefaultUri,
+                                'E164In': ourParsedResponse.OwnUriList[i].E164In,
+                                'E164Out': ourParsedResponse.OwnUriList[i].E164Out,
+                                'SipUri': ourParsedResponse.OwnUriList[i].SipUri,
+                            };
+                            _sgffx.ownUriList[ourParsedResponse.OwnUriList[i].TOS[k]].push(extensionInfo);
+                            if (ourParsedResponse.OwnUriList[i].DefaultUri === true) {
+                                _sgffx.defaultExtension[ourParsedResponse.OwnUriList[i].TOS[k]] = {
+                                    'alias': ourParsedResponse.OwnUriList[i].UriAlias,
+                                    'extensionSipUri': ourParsedResponse.OwnUriList[i].SipUri
+                                };
+                            }
+                        }
+                    }
+                }
+            }
+        };
 		
 		var request = bfXMLRPC.makeXML("samurai.OwnUriListGet", [this.samuraiServer[this.systemArea]]);
 		this.log(request + "");
 		
 		this._rpcCall(request, result);
 		this.log("*** getOwnUriList *** END ***");		
-		return ownUriList; 
 	},
 
 	_rpcCall: function(request, callbackResult, callbackError) {
@@ -505,7 +660,7 @@ SipgateFFX.prototype = {
 		}
 		return _number;
 	},
-	
+
 	logBufferDump: function () {
 		return this.mLogBuffer;
 	},
@@ -576,3 +731,8 @@ function NSGetModule(compMgr, fileSpec) {
 	return XPCOMUtils.generateModule(components);
 }
 
+function dumpJson(obj) {
+	var nativeJSON = Components.classes["@mozilla.org/dom/json;1"]
+	                 .createInstance(Components.interfaces.nsIJSON);
+	_sgffx.log(nativeJSON.encode(obj));
+};

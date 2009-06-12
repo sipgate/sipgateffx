@@ -21,9 +21,19 @@
 	<menuseparator id="context-sipgate-sep" insertbefore="context-sep-selectall"/>
 	<menu id="context-sipgateffx" label="sipgate" insertbefore="context-sep-selectall"  image="chrome://sipgateffx/skin/icon_sipgate_active.gif" class="menu-iconic">
 		<menupopup>
-		    <menuitem label="&sipgateffxContext.label;"
-		              accesskey="&sipgateffxContext.accesskey;"
+		    <menuitem id="context-sipgateffx-sendassms"
+		              disabled="true"		    
+		              label="&sipgateffxContextSendAsSMS.label;"
+		              accesskey="&sipgateffxContextSendAsSMS.accesskey;"
 		              oncommand="sipgateffx.onMenuItemCommand(event)"/>
+		    <menuitem id="context-sipgateffx-sendTo"
+		              disabled="true"		    
+		              label="&sipgateffxContextSendTo.label;"
+		              oncommand="sipgateffx.onMenuItemContextSendTo(event)"/>
+		    <menuitem id="context-sipgateffx-callTo"
+		              disabled="true"		    
+		              label="&sipgateffxContextCallTo.label;"
+		              oncommand="sipgateffx.onMenuItemContextCallTo(event)"/>
 		</menupopup>	           
     </menu>
   </popup>
@@ -47,6 +57,11 @@
 			<hbox align="center" hidden="true" id="sipgateffx_loggedin">
 				<image src="chrome://sipgateffx/skin/icon_sipgate_active.gif" />
 				<label id="BalanceText" />
+			</hbox>
+			
+			<hbox align="center" hidden="true" id="sipgateffx_c2dStatus" style="background-color: #F3DA2B">
+				<image src="chrome://sipgateffx/skin/icon_click2dial.gif" />
+				<label id="sipgateffx_c2dStatusText" />
 			</hbox>
 
 			<command id="sipgatecmd_pollbalance" oncommand="sipgateffx.onStatusbarCommand('pollBalance')"/>

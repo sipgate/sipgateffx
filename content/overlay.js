@@ -48,6 +48,8 @@ var sipgateffx = {
 			sgffx.language = "en"; 
 		}
 		
+		sgffx.strings = this.strings;
+		
 		var allElements = [
 			'showcreditmenuitem',
 			'pollbalance',
@@ -68,7 +70,10 @@ var sipgateffx = {
 			'sipgateffx_loggedout',
 			'sipgateffx_loggedin',
 
-			'BalanceText'
+			'BalanceText',
+						
+			'sipgateffx_c2dStatus',
+			'sipgateffx_c2dStatusText'			
 		];
 
 		for(var i = 0; i < allElements.length; i++)
@@ -116,7 +121,25 @@ var sipgateffx = {
 	showContextMenu: function(event) {
 		// show or hide the menuitem based on what the context menu is on
 		// see http://kb.mozillazine.org/Adding_items_to_menus
-		document.getElementById("context-sipgateffx").hidden = !gContextMenu.isTextSelected;
+		document.getElementById("context-sipgateffx-sendassms").disabled = !gContextMenu.isTextSelected;
+		
+		// allow /,-,(,),.,whitespace and all numers in phonenumbers
+		var browserSelection = getBrowserSelection().match(/^[\/\(\)\ \-\.\[\]\d]+$/);
+		var niceNumber = '';
+
+		if(browserSelection !== null) {
+			niceNumber = sgffx.niceNumber(browserSelection, "49")
+		}
+		
+		if(browserSelection == null || niceNumber.length <  7 ) {
+			document.getElementById("context-sipgateffx-sendTo").disabled = true;
+			document.getElementById("context-sipgateffx-callTo").disabled = true;
+		} else {
+			document.getElementById("context-sipgateffx-sendTo").disabled = false;
+			document.getElementById("context-sipgateffx-sendTo").label = this.strings.getFormattedString("sipgateffxContextSendTo", [niceNumber]);
+			document.getElementById("context-sipgateffx-callTo").disabled = false;
+			document.getElementById("context-sipgateffx-callTo").label = this.strings.getFormattedString("sipgateffxContextCallTo", [niceNumber]);
+		}
 	},
 
 	onToolbarButtonCommand: function(e) {
@@ -151,6 +174,30 @@ var sipgateffx = {
 	    promptService.alert(window, this.strings.getString("helloMessageTitle"),
 	                                this.strings.getString("helloMessage"));
 		*/
+	},
+
+	onMenuItemContextSendTo: function(e) {
+		// allow /,-,(,),.,whitespace and all numers in phonenumbers
+		var browserSelection = getBrowserSelection().match(/^[\/\(\)\ \-\.\[\]\d]+$/);
+		var niceNumber = '';
+
+		if(browserSelection !== null) {
+			niceNumber = sgffx.niceNumber(browserSelection, "49")
+		}
+		
+		window.openDialog('chrome://sipgateffx/content/sms.xul', 'sipgateSMS', 'chrome,centerscreen,resizable=yes,width=400,height=250,titlebar=yes,alwaysRaised=yes', '', '+'+niceNumber);
+	},
+
+	onMenuItemContextCallTo: function(e) {
+		// allow /,-,(,),.,whitespace and all numers in phonenumbers
+		var browserSelection = getBrowserSelection().match(/^[\/\(\)\ \-\.\[\]\d]+$/);
+		var niceNumber = '';
+
+		if(browserSelection !== null) {
+			niceNumber = sgffx.niceNumber(browserSelection, "49")
+		}
+		
+		sgffx.click2dial(niceNumber);
 	},
 
 	toggleClick2Dial: function() {
