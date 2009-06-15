@@ -1,5 +1,10 @@
 var sgffx;
 
+function doOpenDebuggingInfo() {
+    window.opener.loadURI('chrome://sipgateffx/content/sendReport.html');
+    window.close();
+}
+
 var sipgateffx_options = {
   onLoad: function() {
 	try {
@@ -17,6 +22,19 @@ var sipgateffx_options = {
 	
 	document.getElementById('username').setAttribute("value", auth.username);
 	document.getElementById('password').setAttribute("value", auth.password);
+	
+	var voiceList = sgffx.ownUriList.voice;
+	for(var i = 0; i < voiceList.length; i++) {
+		var menuItem = document.createElement("menuitem");
+		menuItem.setAttribute( "label" , voiceList[i].UriAlias);
+		menuItem.setAttribute( "id" , voiceList[i].SipUri);
+		
+		document.getElementById("click2DialListMenu").appendChild(menuItem);
+		
+		if(voiceList[i].DefaultUri === true) {
+			document.getElementById("click2DialList").selectedItem = menuItem;
+		}
+	}
   },
 
   onUnload: function() {
@@ -34,7 +52,11 @@ var sipgateffx_options = {
 	  }
 
 	if(document.getElementById('autologin').value === true) {
-		sgffx.getBalance();
+		if(!sgffx.isLoggedIn) {
+			sgffx.login();
+		} else {
+			sgffx.getBalance();
+		}
 	}
 
   }

@@ -86,8 +86,12 @@ var sipgateffx_sms = {
 		}
 				
 		if(typeof window.arguments != "undefined") {
-			document.getElementById("sipgate_sms_text").setAttribute('value', window.arguments[0]);
-			document.getElementById("sipgate_sms_number").setAttribute('value', window.arguments[1]);
+			if(typeof window.arguments[0] != "undefined") {
+				document.getElementById("sipgate_sms_text").setAttribute('value', window.arguments[0]);
+			}
+			if(typeof window.arguments[1] != "undefined") {
+				document.getElementById("sipgate_sms_number").setAttribute('value', window.arguments[1]);
+			}
 		}
 
 		document.getElementById("sipgate_sms_text").addEventListener("keyup", function(e) {

@@ -2,19 +2,14 @@ var debug = true;
 var sgffx;
 
 var url = {
-	"history": "/user/calls.php",
-	"credit": "/user/kontoaufladen.php",
-	"voicemail": "/user/voicemail.php",
-	"fax": "/user/fax/index.php",
-	"phonebook": "/user/phonebook.php",
-	"sms": "/user/sms/index.php",
-	"shop": "/voipshop",
-	"itemized": "/user/konto_einzel.php?show=all&timeperiod=simple&timeperiod_simpletimeperiod=",
-	"default": "/user/index.php"
+    "history": "/",
+    "credit": "/settings/account/creditaccount",
+    "voicemail": "/",
+    "fax": "/fax",
+    "phonebook": "/contacts",
+    "itemized": "/settings/account/evn",
+    "default": "/user/index.php"
 };
-var urlSessionLogin = "https://secure.sipgate.de/user/slogin.php"; // safe default
-var urlSessionLogout = "https://secure.sipgate.de/user/slogout.php"; // safe default
-var urlSessionCheck = "https://secure.sipgate.de/user/status.php"; // safe default
 var sipgateffx_this;
 
 var sipgateffx = {
@@ -71,9 +66,10 @@ var sipgateffx = {
 			'sipgateffx_loggedin',
 
 			'BalanceText',
-						
+
 			'sipgateffx_c2dStatus',
-			'sipgateffx_c2dStatusText'			
+			'sipgateffx_c2dStatusText',			
+			'sipgatecmd_c2dCancellCall'
 		];
 
 		for(var i = 0; i < allElements.length; i++)
@@ -95,8 +91,9 @@ var sipgateffx = {
 		sgffx.setXulObjectVisibility('separator1', 0);
 		sgffx.setXulObjectVisibility('separator2', 0);
 		sgffx.setXulObjectVisibility('dialdeactivate', 0);
+		sgffx.setXulObjectVisibility('dialdeactivate', 1);
 		
-		sgffx.setXulObjectVisibility('item_logon', 1);
+		// sgffx.setXulObjectVisibility('sipgate-c2d-status-bar', 1);
 
 		document.getElementById("contentAreaContextMenu")
 			.addEventListener("popupshowing", function(e) { sipgateffx_this.showContextMenu(e); }, false);
@@ -168,12 +165,6 @@ var sipgateffx = {
 		}
 	
 		window.openDialog('chrome://sipgateffx/content/sms.xul', 'sipgateSMS', 'chrome,centerscreen,resizable=yes,width=400,height=250,titlebar=yes,alwaysRaised=yes', selection);
-		/*
-	    var promptService = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
-	                                  .getService(Components.interfaces.nsIPromptService);
-	    promptService.alert(window, this.strings.getString("helloMessageTitle"),
-	                                this.strings.getString("helloMessage"));
-		*/
 	},
 
 	onMenuItemContextSendTo: function(e) {
@@ -199,8 +190,19 @@ var sipgateffx = {
 		
 		sgffx.click2dial(niceNumber);
 	},
+	
+	onMenuItemContextCallCancel: function(e) {
+		sgffx.cancelClick2Dial();
+	},
 
 	toggleClick2Dial: function() {
+	    var promptService = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
+	                                  .getService(Components.interfaces.nsIPromptService);
+	    promptService.alert(window, this.strings.getString("bepatientTitle"),
+	                                this.strings.getString("bepatientMessage"));
+	    
+	    return;
+		
 		const tagsOfInterest = [ "a", "abbr", "acronym", "address", "applet", "b", "bdo", "big", "blockquote", "body", "caption",
         "center", "cite", "code", "dd", "del", "div", "dfn", "dt", "em", "fieldset", "font", "form", "h1", "h2", "h3",
         "h4", "h5", "h6", "i", "iframe", "ins", "kdb", "li", "object", "pre", "p", "q", "samp", "small", "span",
@@ -244,18 +246,6 @@ var sipgateffx = {
 				var httpServer = 'secure.live.sipgate.de';
 				var siteURL = protocol + httpServer + url[param];
 				
-				if (param == "itemized") {
-					var _date = new Date();
-					var _year = _date.getYear() + 1900;
-					var _month = _date.getMonth() + 1;
-					if (_month < 10) {
-						var _postfix = _year + "-0" + _month;
-					} else {
-						var _postfix = _year + "-" + _month;
-					}
-					siteURL = siteURL + _postfix;
-				}
-
 				var dataString = 'username='+sgffx.username+'&password='+sgffx.password;
 				
 				// POST method requests must wrap the encoded text in a MIME stream
@@ -309,7 +299,7 @@ var sipgateffx = {
 			default:
 				var text = "action: " + action + "\nparams: " + param + "\n";
 				var promptService = Components.classes["@mozilla.org/embedcomp/prompt-service;1"].getService(Components.interfaces.nsIPromptService);
-				promptService.alert(window, this.strings.getString("helloMessageTitle"), text);
+				promptService.alert(window, 'No Target', text);
 				break;
 		}
 		

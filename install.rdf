@@ -1,22 +1,21 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 
- xmlns:em="http://www.mozilla.org/2004/em-rdf#">
-  <Description about="urn:mozilla:install-manifest">
-    <em:id>sipgateffx@michael.rotmanov</em:id>
-    <em:name>sipgate2.0-FFX</em:name>
-    <em:version>1.0</em:version>
-    <em:creator>Michael Rotmanov</em:creator>
-    <em:description>Neuanfang...</em:description>
-    <em:aboutURL>chrome://sipgateffx/content/about.xul</em:aboutURL>
-    <em:optionsURL>chrome://sipgateffx/content/options.xul</em:optionsURL>
-    <em:targetApplication>
-    
-      <Description>
-        <em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id> <!-- firefox -->
-        <em:minVersion>1.5</em:minVersion>
-        <em:maxVersion>3.0.*</em:maxVersion>
-      </Description>
-    
-    </em:targetApplication>
-  </Description>
-</RDF>
+<?xml version="1.0"?>
+<RDF:RDF xmlns:em="http://www.mozilla.org/2004/em-rdf#"
+         xmlns:NC="http://home.netscape.com/NC-rdf#"
+         xmlns:RDF="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+  <RDF:Description RDF:about="rdf:#$NV0g12"
+                   em:id="{ec8030f7-c20a-464f-9b0e-13a3a9e97384}"
+                   em:minVersion="3.0a1"
+                   em:maxVersion="3.5.*" />
+  <RDF:Description RDF:about="urn:mozilla:install-manifest"
+                   em:id="sipgateffx@michael.rotmanov"
+                   em:name="sipgateFFX"
+                   em:version="2.0"
+                   em:creator="sipgate"
+                   em:description="Neuanfang..."
+                   em:homepageURL="http://www.sipgate.de"
+                   em:iconURL="chrome://sipgateffx/skin/sipgateffx_logo.png"
+                   em:optionsURL="chrome://sipgateffx/content/options.xul"
+                   em:aboutURL="chrome://sipgateffx/content/about.xul">
+    <em:targetApplication RDF:resource="rdf:#$NV0g12"/>
+  </RDF:Description>
+</RDF:RDF>

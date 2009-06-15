@@ -19,11 +19,7 @@ function SipgateFFX() {
 		"samurai.BalanceGet": 60,
 		"samurai.RecommendedIntervalGet": 60
 	};
-	this.samuraiServer = {
-		"classic": "https://samurai.sipgate.net/RPC2",
-		"team": "https://api.sipgate.net/RPC2",
-		"dev": "http://samurai01.dev.sipgate.net/RPC2"
-	};
+	this.samuraiServer = "https://api.sipgate.net/RPC2";
 	
 	this.defaultExtension = {"voice": null, "text": null, "fax": null};
 	this.ownUriList = {"voice": [], "text": [], "fax": []};
@@ -75,10 +71,6 @@ SipgateFFX.prototype = {
 		} else {
 			return this.clientLang = "en";
 		}
-	},
-	
-	get systemArea() {
-		return "dev";
 	},
 	
 	get strings() {
@@ -214,7 +206,7 @@ SipgateFFX.prototype = {
 		var result = function(ourParsedResponse, aXML) {
 			if (ourParsedResponse.StatusCode && ourParsedResponse.StatusCode == 200) {
 				_sgffx.currentSessionID = ourParsedResponse.SessionID;
-				_sgffx.currentSessionTime = new Date().getTime();
+				_sgffx.setXulObjectAttribute('sipgatecmd_c2dCancellCall', "disabled", null);
 				
 				_sgffx.log('### sipgateffx (click2dial): Initiating... (SessionID: ' + _sgffx.currentSessionID + ')');
 				
@@ -233,7 +225,7 @@ SipgateFFX.prototype = {
 			}
 		};
 		
-		var request = bfXMLRPC.makeXML("samurai.SessionInitiate", [	this.samuraiServer[this.systemArea], params]);
+		var request = bfXMLRPC.makeXML("samurai.SessionInitiate", [	this.samuraiServer, params]);
 		this.log(request);
 		
 		this._rpcCall(request, result);
@@ -250,8 +242,6 @@ SipgateFFX.prototype = {
 		var params = {'SessionID': this.currentSessionID};		
 
 		var result = function(ourParsedResponse, aXML) {
-			dumpJson(ourParsedResponse);
-
 			if (ourParsedResponse.StatusCode && ourParsedResponse.StatusCode == 200) {
 				
 				var state = ourParsedResponse.SessionStatus.toUpperCase().replace(/ /g,"_");
@@ -262,6 +252,9 @@ SipgateFFX.prototype = {
 				var text = '';
 				
 				if (state == 'ESTABLISHED') {
+					if (_sgffx.currentSessionTime == null) {
+						_sgffx.currentSessionTime = new Date().getTime();
+					}
 					text = _sgffx.strings.getFormattedString(key, [parseInt((new Date().getTime() - _sgffx.currentSessionTime) / 1000)]);
 				} else {
 					text = _sgffx.strings.getString(key);
@@ -275,6 +268,10 @@ SipgateFFX.prototype = {
 						}
 					}, 1000, Components.interfaces.nsITimer.TYPE_ONE_SHOT);
 				} else {
+					_sgffx.setXulObjectAttribute('sipgatecmd_c2dCancellCall', "disabled", "true");
+					_sgffx.currentSessionID = null;
+					_sgffx.currentSessionTime = null;
+					
 					_sgffx.c2dTimer.initWithCallback({
 						notify: function(timer){
 							_sgffx.setXulObjectVisibility('sipgateffx_c2dStatus', 0);
@@ -297,7 +294,27 @@ SipgateFFX.prototype = {
 			}
 		};
 
-		var request = bfXMLRPC.makeXML("samurai.SessionStatusGet", [	this.samuraiServer[this.systemArea], params]);
+		var request = bfXMLRPC.makeXML("samurai.SessionStatusGet", [	this.samuraiServer, params]);
+		// this.log(request);
+		
+		this._rpcCall(request, result);	
+	},
+	
+	cancelClick2Dial: function() {
+		if(this.currentSessionID == null) {
+			this.log('click2dial is not initiated.');
+			return;
+		}
+
+		var params = {'SessionID': this.currentSessionID};		
+
+		var result = function(ourParsedResponse, aXML){
+			if (ourParsedResponse.StatusCode && ourParsedResponse.StatusCode == 200) {
+				//
+			}
+		};
+		
+		var request = bfXMLRPC.makeXML("samurai.SessionClose", [	this.samuraiServer, params]);
 		// this.log(request);
 		
 		this._rpcCall(request, result);	
@@ -324,10 +341,10 @@ SipgateFFX.prototype = {
 				_sgffx.setXulObjectVisibility('showshopmenuitem', 1);
 				_sgffx.setXulObjectVisibility('showitemizedmenuitem', 1);
 				_sgffx.setXulObjectVisibility('dialactivate', 1);
+				_sgffx.setXulObjectVisibility('dialdeactivate', 0);
 				_sgffx.setXulObjectVisibility('item_logoff', 1);
 				_sgffx.setXulObjectVisibility('separator1', 1);
 				_sgffx.setXulObjectVisibility('separator2', 1);
-				_sgffx.setXulObjectVisibility('dialdeactivate', 1);
 				
 				_sgffx.setXulObjectVisibility('item_logon', 0);
 				
@@ -343,7 +360,7 @@ SipgateFFX.prototype = {
 			}
 		};
 		
-		var request = bfXMLRPC.makeXML("system.serverInfo", [this.samuraiServer[this.systemArea]]);
+		var request = bfXMLRPC.makeXML("system.serverInfo", [this.samuraiServer]);
 		this.log(request);
 		
 		this._rpcCall(request, result);
@@ -368,10 +385,10 @@ SipgateFFX.prototype = {
 		this.setXulObjectVisibility('showshopmenuitem', 0);
 		this.setXulObjectVisibility('showitemizedmenuitem', 0);
 		this.setXulObjectVisibility('dialactivate', 0);
+		this.setXulObjectVisibility('dialdeactivate', 0);
 		this.setXulObjectVisibility('item_logoff', 0);
 		this.setXulObjectVisibility('separator1', 0);
 		this.setXulObjectVisibility('separator2', 0);
-		this.setXulObjectVisibility('dialdeactivate', 0);
 		
 		this.setXulObjectVisibility('item_logon', 1);
 
@@ -414,10 +431,10 @@ SipgateFFX.prototype = {
 		};
 		
 		var params = {
-			'MethodList': [new String("samurai.RecommendedIntervalGet"), new String("samurai.BalanceGet"), new String("samurai.UmSummaryGet")]
+			'MethodList': ["samurai.RecommendedIntervalGet", "samurai.BalanceGet"]
 		};
 		
-		var request = bfXMLRPC.makeXML("samurai.RecommendedIntervalGet", [this.samuraiServer[this.systemArea], params]);
+		var request = bfXMLRPC.makeXML("samurai.RecommendedIntervalGet", [this.samuraiServer, params]);
 		this.log(request);
 		
 		this._rpcCall(request, result);
@@ -485,7 +502,7 @@ SipgateFFX.prototype = {
 			}
 		};
 		
-		var request = bfXMLRPC.makeXML("samurai.BalanceGet", [this.samuraiServer[this.systemArea]]);
+		var request = bfXMLRPC.makeXML("samurai.BalanceGet", [this.samuraiServer]);
 		this.log(request + "");
 		
 		this._rpcCall(request, result);
@@ -505,8 +522,10 @@ SipgateFFX.prototype = {
         var result = function(ourParsedResponse, aXML){
             if (ourParsedResponse.StatusCode && ourParsedResponse.StatusCode == 200) {
                 if (ourParsedResponse.OwnUriList.length > 0) {
+					// clear old list
+					_sgffx.ownUriList = {"voice": [], "text": [], "fax": []};
+					
                     for (var i = 0; i < ourParsedResponse.OwnUriList.length; i++) {
-                        //						this.defaultExtension
                         for (var k = 0; k < ourParsedResponse.OwnUriList[i].TOS.length; k++) {
                             var extensionInfo = {
                                 'UriAlias': ourParsedResponse.OwnUriList[i].UriAlias,
@@ -528,7 +547,7 @@ SipgateFFX.prototype = {
             }
         };
 		
-		var request = bfXMLRPC.makeXML("samurai.OwnUriListGet", [this.samuraiServer[this.systemArea]]);
+		var request = bfXMLRPC.makeXML("samurai.OwnUriListGet", [this.samuraiServer]);
 		this.log(request + "");
 		
 		this._rpcCall(request, result);
@@ -551,7 +570,7 @@ SipgateFFX.prototype = {
 		}
 		
 		//PffXmlHttpReq( aUrl, aType, aContent, aDoAuthBool, aUser, aPass) 
-		var theCall = new PffXmlHttpReq(this.samuraiServer[this.systemArea], "POST", request, true, user, pass);
+		var theCall = new PffXmlHttpReq(this.samuraiServer, "POST", request, true, user, pass);
 		
 		theCall.onResult = function(aText, aXML) {
 			var re = /(\<\?\xml[0-9A-Za-z\D]*\?\>)/;
@@ -715,7 +734,11 @@ SipgateFFX.prototype = {
 					xulObj[k] = xulObj[k].QueryInterface(Components.interfaces.nsIDOMXULElement);
 				}
 				// this.log("set attribute '" + attrib_name + "' of '" + id + "' to '" + new_value + "'");
-				xulObj[k].setAttribute(attrib_name, new_value);
+				if (new_value == null) {
+					xulObj[k].removeAttribute(attrib_name);
+				} else {
+					xulObj[k].setAttribute(attrib_name, new_value);
+				}
 			}
 		} else {
 			this.log("No reference to XUL-Objects of " + id + "!");

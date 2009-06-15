@@ -10,12 +10,12 @@
     <stringbundle id="sipgateffx-strings" src="chrome://sipgateffx/locale/sipgateffx.properties"/>
   </stringbundleset>
 
-  
+  <!--
   <menupopup id="menu_ToolsPopup">
     <menuitem id="sipgateffx-hello" label="&sipgateffx.label;" 
               oncommand="sipgateffx.onMenuItemCommand(event);"/>
   </menupopup>
-  
+  -->  
   
   <popup id="contentAreaContextMenu">
 	<menuseparator id="context-sipgate-sep" insertbefore="context-sep-selectall"/>
@@ -39,13 +39,13 @@
   </popup>
   
   
-	  <toolbarpalette id="BrowserToolbarPalette">
-		  <toolbarbutton id="sipgateffx-toolbar-button"
-			label="&sipgateffxToolbar.label;"
-			tooltiptext="&sipgateffxToolbar.tooltip;"
-			oncommand="sipgateffx.onToolbarButtonCommand()"
-			class="toolbarbutton-1 chromeclass-toolbar-additional"/>
-	  </toolbarpalette>
+	<toolbarpalette id="BrowserToolbarPalette">
+	  <toolbarbutton id="sipgateffx-toolbar-button"
+		label="&sipgateffxToolbar.label;"
+		tooltiptext="&sipgateffxToolbar.tooltip;"
+		oncommand="sipgateffx.onToolbarButtonCommand()"
+		class="toolbarbutton-1 chromeclass-toolbar-additional"/>
+	</toolbarpalette>
 
 	<statusbar id="status-bar">
 		<statusbarpanel class="statusbarpanel-iconic" id="sipgateffx_statusbar_noauth" contextmenu="sipgatemenu" style="cursor: pointer;" >
@@ -59,11 +59,6 @@
 				<label id="BalanceText" />
 			</hbox>
 			
-			<hbox align="center" hidden="true" id="sipgateffx_c2dStatus" style="background-color: #F3DA2B">
-				<image src="chrome://sipgateffx/skin/icon_click2dial.gif" />
-				<label id="sipgateffx_c2dStatusText" />
-			</hbox>
-
 			<command id="sipgatecmd_pollbalance" oncommand="sipgateffx.onStatusbarCommand('pollBalance')"/>
 			<command id="sipgatecmd_openPrefs" oncommand="sipgateffx.onStatusbarCommand('openPrefs')"/>
 			<command id="sipgatecmd_toggledial" oncommand="sipgateffx.onStatusbarCommand('toggleClick2Dial');"/>
@@ -82,41 +77,63 @@
 		
 			<popupset>
 				<menupopup id="sipgatemenu">
-					<menuitem label="&showcredit.menuitem;" accesskey="&showcredit.key;" 
+					<menuitem label="&showcredit.menuitem;" accesskey="&showcredit.key;" hidden="true" 
 						 id="showcreditmenuitem" command="sipgatecmd_showCredit" />
-					<menuitem label="&showvoicemail.menuitem;" accesskey="&showvoicemail.key;"
+					<menuitem label="&showvoicemail.menuitem;" accesskey="&showvoicemail.key;" hidden="true"
 						id="showvoicemailmenuitem" command="sipgatecmd_showVoiceMail" />
-					<menuitem label="&showphonebook.menuitem;" accesskey="&showphonebook.key;"
+					<menuitem label="&showphonebook.menuitem;" accesskey="&showphonebook.key;" hidden="true"
 						id="showphonebookmenuitem" command="sipgatecmd_showPhoneBook"   />
-					<menuitem label="&showsmsform.menuitem;" accesskey="&showsmsform.key;"
+					<menuitem label="&showsmsform.menuitem;" accesskey="&showsmsform.key;" hidden="true"
 						id="showsmsformmenuitem" command="sipgatecmd_showSmsForm" />
-					<menuitem label="&showhistory.menuitem;" accesskey="&showhistory.key;"
+					<menuitem label="&showhistory.menuitem;" accesskey="&showhistory.key;" hidden="true"
 						id="showhistorymenuitem" command="sipgatecmd_showHistory" />
-					<menuitem label="&showfax.menuitem;" accesskey="&showfax.key;"
+					<menuitem label="&showfax.menuitem;" accesskey="&showfax.key;" hidden="true"
 						id="showfaxmenuitem" command="sipgatecmd_showFax" />
-					<menuitem label="&showshop.menuitem;" accesskey="&showshop.key;"
+					<menuitem label="&showshop.menuitem;" accesskey="&showshop.key;" hidden="true"
 						id="showshopmenuitem" command="sipgatecmd_showShop" />
-					<menuitem label="&showitemized.menuitem;" accesskey="&showitemized.key;"
+					<menuitem label="&showitemized.menuitem;" accesskey="&showitemized.key;" hidden="true"
 						id="showitemizedmenuitem" command="sipgatecmd_showItemized" />
 						
 					<menuseparator id="separator1" />
 					
-					<menuitem label="&getbalance.menuitem;" accesskey="&getbalance.key;" command="sipgatecmd_pollbalance" id="pollbalance" />
+					<menuitem label="&getbalance.menuitem;" accesskey="&getbalance.key;" command="sipgatecmd_pollbalance" id="pollbalance"  hidden="true" />
 
 					<menuitem label="&showprefs.menuitem;" accesskey="&showprefs.key;" command="sipgatecmd_openPrefs" />
 	 
-					<menuitem id="dialactivate" label="&dialactivate.menuitem;" accesskey="&dialactivate.key;"
+					<menuitem id="dialactivate" label="&dialactivate.menuitem;" accesskey="&dialactivate.key;" hidden="true"
 						command="sipgatecmd_toggledial" /> 
-					<menuitem id="dialdeactivate" label="&dialdeactivate.menuitem;" accesskey="&dialdeactivate.key;"
+					<menuitem id="dialdeactivate" label="&dialdeactivate.menuitem;" accesskey="&dialdeactivate.key;" hidden="true"
 						command="sipgatecmd_toggledial" /> 
 
 					<menuseparator id="separator2" />
 					<menuitem id="item_logon" label="Login" accesskey="n" command="sipgatecmd_logon" />
-					<menuitem id="item_logoff" label="&logoff.menuitem;" accesskey="&logoff.key;" command="sipgatecmd_logoff" />
+					<menuitem id="item_logoff" label="&logoff.menuitem;" accesskey="&logoff.key;" command="sipgatecmd_logoff"  hidden="true" />
 				</menupopup>
 			</popupset>		
 		</statusbarpanel>
+		
+		<!--
+			TODO: Implement this colors for click2dial states
+			gruen: #caefa2
+			gelb: #fff1b8
+			rot: #f9c7c6		
+		-->
+		<statusbarpanel class="statusbarpanel-iconic" id="sipgateffx_c2dStatus" contextmenu="sipgatec2dmenu" hidden="true">
+			<hbox align="center" style="background-color: #F3DA2B">
+				<image src="chrome://sipgateffx/skin/icon_click2dial.gif" />
+				<label id="sipgateffx_c2dStatusText" />
+			</hbox>
+			
+			<command id="sipgatecmd_c2dCancellCall" oncommand="sipgateffx.onMenuItemContextCallCancel()" disabled="true"/>
+			
+			<popupset>
+				<menupopup id="sipgatec2dmenu">
+					<menuitem label="&cancelcall.menuitem;"
+						 id="sipgateffx_c2dCancellCall" command="sipgatecmd_c2dCancellCall" />
+				</menupopup>
+			</popupset>					
+		</statusbarpanel>
+		
 	</statusbar>
-
 
 </overlay>

@@ -20,6 +20,7 @@
 <!ENTITY dialactivate.menuitem "'Click2Dial' aktivieren">
 <!ENTITY dialdeactivate.menuitem "'Click2Dial' deaktivieren">
 <!ENTITY logoff.menuitem "Abmelden">
+<!ENTITY cancelcall.menuitem "Auflegen">
 
 <!ENTITY showprefs.key "E">
 <!ENTITY getbalance.key "K">
