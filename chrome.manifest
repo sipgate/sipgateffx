@@ -3,4 +3,4 @@ locale	sipgateffx	en-US	locale/en-US/
 skin	sipgateffx	classic/1.0	skin/
 overlay	chrome://browser/content/browser.xul	chrome://sipgateffx/content/firefoxOverlay.xul
 style	chrome://global/content/customizeToolbar.xul	chrome://sipgateffx/skin/overlay.css
-resource	sipgateffx	content/
+resource	sipgateffx	modules/
