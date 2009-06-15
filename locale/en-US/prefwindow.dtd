@@ -1,6 +1,5 @@
 <!ENTITY prefwindow.title "sipgateFFX 2.0 preferences">
 <!ENTITY pane1.title "sipgateFFX 2.0 preferences">
-<!ENTITY pane1.title "sipgateFFX 2.0 preferences">
 <!ENTITY username.value "Username">
 <!ENTITY password.value "Password">
 <!ENTITY polling.label "Polling enabled">

@@ -1,5 +1,4 @@
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
-Components.utils.import("resource://sipgateffx/xmlrpc.js");
 
 var xulObjReference = new Array();
 var _sgffx;
@@ -36,6 +35,9 @@ function SipgateFFX() {
 	this.c2dTimer = Components.classes["@mozilla.org/timer;1"].createInstance(Components.interfaces.nsITimer);
 	this.curBalance = null;
 	this.isLoggedIn = false;
+	
+	// must loaded here
+	Components.utils.import("resource://sipgateffx/xmlrpc.js");
 }
 
 SipgateFFX.prototype = {

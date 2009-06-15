@@ -19,8 +19,6 @@
   - Portions created by the Initial Developer are Copyright (C) 2009
   - the Initial Developer. All Rights Reserved.
   -
-  - Contributor(s):
-  -
   - Alternatively, the contents of this file may be used under the terms of
   - either the GNU General Public License Version 2 or later (the "GPL"), or
   - the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
@@ -41,11 +39,11 @@
 <!-- Original template by Jed Brown -->
 <groupbox align="center" orient="horizontal">
 <vbox>
-  <text value="sipgate2.0-FFX" style="font-weight: bold; font-size: x-large;"/>
-  <text value="&version; 1.0"/>
+  <text value="sipgateFFX 2.0" style="font-weight: bold; font-size: x-large;"/>
+  <text value="&version; 0.5"/>
   <separator class="thin"/>
   <text value="&createdBy;" style="font-weight: bold;"/>
-  <text value="Michael Rotmanov"/>
+  <text value="sipgate &lt;&initially; michael.rotmanov&gt;"/>
   <separator class="thin"/>
 </vbox>
 </groupbox>

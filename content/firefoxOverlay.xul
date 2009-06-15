@@ -106,7 +106,7 @@
 						command="sipgatecmd_toggledial" /> 
 
 					<menuseparator id="separator2" />
-					<menuitem id="item_logon" label="Login" accesskey="n" command="sipgatecmd_logon" />
+					<menuitem id="item_logon" label="&login.menuitem;" accesskey="n" command="sipgatecmd_logon" />
 					<menuitem id="item_logoff" label="&logoff.menuitem;" accesskey="&logoff.key;" command="sipgatecmd_logoff"  hidden="true" />
 				</menupopup>
 			</popupset>		

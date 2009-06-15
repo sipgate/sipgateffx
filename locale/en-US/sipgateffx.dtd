@@ -1,26 +1,26 @@
-<!ENTITY sipgateffx.label "Your localized menuitem">
-<!ENTITY sipgateffxContextSendAsSMS.label "Als SMS senden">
-<!ENTITY sipgateffxContextSendAsSMS.accesskey "M">
-<!ENTITY sipgateffxContextSendTo.label "SMS senden">
-<!ENTITY sipgateffxContextCallTo.label "Anrufen">
+<!ENTITY sipgateffxContextSendAsSMS.label "Text this">
+<!ENTITY sipgateffxContextSendAsSMS.accesskey "t">
+<!ENTITY sipgateffxContextSendTo.label "Send text message">
+<!ENTITY sipgateffxContextCallTo.label "Call">
 <!ENTITY sipgateffxToolbar.label "Your Toolbar Button">
 <!ENTITY sipgateffxToolbar.tooltip "This is your toolbar button!">
-<!ENTITY sipgateffxStatusbar.InfoNoAuth.label "nicht angemeldet">
+<!ENTITY sipgateffxStatusbar.InfoNoAuth.label "not logged in">
 
-<!ENTITY showprefs.menuitem "Einstellungen">
-<!ENTITY getbalance.menuitem "Kontostand abfragen">
-<!ENTITY showhistory.menuitem "Anrufliste anzeigen">
-<!ENTITY showcredit.menuitem "Konto aufladen">
-<!ENTITY showvoicemail.menuitem "Sprachnachrichten abrufen">
-<!ENTITY showphonebook.menuitem "Kontakte anzeigen">
-<!ENTITY showsmsform.menuitem "SMS versenden">
-<!ENTITY showfax.menuitem "FAX senden/abrufen">
-<!ENTITY showshop.menuitem "Online-Shop">
-<!ENTITY showitemized.menuitem "Einzelverbindungsnachweis">
-<!ENTITY dialactivate.menuitem "'Click2Dial' aktivieren">
-<!ENTITY dialdeactivate.menuitem "'Click2Dial' deaktivieren">
-<!ENTITY logoff.menuitem "Abmelden">
-<!ENTITY cancelcall.menuitem "Auflegen">
+<!ENTITY showprefs.menuitem "Preferences">
+<!ENTITY getbalance.menuitem "Check balance">
+<!ENTITY showhistory.menuitem "Show call list">
+<!ENTITY showcredit.menuitem "Credit account">
+<!ENTITY showvoicemail.menuitem "Check voice messages">
+<!ENTITY showphonebook.menuitem "Show contacts">
+<!ENTITY showsmsform.menuitem "Send text message">
+<!ENTITY showfax.menuitem "Send Fax">
+<!ENTITY showshop.menuitem "Online shop">
+<!ENTITY showitemized.menuitem "Itemized call list">
+<!ENTITY dialactivate.menuitem "Activate 'Click2Dial'">
+<!ENTITY dialdeactivate.menuitem "Deactivate 'Click2Dial'">
+<!ENTITY login.menuitem "Log In">
+<!ENTITY logoff.menuitem "Log Off">
+<!ENTITY cancelcall.menuitem "Hang Up">
 
 <!ENTITY showprefs.key "E">
 <!ENTITY getbalance.key "K">
