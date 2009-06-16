@@ -1,0 +1,11 @@
+
+How to make a XPI-File?
+=========================================================
+Here a five simple steps using a plattform indepent add-on.
+1. Download the "Extension Developer" Add-On from http://github.com/sipgate/sipgateffx/ or Mozilla's add-on site
+2. You'll find the right option at Tools -> Extension Developer -> Extension Builder
+3. Choose your working directory
+4. You need to add the folder module/ to your extra files. You can do at the bottom of Extension Builder's dialog.
+5. Click on "Build extension". A new file is created in your working directory.
+
+The resulting file is ready to be installed by every suitable application.
