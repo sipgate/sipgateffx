@@ -325,33 +325,39 @@ SipgateFFX.prototype = {
 	login: function() {
 		this.log("*** sipgateffx: login *** BEGIN ***");
 		
+		var showActiveMenu = function() {
+			_sgffx.setXulObjectVisibility('showcreditmenuitem', 1);
+			_sgffx.setXulObjectVisibility('pollbalance', 1);
+			_sgffx.setXulObjectVisibility('showvoicemailmenuitem', 1);
+			_sgffx.setXulObjectVisibility('showphonebookmenuitem', 1);
+			_sgffx.setXulObjectVisibility('showsmsformmenuitem', 1);
+			_sgffx.setXulObjectVisibility('showhistorymenuitem', 1);
+			_sgffx.setXulObjectVisibility('showfaxmenuitem', 1);
+			_sgffx.setXulObjectVisibility('showshopmenuitem', 1);
+			_sgffx.setXulObjectVisibility('showitemizedmenuitem', 1);
+			_sgffx.setXulObjectVisibility('dialactivate', 1);
+			_sgffx.setXulObjectVisibility('dialdeactivate', 0);
+			_sgffx.setXulObjectVisibility('item_logoff', 1);
+			_sgffx.setXulObjectVisibility('separator1', 1);
+			_sgffx.setXulObjectVisibility('separator2', 1);
+			
+			_sgffx.setXulObjectVisibility('item_logon', 0);
+			
+			_sgffx.setXulObjectVisibility('sipgateffx_loggedout', 0);
+			_sgffx.setXulObjectVisibility('sipgateffx_loggedin', 1);			
+		}
+		
 		if (this.isLoggedIn) {
 			this.log("*** sipgateffx: login *** ALREADY LOGGED IN ***");
+			showActiveMenu();
+			this.getBalance();
 			return;
 		}
 		
 		var result = function(ourParsedResponse, aXML) {
 			if (ourParsedResponse.StatusCode && ourParsedResponse.StatusCode == 200) {
 			
-				_sgffx.setXulObjectVisibility('showcreditmenuitem', 1);
-				_sgffx.setXulObjectVisibility('pollbalance', 1);
-				_sgffx.setXulObjectVisibility('showvoicemailmenuitem', 1);
-				_sgffx.setXulObjectVisibility('showphonebookmenuitem', 1);
-				_sgffx.setXulObjectVisibility('showsmsformmenuitem', 1);
-				_sgffx.setXulObjectVisibility('showhistorymenuitem', 1);
-				_sgffx.setXulObjectVisibility('showfaxmenuitem', 1);
-				_sgffx.setXulObjectVisibility('showshopmenuitem', 1);
-				_sgffx.setXulObjectVisibility('showitemizedmenuitem', 1);
-				_sgffx.setXulObjectVisibility('dialactivate', 1);
-				_sgffx.setXulObjectVisibility('dialdeactivate', 0);
-				_sgffx.setXulObjectVisibility('item_logoff', 1);
-				_sgffx.setXulObjectVisibility('separator1', 1);
-				_sgffx.setXulObjectVisibility('separator2', 1);
-				
-				_sgffx.setXulObjectVisibility('item_logon', 0);
-				
-				_sgffx.setXulObjectVisibility('sipgateffx_loggedout', 0);
-				_sgffx.setXulObjectVisibility('sipgateffx_loggedin', 1);
+				showActiveMenu();
 				
 				_sgffx.isLoggedIn = true;
 				
@@ -462,6 +468,7 @@ SipgateFFX.prototype = {
 		};
 		
 		if(this.curBalance != null) {
+			this.log("*** sipgateffx: getBalance: no need to do a request, we have a balance");
 			setBalance();
 			return;
 		}
