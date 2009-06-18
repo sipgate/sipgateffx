@@ -134,6 +134,20 @@
 			</popupset>					
 		</statusbarpanel>
 		
+		<panel id="sipgatenotificationPanel" noautofocus="true" noautohide="true">
+		  <hbox align="start" >
+		    <image src="chrome://sipgateffx/skin/ok.png"/>
+		    <vbox>
+		    	<vbox id="sipgatenotificationPanelMessages">
+		    	</vbox>
+		      <hbox>
+		        <button label="Go To Call List"/>
+		        <button label="Close this" onclick="return document.getElementById('sipgatenotificationPanel').hidePopup()"/>
+		      </hbox>
+		    </vbox>
+		  </hbox>
+		</panel>
+		
 	</statusbar>
 
 </overlay>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE overlay SYSTEM "chrome://sipgateffx/locale/sipgateffx.dtd">
+
+<bindings xmlns="http://www.mozilla.org/xbl"
+          xmlns:html="http://www.w3.org/1999/xhtml"
+          xmlns:xbl="http://www.mozilla.org/xbl"
+          xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+  <binding id="default" extends="chrome://global/content/bindings/popup.xml#popup">
+  <implementation>
+	<field name="startX">0</field>
+	<field name="startY">0</field>
+	<method name="addLine">
+		<parameter name="newElemValue"/>
+		<body><![CDATA[
+		var elem = document.getElementById('sipgatenotificationPanelMessages');
+		var newElem = document.createElement('description');
+		newElem.appendChild(document.createTextNode(newElemValue));
+		elem.appendChild(newElem);
+		]]></body>
+	</method>
+	<method name="clearLines">
+		<body><![CDATA[
+		var obj = document.getElementById('sipgatenotificationPanelMessages');
+		while(obj.firstChild) obj.removeChild(obj.firstChild);
+		]]></body>
+	</method>
+	<method name="open">
+		<body><![CDATA[
+		this.openPopup( document.getElementById('status-bar'), "before_end", 0, 0);
+		]]></body>
+	</method>
+  </implementation>
+  </binding>
+
+</bindings>

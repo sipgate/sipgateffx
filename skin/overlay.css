@@ -20,3 +20,9 @@
 {
   -moz-image-region: rect(24px 40px 40px 24px);
 }
+
+#sipgatenotificationPanel
+{
+	-moz-binding: url("chrome://sipgateffx/content/binding-popup.xml#default");
+	border: 1px solid #000;
+}

@@ -4,34 +4,61 @@ var xulObjReference = new Array();
 var _sgffx;
 
 function SipgateFFX() {
-	this.wrappedJSObject = this;
-	_sgffx = this;
-	this._strings = null;
-	this.samuraiAuth = {
-		"hostname": "chrome://sipgateffx",
-		"formSubmitURL": null,
-		"httprealm": 'sipgate Account Login',
-		"username": null,
-		"password": null
-	};
-	this.recommendedIntervals = {
-		"samurai.BalanceGet": 60,
-		"samurai.RecommendedIntervalGet": 60
-	};
-	this.samuraiServer = "https://api.sipgate.net/RPC2";
-	
-	this.defaultExtension = {"voice": null, "text": null, "fax": null};
-	this.ownUriList = {"voice": [], "text": [], "fax": []};
-	
-	this.currentSessionID = null;	// session for click2dial (must be NULL if there is no active session)
-	this.currentSessionTime = null;
-	this.currentSessionData = {'to': '', 'from': ''};
-	
+    this.wrappedJSObject = this;
+    _sgffx = this;
+    this._strings = null;
+    this.samuraiAuth = {
+        "hostname": "chrome://sipgateffx",
+        "formSubmitURL": null,
+        "httprealm": 'sipgate Account Login',
+        "username": null,
+        "password": null
+    };
+    this.recommendedIntervals = {
+        "samurai.BalanceGet": 60,
+        "samurai.RecommendedIntervalGet": 60,
+        "samurai.EventSummaryGet": 60
+    };
+    this.samuraiServer = "https://api.sipgate.net/RPC2";
+    
+    this.defaultExtension = {
+        "voice": null,
+        "text": null,
+        "fax": null
+    };
+    this.ownUriList = {
+        "voice": [],
+        "text": [],
+        "fax": []
+    };
+    
+    this.unreadEvents = {
+        "voice": {
+            'count': null,
+            'time': null
+        },
+        "text": {
+            'count': null,
+            'time': null
+        },
+        "fax": {
+            'count': null,
+            'time': null
+        }
+    };
+    
+    this.currentSessionID = null; // session for click2dial (must be NULL if there is no active session)
+    this.currentSessionTime = null;
+    this.currentSessionData = {
+        'to': '',
+        'from': ''
+    };
 	this.clientLang = 'en';
 	this.mLogBuffer = Components.classes["@mozilla.org/supports-array;1"].createInstance(Components.interfaces.nsISupportsArray);
 	this.mLogBufferMaxSize = 1000;
 	this.getBalanceTimer = Components.classes["@mozilla.org/timer;1"].createInstance(Components.interfaces.nsITimer);
 	this.getRecommendedIntervalsTimer = Components.classes["@mozilla.org/timer;1"].createInstance(Components.interfaces.nsITimer);
+	this.getEventSummaryTimer = Components.classes["@mozilla.org/timer;1"].createInstance(Components.interfaces.nsITimer);
 	this.c2dTimer = Components.classes["@mozilla.org/timer;1"].createInstance(Components.interfaces.nsITimer);
 	this.curBalance = null;
 	this.isLoggedIn = false;
@@ -365,6 +392,7 @@ SipgateFFX.prototype = {
 				_sgffx.getRecommendedIntervals();
 				_sgffx.getOwnUriList();
 				_sgffx.getBalance();
+				_sgffx.getEventSummary();
 			}
 		};
 		
@@ -439,7 +467,7 @@ SipgateFFX.prototype = {
 		};
 		
 		var params = {
-			'MethodList': ["samurai.RecommendedIntervalGet", "samurai.BalanceGet"]
+			'MethodList': ["samurai.RecommendedIntervalGet", "samurai.BalanceGet", "samurai.EventSummaryGet"]
 		};
 		
 		var request = bfXMLRPC.makeXML("samurai.RecommendedIntervalGet", [this.samuraiServer, params]);
@@ -520,7 +548,7 @@ SipgateFFX.prototype = {
 		
 		
 	},
-	
+		
 	getOwnUriList: function () {
 		this.log("*** getOwnUriList *** BEGIN ***");
 		if (!this.isLoggedIn) {
@@ -562,7 +590,74 @@ SipgateFFX.prototype = {
 		this._rpcCall(request, result);
 		this.log("*** getOwnUriList *** END ***");		
 	},
-
+	
+	getEventSummary: function () {
+		this.log("*** getEventSummary *** BEGIN ***");
+		if (!this.isLoggedIn) {
+			this.log("*** getEventSummary *** USER NOT LOGGED IN ***");
+			return;
+		}
+		
+		var params = {
+			// 'LabelName': []
+			// 'TOS': ["voice", "fax", "text"]
+		};
+		
+        var result = function(ourParsedResponse, aXML){
+			// dumpJson(ourParsedResponse);
+            if (ourParsedResponse.StatusCode && ourParsedResponse.StatusCode == 200) {
+				try {
+					var timestamp = parseInt(new Date().getTime() / 1000);
+					for (var i = 0; i < ourParsedResponse.EventSummary.length; i++) {
+						// check for new events
+						if(_sgffx.unreadEvents[ourParsedResponse.EventSummary[i].TOS]['count'] != null &&
+							ourParsedResponse.EventSummary[i].Unread > _sgffx.unreadEvents[ourParsedResponse.EventSummary[i].TOS]['count']
+						) 
+						{
+							var diff = ourParsedResponse.EventSummary[i].Unread - _sgffx.unreadEvents[ourParsedResponse.EventSummary[i].TOS]['count'];
+							var msg = diff+" new "+ourParsedResponse.EventSummary[i].TOS+" event(s)";
+							_sgffx.log("getEventSummary: "+ msg);
+							var xulObj = xulObjReference['sipgatenotificationPanel'];
+							for (var k = 0; k < xulObj.length; k++) {
+									xulObj[k] = xulObj[k].QueryInterface(Components.interfaces.nsIDOMXULElement);
+									xulObj[k].clearLines();
+									xulObj[k].addLine('You have ' + msg);
+									xulObj[k].open();
+							}
+						}
+						// store new event count
+						_sgffx.unreadEvents[ourParsedResponse.EventSummary[i].TOS]['count'] = ourParsedResponse.EventSummary[i].Unread;
+						_sgffx.unreadEvents[ourParsedResponse.EventSummary[i].TOS]['time'] = timestamp;
+					}
+				
+					
+					//if (_sgffx.getPref("extensions.sipgateffx.polling", "bool")) {
+						// set update timer
+						var delay = _sgffx.recommendedIntervals["samurai.EventSummaryGet"];
+						
+						_sgffx.getEventSummaryTimer.initWithCallback({
+							notify: function(timer) {
+								_sgffx.getEventSummary();
+							}
+						}, delay * 1000, Components.interfaces.nsITimer.TYPE_ONE_SHOT);
+						
+						_sgffx.log("getEventSummary: polling enabled. set to " + delay + " seconds");
+					//}
+					
+				} catch(e) {
+					_sgffx.log("getEventSummary: Error occured during parsing ("+e+")");
+				}
+            } else {
+				_sgffx.log("getEventSummary failed toSTRING: "+ aXML.toString());
+			}
+        };
+		
+		var request = bfXMLRPC.makeXML("samurai.EventSummaryGet", [this.samuraiServer, params]);
+		
+		this._rpcCall(request, result);
+		this.log("*** getEventSummary *** END ***");		
+	},
+	
 	_rpcCall: function(request, callbackResult, callbackError) {
 		var user = this.username;
 		var pass = this.password;

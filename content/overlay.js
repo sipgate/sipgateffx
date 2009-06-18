@@ -69,7 +69,9 @@ var sipgateffx = {
 
 			'sipgateffx_c2dStatus',
 			'sipgateffx_c2dStatusText',			
-			'sipgatecmd_c2dCancellCall'
+			'sipgatecmd_c2dCancellCall',
+			
+			'sipgatenotificationPanel'
 		];
 
 		for(var i = 0; i < allElements.length; i++)
@@ -97,11 +99,11 @@ var sipgateffx = {
 
 		document.getElementById("contentAreaContextMenu")
 			.addEventListener("popupshowing", function(e) { sipgateffx_this.showContextMenu(e); }, false);
-		
+			
 		if(sgffx.getPref("extensions.sipgateffx.autologin","bool")) {
 			this.login();
 		}
-				
+
 	},
 
 	onUnload: function() {
@@ -307,7 +309,12 @@ var sipgateffx = {
 	
 	echo: function(txt) {
 		return txt;
+	},
+	
+	$: function(name) {
+		return document.getElementById(name);
 	}
+	
 };
 window.addEventListener("load", function(e) { sipgateffx.onLoad(e); }, false);
 window.addEventListener("unload", function(e) { sipgateffx.onUnload(e); }, false); 
