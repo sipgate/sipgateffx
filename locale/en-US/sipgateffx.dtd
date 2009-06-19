@@ -28,10 +28,10 @@
 <!ENTITY showcredit.key "o">
 <!ENTITY showvoicemail.key "S">
 <!ENTITY showphonebook.key "t">
-<!ENTITY showsmsform.key "v">
+<!ENTITY showsmsform.key "M">
 <!ENTITY showfax.key "F">
 <!ENTITY showshop.key "l">
 <!ENTITY showitemized.key "z">
 <!ENTITY dialactivate.key "a">
 <!ENTITY dialdeactivate.key "d">
-<!ENTITY logoff.key "b">
+<!ENTITY logoff.key "g">

@@ -41,20 +41,24 @@
     </preferences>
 
 	<hbox>
-		<groupbox align="center">
-			<hbox>
-				<label accesskey="U" control="username" value="&username.value;"/>
-				<textbox id="username"/>
-			</hbox>
+		<grid>
+			<rows>
+				<row>
+					<label accesskey="U" control="username" value="&username.value;"/>
+					<textbox id="username"/>
+				</row>
 			
-			<hbox>
-				<label accesskey="P" control="password" value="&password.value;"/>
-				<textbox id="password" type="password"/>
-			</hbox>
-
-			<checkbox id="autologin" preference="autologin" label="&autologin.label;" accesskey="A"/>
-		
-		</groupbox>
+				<row>
+					<label accesskey="P" control="password" value="&password.value;"/>
+					<textbox id="password" type="password"/>
+				</row>
+				
+				<row>
+					<label/>
+					<checkbox id="autologin" preference="autologin" label="&autologin.label;" accesskey="A"/>
+				</row>
+			</rows>
+		</grid>
 
 		<groupbox align="left">
 			<checkbox id="polling" preference="polling" label="&polling.label;" accesskey="p"/>

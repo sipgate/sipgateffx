@@ -90,7 +90,7 @@
 			<command id="sipgatecmd_toggledial" oncommand="sipgateffx.onStatusbarCommand('toggleClick2Dial');"/>
 			<command id="sipgatecmd_showHistory" oncommand="sipgateffx.onStatusbarCommand('showSitePage','history');"/>
 			<command id="sipgatecmd_showFax" oncommand="sipgateffx.onStatusbarCommand('showSitePage','fax');"/>
-			<command id="sipgatecmd_showShop" oncommand="sipgateffx.onStatusbarCommand('showSitePage','shop');"/>
+			<command id="sipgatecmd_showShop" disabled="true" oncommand="sipgateffx.onStatusbarCommand('showSitePage','shop');"/>
 			<command id="sipgatecmd_showItemized" oncommand="sipgateffx.onStatusbarCommand('showSitePage','itemized');"/>
 
 			<command id="sipgatecmd_showCredit" oncommand="sipgateffx.onStatusbarCommand('showSitePage','credit');"/>
@@ -103,18 +103,18 @@
 		
 			<popupset>
 				<menupopup id="sipgatemenu">
+					<menuitem label="&showsmsform.menuitem;" accesskey="&showsmsform.key;" hidden="true"
+						id="showsmsformmenuitem" command="sipgatecmd_showSmsForm" />
+					<menuitem label="&showfax.menuitem;" accesskey="&showfax.key;" hidden="true"
+						id="showfaxmenuitem" command="sipgatecmd_showFax" />
+					<menuitem label="&showhistory.menuitem;" accesskey="&showhistory.key;" hidden="true"
+						id="showhistorymenuitem" command="sipgatecmd_showHistory" />
 					<menuitem label="&showcredit.menuitem;" accesskey="&showcredit.key;" hidden="true" 
 						 id="showcreditmenuitem" command="sipgatecmd_showCredit" />
 					<menuitem label="&showvoicemail.menuitem;" accesskey="&showvoicemail.key;" hidden="true"
 						id="showvoicemailmenuitem" command="sipgatecmd_showVoiceMail" />
 					<menuitem label="&showphonebook.menuitem;" accesskey="&showphonebook.key;" hidden="true"
 						id="showphonebookmenuitem" command="sipgatecmd_showPhoneBook"   />
-					<menuitem label="&showsmsform.menuitem;" accesskey="&showsmsform.key;" hidden="true"
-						id="showsmsformmenuitem" command="sipgatecmd_showSmsForm" />
-					<menuitem label="&showhistory.menuitem;" accesskey="&showhistory.key;" hidden="true"
-						id="showhistorymenuitem" command="sipgatecmd_showHistory" />
-					<menuitem label="&showfax.menuitem;" accesskey="&showfax.key;" hidden="true"
-						id="showfaxmenuitem" command="sipgatecmd_showFax" />
 					<menuitem label="&showshop.menuitem;" accesskey="&showshop.key;" hidden="true"
 						id="showshopmenuitem" command="sipgatecmd_showShop" />
 					<menuitem label="&showitemized.menuitem;" accesskey="&showitemized.key;" hidden="true"

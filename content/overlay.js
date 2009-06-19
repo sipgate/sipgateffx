@@ -63,7 +63,7 @@ var sipgateffx = {
 				sgffx.language = "en"; 
 			}
 		} catch (lang_ex) {
-			dump("Error in detecting language! Found: "+navigator.language.match(/de/)+". Falling back to 'en' ...\n");
+			sgffx.log("Error in detecting language! Found: "+navigator.language.match(/de/)+". Falling back to 'en' ...\n");
 			sgffx.language = "en"; 
 		}
 		
@@ -115,9 +115,9 @@ var sipgateffx = {
 		sgffx.setXulObjectVisibility('dialactivate', 0);
 		sgffx.setXulObjectVisibility('item_logoff', 0);
 		sgffx.setXulObjectVisibility('separator1', 0);
-		sgffx.setXulObjectVisibility('separator2', 0);
+		sgffx.setXulObjectVisibility('separator2', 1);
 		sgffx.setXulObjectVisibility('dialdeactivate', 0);
-		sgffx.setXulObjectVisibility('dialdeactivate', 1);
+		sgffx.setXulObjectVisibility('dialdeactivate', 0);
 		
 		// sgffx.setXulObjectVisibility('sipgate-c2d-status-bar', 1);
 
@@ -134,6 +134,12 @@ var sipgateffx = {
 	},
 	
 	login: function() {
+		var retVal = sgffx.getSamuraiAuth();
+		if (retVal.username == null || retVal.password == null) {
+			window.openDialog('chrome://sipgateffx/content/options.xul', '');
+			return;
+		}
+		
 		sgffx.login();
 	},
 
