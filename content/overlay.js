@@ -196,7 +196,7 @@ var sipgateffx = {
 				selection = selection.substr(0, charLen);
 		}
 	
-		window.openDialog('chrome://sipgateffx/content/sms.xul', 'sipgateSMS', 'chrome,centerscreen,resizable=yes,width=400,height=250,titlebar=yes,alwaysRaised=yes', selection);
+		window.openDialog('chrome://sipgateffx/content/sms.xul', 'sipgateSMS', 'chrome,centerscreen,resizable=yes,titlebar=yes,alwaysRaised=yes', selection);
 	},
 
 	onMenuItemContextSendTo: function(e) {

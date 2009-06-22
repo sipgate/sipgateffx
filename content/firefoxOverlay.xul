@@ -65,13 +65,15 @@
   </popup>
   
   
-	<toolbarpalette id="BrowserToolbarPalette">
+	<toolbar id="BrowserToolbarPalette">
 	  <toolbarbutton id="sipgateffx-toolbar-button"
 		label="&sipgateffxToolbar.label;"
 		tooltiptext="&sipgateffxToolbar.tooltip;"
-		oncommand="sipgateffx.onToolbarButtonCommand()"
+		insertbefore="print-button"
+		popup="sipgatemenu"
 		class="toolbarbutton-1 chromeclass-toolbar-additional"/>
-	</toolbarpalette>
+	</toolbar>
+	<!--	oncommand="sipgateffx.onToolbarButtonCommand()" -->
 
 	<statusbar id="status-bar">
 		<statusbarpanel class="statusbarpanel-iconic" id="sipgateffx_statusbar_noauth" contextmenu="sipgatemenu" style="cursor: pointer;" >

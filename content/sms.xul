@@ -26,7 +26,9 @@
 -->
 
 <?xml-stylesheet href="chrome://global/skin/global.css" type="text/css"?>
-<dialog id="donothing" title="Send SMS"
+<!DOCTYPE overlay SYSTEM "chrome://sipgateffx/locale/sms.dtd">
+
+<dialog id="sipgateffxSmsWindow" title="&sipgateffxSmsWindow.title;"
 	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
 	buttons="accept,cancel"
 	buttonlabelcancel="Cancel"
@@ -38,17 +40,17 @@
 
 	<vbox id="sipgate_sms">
 	    <groupbox>
-			<caption label="Number"/>
+			<caption label="&sipgateffxSmsNumberHeader.label;"/>
 			<textbox type="autocomplete" autocompletesearch="form-history"  id="sipgate_sms_number" height="20px" />
 		</groupbox>
 	    <groupbox>
-			<caption label="Text" id="sipgate_sms_text_header"/>
+			<caption label="&sipgateffxSmsTextHeader.label;" id="sipgate_sms_text_header"/>
 			<textbox multiline="true" id="sipgate_sms_text" />
 		</groupbox>
 	    <groupbox>
-			<caption label="Scheduled"/>
+			<caption label="&sipgateffxSmsScheduleHeader.label;"/>
 			<hbox>
-				<checkbox label="Send later" checked="false" id="sipgate_sms_schedule_check"/>
+				<checkbox label="&sipgateffxSmsScheduleCheck.label;" checked="false" id="sipgate_sms_schedule_check"/>
 				<datepicker type="popup" id="sipgate_sms_schedule_date" disabled="true" />
 				<timepicker id="sipgate_sms_schedule_time" disabled="true" hideseconds="true"/>			
 			</hbox>
@@ -56,7 +58,7 @@
 	</vbox>
 	<vbox id="sipgate_sms_sending" hidden="true">
 	    <groupbox>
-			<caption label="Sending"/>
+			<caption label="&sipgateffxSmsSending.label;"/>
 			<progressmeter mode="undetermined"/>
 	    </groupbox>
 	</vbox>

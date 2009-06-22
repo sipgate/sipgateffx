@@ -2,8 +2,8 @@
 <!ENTITY sipgateffxContextSendAsSMS.accesskey "M">
 <!ENTITY sipgateffxContextSendTo.label "SMS senden">
 <!ENTITY sipgateffxContextCallTo.label "Anrufen">
-<!ENTITY sipgateffxToolbar.label "Your Toolbar Button">
-<!ENTITY sipgateffxToolbar.tooltip "This is your toolbar button!">
+<!ENTITY sipgateffxToolbar.label "sipgateFFX">
+<!ENTITY sipgateffxToolbar.tooltip "sipgateFFX">
 <!ENTITY sipgateffxStatusbar.InfoNoAuth.label "nicht angemeldet">
 
 <!ENTITY showprefs.menuitem "Einstellungen">

@@ -723,6 +723,7 @@ SipgateFFX.prototype = {
 	},
 	
 	_rpcCall: function(request, callbackResult, callbackError) {
+		var samuraiServer = this.samuraiServer;
 		var user = this.username;
 		var pass = this.password;
 		
@@ -737,8 +738,13 @@ SipgateFFX.prototype = {
 			pass = retVal.password;
 		}
 		
+		var _tmpSrv = this.getPref("extensions.sipgateffx.server","char");
+		if(_tmpSrv != null && typeof(_tmpSrv) == 'string' && _tmpSrv.match(/^https?(.*)\.sipgate\.net/)) {
+			samuraiServer = _tmpSrv;
+		}
+		
 		//PffXmlHttpReq( aUrl, aType, aContent, aDoAuthBool, aUser, aPass) 
-		var theCall = new PffXmlHttpReq(this.samuraiServer, "POST", request, true, user, pass);
+		var theCall = new PffXmlHttpReq(samuraiServer, "POST", request, true, user, pass);
 		
 		theCall.onResult = function(aText, aXML) {
 			var re = /(\<\?\xml[0-9A-Za-z\D]*\?\>)/;
@@ -769,6 +775,9 @@ SipgateFFX.prototype = {
 			}
 			
 			if (typeof(callbackResult) == 'function') {
+				if(typeof(ourParsedResponse) == 'undefined') {
+					ourParsedResponse = {};
+				}
 				callbackResult(ourParsedResponse, aXML);
 			} else {
 				alert("Good Result:" + aText);
@@ -779,6 +788,7 @@ SipgateFFX.prototype = {
 		var errString = this.strings;
 		
 		theCall.onError = function(aStatusMsg, Msg) {
+			_sgffx.log(Msg);
 			var errorMessage = '';
 			
 			if (typeof(callbackError) == 'function') {
@@ -802,7 +812,7 @@ SipgateFFX.prototype = {
 			}
 			
 			var promptService = Components.classes["@mozilla.org/embedcomp/prompt-service;1"].getService(Components.interfaces.nsIPromptService);
-			promptService.alert(window, errString.getString("helloMessageTitle"), errString.getString(errorMessage));
+			promptService.alert(null, _sgffx.strings.getString("sipgateffxError.title"), _sgffx.strings.getString(errorMessage));
 			
 		};
 		

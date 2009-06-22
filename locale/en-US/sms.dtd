@@ -1,0 +1,6 @@
+<!ENTITY sipgateffxSmsWindow.title "Send text message">
+<!ENTITY sipgateffxSmsSending.label "Sending...">
+<!ENTITY sipgateffxSmsScheduleHeader.label "Scheduled">
+<!ENTITY sipgateffxSmsScheduleCheck.label "Send later">
+<!ENTITY sipgateffxSmsTextHeader.label "Text">
+<!ENTITY sipgateffxSmsNumberHeader.label "Number">
