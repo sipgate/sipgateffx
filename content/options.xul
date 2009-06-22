@@ -62,7 +62,7 @@
 
 		<groupbox align="left">
 			<checkbox id="polling" preference="polling" label="&polling.label;" accesskey="p"/>
-			<checkbox id="parsenumbers" preference="parsenumbers" label="&parsenumbers.label;" accesskey="n" disabled="true"/>
+			<checkbox id="parsenumbers" preference="parsenumbers" label="&parsenumbers.label;" accesskey="n" />
 			<checkbox id="click2dial" preference="click2dial" label="&click2dial.label;" accesskey="c" disabled="true"/>
 			<button label="&showDebug.label;" oncommand="doOpenDebuggingInfo(event)"/>
 		</groupbox>

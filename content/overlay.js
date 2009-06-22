@@ -127,7 +127,8 @@ var sipgateffx = {
 		if(sgffx.getPref("extensions.sipgateffx.autologin","bool")) {
 			this.login();
 		}
-
+		
+		gBrowser.addEventListener("DOMContentLoaded", this.toggleClick2Dial, false);
 	},
 
 	onUnload: function() {
@@ -228,8 +229,11 @@ var sipgateffx = {
 	},
 
 	toggleClick2Dial: function() {
-				sipgateffxPageLoaded();
-return;
+		if (sgffx.getPref("extensions.sipgateffx.parsenumbers", "bool")) {
+			sipgateffxPageLoaded();
+		}
+		return;
+		
 	    var promptService = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
 	                                  .getService(Components.interfaces.nsIPromptService);
 	    promptService.alert(window, this.strings.getString("bepatientTitle"),
