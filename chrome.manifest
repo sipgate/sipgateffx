@@ -1,4 +1,4 @@
-content	sipgateffx	content/
+content	sipgateffx	content/ contentaccessible=yes
 locale	sipgateffx	en-US	locale/en-US/
 locale	sipgateffx	de-DE	locale/de-DE/
 skin	sipgateffx	classic/1.0	skin/

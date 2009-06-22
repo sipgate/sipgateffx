@@ -336,9 +336,7 @@ function PffXmlHttpReq( aUrl, aType, aContent, aDoAuthBool, aUser, aPass) {
 	this.prepCall = function () {
 	    if(this.doAuth){
 	        this.request.open(this.posttype, this.url, true, this.username, this.password);
-			// this.request.setRequestHeader();
-			
-	        
+        
 	        //Keeps stupid Authentication window from poping up
 	        this.request.channel.notificationCallbacks = {
 	            QueryInterface: function (iid) { // nsISupports

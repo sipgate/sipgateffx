@@ -30,6 +30,7 @@
 <overlay id="sipgateffx-overlay"
          xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
+  <script src="highlightNumber.js"/>
   <script src="overlay.js"/>
  
   <stringbundleset id="stringbundleset">

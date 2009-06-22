@@ -37,7 +37,7 @@ var url = {
 var sipgateffx_this;
 
 var sipgateffx = {
-	onLoad: function() {
+	onLoad: function(event) {
 		// initialization code
 		this.initialized = true;
 		this.strings = document.getElementById("sipgateffx-strings");
@@ -228,6 +228,8 @@ var sipgateffx = {
 	},
 
 	toggleClick2Dial: function() {
+				sipgateffxPageLoaded();
+return;
 	    var promptService = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
 	                                  .getService(Components.interfaces.nsIPromptService);
 	    promptService.alert(window, this.strings.getString("bepatientTitle"),
