@@ -38,6 +38,7 @@
       <preference id="parsenumbers" name="extensions.sipgateffx.parsenumbers" type="bool"/>
       <preference id="click2dial" name="extensions.sipgateffx.click2dial" type="bool"/>
 	  <preference id="defaultExtension" name="extensions.sipgateffx.defaultExtension" type="bool"/>
+	  <preference id="systemTeam" name="extensions.sipgateffx.systemTeam" type="bool"/>
     </preferences>
 
 	<hbox>
@@ -57,6 +58,12 @@
 					<label/>
 					<checkbox id="autologin" preference="autologin" label="&autologin.label;" accesskey="A"/>
 				</row>
+
+				<row>
+					<label/>
+					<checkbox id="systemTeam" preference="systemTeam" label="&systemTeam.label;" accesskey="s" />
+				</row>
+
 			</rows>
 		</grid>
 

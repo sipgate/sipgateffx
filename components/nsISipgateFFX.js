@@ -43,7 +43,9 @@ function SipgateFFX() {
         "samurai.RecommendedIntervalGet": 60,
         "samurai.EventSummaryGet": 60
     };
-    this.samuraiServer = "https://api.sipgate.net/RPC2";
+	
+    this.samuraiServer = {'team': "https://api.sipgate.net/RPC2", 'classic': "https://samurai.sipgate.net/RPC2"};
+	this.systemArea = (this.getPref("extensions.sipgateffx.systemTeam", "bool") ? 'team' : 'classic');
     
     this.defaultExtension = {
         "voice": null,
@@ -284,7 +286,7 @@ SipgateFFX.prototype = {
 		};
 		
 		try {
-			var request = bfXMLRPC.makeXML("samurai.SessionInitiate", [	this.samuraiServer, params]);
+			var request = bfXMLRPC.makeXML("samurai.SessionInitiate", [	this.samuraiServer[this.systemArea], params]);
 			this.log(request);
 		} catch(e) {
 			this.log('Exception in xmlrpc-request: ' + e);
@@ -362,7 +364,7 @@ SipgateFFX.prototype = {
 		};
 
 		try {
-			var request = bfXMLRPC.makeXML("samurai.SessionStatusGet", [	this.samuraiServer, params]);
+			var request = bfXMLRPC.makeXML("samurai.SessionStatusGet", [	this.samuraiServer[this.systemArea], params]);
 			this._rpcCall(request, result);	
 		} catch(e) {
 			this.log('Exception in xmlrpc-request: ' + e);
@@ -385,7 +387,7 @@ SipgateFFX.prototype = {
 		};
 		
 		try {
-			var request = bfXMLRPC.makeXML("samurai.SessionClose", [	this.samuraiServer, params]);
+			var request = bfXMLRPC.makeXML("samurai.SessionClose", [	this.samuraiServer[this.systemArea], params]);
 			this._rpcCall(request, result);	
 		} catch(e) {
 			this.log('Exception in xmlrpc-request: ' + e);
@@ -398,15 +400,18 @@ SipgateFFX.prototype = {
 		this.log("*** sipgateffx: login *** BEGIN ***");
 		
 		var showActiveMenu = function() {
-			_sgffx.setXulObjectVisibility('showcreditmenuitem', 1);
+			if (_sgffx.systemArea == 'team') {
+				_sgffx.setXulObjectVisibility('showcreditmenuitem', 1);
+				_sgffx.setXulObjectVisibility('showvoicemailmenuitem', 1);
+				_sgffx.setXulObjectVisibility('showphonebookmenuitem', 1);
+				_sgffx.setXulObjectVisibility('showhistorymenuitem', 1);
+				_sgffx.setXulObjectVisibility('showfaxmenuitem', 1);
+				_sgffx.setXulObjectVisibility('showshopmenuitem', 1);
+				_sgffx.setXulObjectVisibility('showitemizedmenuitem', 1);
+			}
+
 			_sgffx.setXulObjectVisibility('pollbalance', 1);
-			_sgffx.setXulObjectVisibility('showvoicemailmenuitem', 1);
-			_sgffx.setXulObjectVisibility('showphonebookmenuitem', 1);
 			_sgffx.setXulObjectVisibility('showsmsformmenuitem', 1);
-			_sgffx.setXulObjectVisibility('showhistorymenuitem', 1);
-			_sgffx.setXulObjectVisibility('showfaxmenuitem', 1);
-			_sgffx.setXulObjectVisibility('showshopmenuitem', 1);
-			_sgffx.setXulObjectVisibility('showitemizedmenuitem', 1);
 			_sgffx.setXulObjectVisibility('item_logoff', 1);
 			_sgffx.setXulObjectVisibility('separator1', 1);
 			_sgffx.setXulObjectVisibility('separator2', 1);
@@ -440,12 +445,14 @@ SipgateFFX.prototype = {
 				_sgffx.getRecommendedIntervals();
 				_sgffx.getOwnUriList();
 				_sgffx.getBalance();
-				_sgffx.getEventSummary();
+				if (this.systemArea == 'team') {
+					_sgffx.getEventSummary();
+				}
 			}
 		};
 		
 		try {
-			var request = bfXMLRPC.makeXML("system.serverInfo", [this.samuraiServer]);
+			var request = bfXMLRPC.makeXML("system.serverInfo", [this.samuraiServer[this.systemArea]]);
 			this._rpcCall(request, result);
 		} catch(e) {
 			this.log('Exception in xmlrpc-request: ' + e);
@@ -523,7 +530,7 @@ SipgateFFX.prototype = {
 		};
 		
 		try {
-			var request = bfXMLRPC.makeXML("samurai.RecommendedIntervalGet", [this.samuraiServer, params]);
+			var request = bfXMLRPC.makeXML("samurai.RecommendedIntervalGet", [this.samuraiServer[this.systemArea], params]);
 			this._rpcCall(request, result);
 		} catch(e) {
 			this.log('Exception in xmlrpc-request: ' + e);
@@ -595,7 +602,7 @@ SipgateFFX.prototype = {
 		};
 	
 		try {
-			var request = bfXMLRPC.makeXML("samurai.BalanceGet", [this.samuraiServer]);
+			var request = bfXMLRPC.makeXML("samurai.BalanceGet", [this.samuraiServer[this.systemArea]]);
 			this._rpcCall(request, result);
 		} catch(e) {
 			this.log('Exception in xmlrpc-request: ' + e);
@@ -643,7 +650,7 @@ SipgateFFX.prototype = {
         };
 		
 		try {
-			var request = bfXMLRPC.makeXML("samurai.OwnUriListGet", [this.samuraiServer]);
+			var request = bfXMLRPC.makeXML("samurai.OwnUriListGet", [this.samuraiServer[this.systemArea]]);
 			this._rpcCall(request, result);
 		} catch(e) {
 			this.log('Exception in xmlrpc-request: ' + e);
@@ -715,7 +722,7 @@ SipgateFFX.prototype = {
         };
 		
 		try {
-			var request = bfXMLRPC.makeXML("samurai.EventSummaryGet", [this.samuraiServer, params]);
+			var request = bfXMLRPC.makeXML("samurai.EventSummaryGet", [this.samuraiServer[this.systemArea], params]);
 			this._rpcCall(request, result);
 		} catch(e) {
 			this.log('Exception in xmlrpc-request: ' + e);
@@ -726,7 +733,7 @@ SipgateFFX.prototype = {
 	},
 	
 	_rpcCall: function(request, callbackResult, callbackError) {
-		var samuraiServer = this.samuraiServer;
+		var samuraiServer = this.samuraiServer[this.systemArea];
 		var user = this.username;
 		var pass = this.password;
 		

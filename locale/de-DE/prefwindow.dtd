@@ -8,3 +8,4 @@
 <!ENTITY click2dial.label "Click2Dial auf TEL-URIs anwenden">
 <!ENTITY autologin.label "Auto-Login">
 <!ENTITY click2dialExtension.label "Click2Dial-Telefon (aktuell nur im Web änderbar)">
+<!ENTITY systemTeam.label "Ich benutze sipgate team">
