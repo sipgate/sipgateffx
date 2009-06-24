@@ -281,7 +281,7 @@ var sipgateffx = {
 				break;
 				
 			case 'sendSMS':
-				window.open('chrome://sipgateffx/content/sms.xul', 'sipgateSMS', 'chrome,centerscreen,resizable=yes,width=400,height=250,titlebar=yes,alwaysRaised=yes');
+				window.open('chrome://sipgateffx/content/sms.xul', 'sipgateSMS', 'chrome,centerscreen,resizable=yes,titlebar=yes,alwaysRaised=yes');
 				break;
 				
 			case 'pollBalance':
