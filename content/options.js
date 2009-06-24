@@ -62,6 +62,12 @@ var sipgateffx_options = {
   },
 
   onUnload: function() {
+		if(document.getElementById("parsenumbers").value) {
+			sgffx.setXulObjectVisibility('dialactivate', 0);
+		} else {
+			sgffx.setXulObjectVisibility('dialactivate', 1);
+		}
+	  
 	  var username = document.getElementById('username').value;
 	  var password = document.getElementById('password').value;
 	  

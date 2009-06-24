@@ -407,11 +407,14 @@ SipgateFFX.prototype = {
 			_sgffx.setXulObjectVisibility('showfaxmenuitem', 1);
 			_sgffx.setXulObjectVisibility('showshopmenuitem', 1);
 			_sgffx.setXulObjectVisibility('showitemizedmenuitem', 1);
-			_sgffx.setXulObjectVisibility('dialactivate', 1);
-			_sgffx.setXulObjectVisibility('dialdeactivate', 0);
 			_sgffx.setXulObjectVisibility('item_logoff', 1);
 			_sgffx.setXulObjectVisibility('separator1', 1);
 			_sgffx.setXulObjectVisibility('separator2', 1);
+			
+			if (!_sgffx.getPref("extensions.sipgateffx.parsenumbers", "bool")) {
+				_sgffx.setXulObjectVisibility('dialactivate', 1);
+			}
+			
 			
 			_sgffx.setXulObjectVisibility('item_logon', 0);
 			

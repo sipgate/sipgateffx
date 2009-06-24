@@ -112,12 +112,12 @@ var sipgateffx = {
 		sgffx.setXulObjectVisibility('showfaxmenuitem', 0);
 		sgffx.setXulObjectVisibility('showshopmenuitem', 0);
 		sgffx.setXulObjectVisibility('showitemizedmenuitem', 0);
-		sgffx.setXulObjectVisibility('dialactivate', 0);
 		sgffx.setXulObjectVisibility('item_logoff', 0);
 		sgffx.setXulObjectVisibility('separator1', 0);
 		sgffx.setXulObjectVisibility('separator2', 1);
+		
 		sgffx.setXulObjectVisibility('dialdeactivate', 0);
-		sgffx.setXulObjectVisibility('dialdeactivate', 0);
+		sgffx.setXulObjectVisibility('dialactivate', 0);
 		
 		// sgffx.setXulObjectVisibility('sipgate-c2d-status-bar', 1);
 
@@ -128,7 +128,7 @@ var sipgateffx = {
 			this.login();
 		}
 		
-		gBrowser.addEventListener("DOMContentLoaded", this.toggleClick2Dial, false);
+		gBrowser.addEventListener("DOMContentLoaded", this.parseClick2Dial, false);
 	},
 
 	onUnload: function() {
@@ -228,48 +228,14 @@ var sipgateffx = {
 		sgffx.cancelClick2Dial();
 	},
 
-	toggleClick2Dial: function() {
+	parseClick2Dial: function() {
 		if (sgffx.getPref("extensions.sipgateffx.parsenumbers", "bool")) {
 			sipgateffxPageLoaded();
 		}
-		return;
-		
-	    var promptService = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
-	                                  .getService(Components.interfaces.nsIPromptService);
-	    promptService.alert(window, this.strings.getString("bepatientTitle"),
-	                                this.strings.getString("bepatientMessage"));
-	    
-	    return;
-		
-		const tagsOfInterest = [ "a", "abbr", "acronym", "address", "applet", "b", "bdo", "big", "blockquote", "body", "caption",
-        "center", "cite", "code", "dd", "del", "div", "dfn", "dt", "em", "fieldset", "font", "form", "h1", "h2", "h3",
-        "h4", "h5", "h6", "i", "iframe", "ins", "kdb", "li", "object", "pre", "p", "q", "samp", "small", "span",
-        "strike", "s", "strong", "sub", "sup", "td", "th", "tt", "u", "var" ];
-
-		var xpath = "//text()[(parent::" + tagsOfInterest.join(" or parent::") + ")]";
-		var candidates = content.document.evaluate(xpath, content.document, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
-		var numberRegex = /(^|[\s])((\+[1-9]\d)|(00[1-9]\d)|(0[^0]|([(\[][ \t\f]*[\d \t\f]+[ \t\f]*[)\]])))((((([ \t\f]*[(\[][ \t\f]*[\d \t\f]+[)\]][ \t\f]*)|([\d \t\f]{1,}[\.]?)))|(\(\d{3,}\)))[/]?(([ \t\f]*[\[(][\-\d \t\f]{3,}[\])][ \t\f]*)|([\-\d \t\f]{3,}))+)|(\+[1-9][\.\d]{4,})([\s]|$)/;
+	},
 	
-		for ( var cand = null, i = 0; (cand = candidates.snapshotItem(i)); i++)
-		{		
-			var nodeText = cand.nodeValue;
-			nodeText = nodeText.replace(/^\s+|\s+$|[\xC2-\xFF]*/g, '');
-			if (nodeText.match(numberRegex) != null) {
-				var numberText = numberRegex.exec(cand.nodeValue)[0];
-				var formatednumberText = numberText.replace(/\D/g, '');
-				dump(nodeText + " -- \n");
-			
-				var newNodeClick2DialIcon = document.createElement("A");
-				newNodeClick2DialIcon.style.border = "1px solid #000000";
-				newNodeClick2DialIcon.style.margin = "0px 5px 0px 0px";
-				newNodeClick2DialIcon.setAttribute('href', "tel:" + formatednumberText);
-				newNodeClick2DialIcon.setAttribute('title', "sipgate Click2Dial");
-				newNodeClick2DialIcon.appendChild(document.createTextNode(numberText));
-
-				cand.parentNode.replaceChild(newNodeClick2DialIcon, cand);
-				dump(nodeText + "\n");
-			}
-		}
+	toggleClick2Dial: function() {
+		sipgateffxPageLoaded();
 	},
   
 	onStatusbarCommand: function(action, param) {
