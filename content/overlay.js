@@ -95,7 +95,11 @@ var sipgateffx = {
 			'sipgateffx_c2dStatusText',			
 			'sipgatecmd_c2dCancellCall',
 			
-			'sipgatenotificationPanel'
+			'sipgatenotificationPanel',
+			
+			'sipgateffxEventsCall',
+			'sipgateffxEventsFax',
+			'sipgateffxEventsSMS'
 		];
 
 		for(var i = 0; i < allElements.length; i++)
@@ -132,6 +136,47 @@ var sipgateffx = {
 	},
 
 	onUnload: function() {
+
+		sgffx.log('unload overlay');
+
+		var allElements = [
+			'showcreditmenuitem',
+			'pollbalance',
+			'showvoicemailmenuitem',
+			'showphonebookmenuitem',
+			'showsmsformmenuitem',
+			'showhistorymenuitem',
+			'showfaxmenuitem',
+			'showshopmenuitem',
+			'showitemizedmenuitem',
+			'dialactivate',
+			'item_logoff',
+			'separator1',
+			'separator2',
+			'dialdeactivate',
+			'item_logon',
+
+			'sipgateffx_loggedout',
+			'sipgateffx_loggedin',
+
+			'BalanceText',
+
+			'sipgateffx_c2dStatus',
+			'sipgateffx_c2dStatusText',			
+			'sipgatecmd_c2dCancellCall',
+			
+			'sipgatenotificationPanel',
+			
+			'sipgateffxEventsCall',
+			'sipgateffxEventsFax',
+			'sipgateffxEventsSMS'
+		];
+
+		for(var i = 0; i < allElements.length; i++)
+		{
+			sgffx.removeXulObjRef(allElements[i], document.getElementById(allElements[i]));
+		}
+		
 	},
 	
 	login: function() {

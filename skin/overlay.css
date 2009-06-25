@@ -21,3 +21,28 @@
 	-moz-binding: url("chrome://sipgateffx/content/binding-popup.xml#default");
 	border: 1px solid #000;
 }
+
+#sipgateffxEventsCall,
+#sipgateffxEventsSMS,
+#sipgateffxEventsFax
+{
+  background: url("chrome://sipgateffx/skin/events_tos.gif") no-repeat;
+  padding-left: 20px;
+  height: 16px;
+  margin: 0 1px;
+}
+
+#sipgateffxEventsCall
+{
+	background-position: 0px 0px;
+}
+
+#sipgateffxEventsFax
+{
+	background-position: 0px -34px;
+}
+
+#sipgateffxEventsSMS
+{
+	background-position: 0px -67px;
+}

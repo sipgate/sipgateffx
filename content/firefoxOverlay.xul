@@ -79,6 +79,10 @@
 			<hbox align="center" hidden="true" id="sipgateffx_loggedin">
 				<image src="chrome://sipgateffx/skin/icon_sipgate_active.gif" />
 				<label id="BalanceText" />
+				
+				<label id="sipgateffxEventsCall" value="0/0" hidden="true" />
+				<label id="sipgateffxEventsFax" value="0/0" hidden="true" />
+				<label id="sipgateffxEventsSMS" value="0/0" hidden="true" />
 			</hbox>
 			
 		</statusbarpanel>

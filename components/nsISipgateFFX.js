@@ -444,8 +444,10 @@ SipgateFFX.prototype = {
 				_sgffx.log("*** NOW logged in ***");
 				_sgffx.getRecommendedIntervals();
 				_sgffx.getOwnUriList();
+				
+				_sgffx.curBalance = null;
 				_sgffx.getBalance();
-				if (this.systemArea == 'team') {
+				if (_sgffx.systemArea == 'team') {
 					_sgffx.getEventSummary();
 				}
 			}
@@ -507,22 +509,24 @@ SipgateFFX.prototype = {
 						_sgffx.recommendedIntervals[ourParsedResponse.IntervalList[i].MethodName] = ourParsedResponse.IntervalList[i].RecommendedInterval;
 						_sgffx.log(ourParsedResponse.IntervalList[i].MethodName + " = " + ourParsedResponse.IntervalList[i].RecommendedInterval);
 					}
-					if (_sgffx.getPref("extensions.sipgateffx.polling", "bool")) {
-						// set update timer
-						var delay = _sgffx.recommendedIntervals["samurai.RecommendedIntervalGet"];
-						
-						_sgffx.getRecommendedIntervalsTimer.initWithCallback({
-							notify: function(timer) {
-								_sgffx.getRecommendedIntervals();
-							}
-						}, delay * 1000, Components.interfaces.nsITimer.TYPE_ONE_SHOT);
-						
-						_sgffx.log("getRecommendedIntervals: polling enabled. set to " + delay + " seconds");
-					}
 				}
 			} else {
 				_sgffx.log("getRecommendedIntervals failed toSTRING: "+ aXML.toString());
 			}
+		
+			if (_sgffx.getPref("extensions.sipgateffx.polling", "bool")) {
+				// set update timer
+				var delay = _sgffx.recommendedIntervals["samurai.RecommendedIntervalGet"];
+				
+				_sgffx.getRecommendedIntervalsTimer.initWithCallback({
+					notify: function(timer) {
+						_sgffx.getRecommendedIntervals();
+					}
+				}, delay * 1000, Components.interfaces.nsITimer.TYPE_ONE_SHOT);
+				
+				_sgffx.log("getRecommendedIntervals: polling enabled. set to " + delay + " seconds");
+			}
+			
 		};
 		
 		var params = {
@@ -584,21 +588,22 @@ SipgateFFX.prototype = {
 				_sgffx.curBalance = [balanceValueString + " " + currency, balanceValueDouble];
 				setBalance();
 				
-				if (_sgffx.getPref("extensions.sipgateffx.polling", "bool")) {
-					// set update timer
-					var delay = _sgffx.recommendedIntervals["samurai.BalanceGet"];
-					
-					_sgffx.getBalanceTimer.initWithCallback({
-						notify: function(timer) {
-							_sgffx.curBalance = null;
-							_sgffx.getBalance();
-						}
-					}, delay * 1000, Components.interfaces.nsITimer.TYPE_ONE_SHOT);
-					
-					_sgffx.log("getBalance: polling enabled. set to " + delay + " seconds");
-				}
-				
 			}
+			
+			if (_sgffx.getPref("extensions.sipgateffx.polling", "bool")) {
+				// set update timer
+				var delay = _sgffx.recommendedIntervals["samurai.BalanceGet"];
+				
+				_sgffx.getBalanceTimer.initWithCallback({
+					notify: function(timer) {
+						_sgffx.curBalance = null;
+						_sgffx.getBalance();
+					}
+				}, delay * 1000, Components.interfaces.nsITimer.TYPE_ONE_SHOT);
+				
+				_sgffx.log("getBalance: polling enabled. set to " + delay + " seconds");
+			}
+				
 		};
 	
 		try {
@@ -673,10 +678,11 @@ SipgateFFX.prototype = {
 		};
 		
         var result = function(ourParsedResponse, aXML){
-			// dumpJson(ourParsedResponse);
+			dumpJson(ourParsedResponse);
             if (ourParsedResponse.StatusCode && ourParsedResponse.StatusCode == 200) {
 				try {
 					var timestamp = parseInt(new Date().getTime() / 1000);
+					_sgffx.log('getEventSummary: got ' + ourParsedResponse.EventSummary.length + ' EventSummaries');
 					for (var i = 0; i < ourParsedResponse.EventSummary.length; i++) {
 						// check for new events
 						if(_sgffx.unreadEvents[ourParsedResponse.EventSummary[i].TOS]['count'] != null &&
@@ -697,28 +703,60 @@ SipgateFFX.prototype = {
 						// store new event count
 						_sgffx.unreadEvents[ourParsedResponse.EventSummary[i].TOS]['count'] = ourParsedResponse.EventSummary[i].Unread;
 						_sgffx.unreadEvents[ourParsedResponse.EventSummary[i].TOS]['time'] = timestamp;
+						
+						// update toolBar
+						var toolBarText = ourParsedResponse.EventSummary[i].Unread + "/" + ourParsedResponse.EventSummary[i].Read;
+						switch(ourParsedResponse.EventSummary[i].TOS) {
+							case 'voice':
+								if (toolBarText == '0/0') {
+									_sgffx.setXulObjectVisibility('sipgateffxEventsCall', 0);
+								}
+								else {
+									_sgffx.setXulObjectVisibility('sipgateffxEventsCall', 1);
+									_sgffx.setXulObjectAttribute('sipgateffxEventsCall', 'value', toolBarText);
+								}
+								break;
+							case 'text':
+								if (toolBarText == '0/0') {
+									_sgffx.setXulObjectVisibility('sipgateffxEventsSMS', 0);
+								}
+								else {
+									_sgffx.setXulObjectVisibility('sipgateffxEventsSMS', 1);
+									_sgffx.setXulObjectAttribute('sipgateffxEventsSMS', 'value', toolBarText);
+								}
+								break;
+							case 'fax':
+								if (toolBarText == '0/0') {
+									_sgffx.setXulObjectVisibility('sipgateffxEventsFax', 0);
+								}
+								else {
+									_sgffx.setXulObjectVisibility('sipgateffxEventsFax', 1);
+									_sgffx.setXulObjectAttribute('sipgateffxEventsFax', 'value', toolBarText);
+								}
+								break; 
+						}
 					}
-				
-					
-					//if (_sgffx.getPref("extensions.sipgateffx.polling", "bool")) {
-						// set update timer
-						var delay = _sgffx.recommendedIntervals["samurai.EventSummaryGet"];
-						
-						_sgffx.getEventSummaryTimer.initWithCallback({
-							notify: function(timer) {
-								_sgffx.getEventSummary();
-							}
-						}, delay * 1000, Components.interfaces.nsITimer.TYPE_ONE_SHOT);
-						
-						_sgffx.log("getEventSummary: polling enabled. set to " + delay + " seconds");
-					//}
-					
 				} catch(e) {
 					_sgffx.log("getEventSummary: Error occured during parsing ("+e+")");
 				}
             } else {
 				_sgffx.log("getEventSummary failed toSTRING: "+ aXML.toString());
+	
 			}
+			
+			if (_sgffx.getPref("extensions.sipgateffx.polling", "bool")) {
+				// set update timer
+				var delay = _sgffx.recommendedIntervals["samurai.EventSummaryGet"];
+				
+				_sgffx.getEventSummaryTimer.initWithCallback({
+					notify: function(timer) {
+						_sgffx.getEventSummary();
+					}
+				}, delay * 1000, Components.interfaces.nsITimer.TYPE_ONE_SHOT);
+				
+				_sgffx.log("getEventSummary: polling enabled. set to " + delay + " seconds");
+			}
+			
         };
 		
 		try {
@@ -815,6 +853,12 @@ SipgateFFX.prototype = {
 					break;
 				case 404:
 					errorMessage = "status.404";
+					break;
+				case 503:
+					if (typeof(callbackResult) == 'function') {
+						callbackResult({}, new XML());
+						return;
+					}
 					break;
 				default:
 					errorMessage = Msg;
@@ -932,8 +976,27 @@ SipgateFFX.prototype = {
 			this.log("No reference to XUL-Objects of " + id + "!");
 		}
 	},
-
-
+	
+	removeXulObjRef: function(id, aXulObjRef) {
+		try {
+			if (typeof(xulObjReference[id]) == "object") {
+				for (var i = 0; i < xulObjReference[id].length; i++) {
+					var tmpElementStorage = xulObjReference[id].pop();
+					if (tmpElementStorage == aXulObjRef) {
+						this.log("removed a reference to element with id '" + id + "'");
+					}
+					else {
+						xulObjReference[id].unshift(tmpElementStorage);
+					}
+				}
+			}
+			else {
+				this.log("xulObjReference to " + id + " not defined as Array");
+			}
+		} catch(e) {
+			this.log("sipgateFFX->removeXulObjRef ERROR " + e);
+		}
+	}
 
 };
 var components = [SipgateFFX];
