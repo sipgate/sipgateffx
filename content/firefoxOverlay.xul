@@ -110,17 +110,18 @@
 		</statusbarpanel>
 		
 		<panel id="sipgatenotificationPanel" noautofocus="true" noautohide="true">
-		  <hbox align="start" >
-		    <image src="chrome://sipgateffx/skin/ok.png"/>
-		    <vbox>
+		    <vbox id="sipgatenotificationPanelHeader" align="start">
+		    	<label value="sipgateFFX" style="font-weight: bold; height: 15px;" />
 		    	<vbox id="sipgatenotificationPanelMessages">
 		    	</vbox>
-		      <hbox>
-		        <button label="Go To Call List"/>
-		        <button label="Close this" onclick="return document.getElementById('sipgatenotificationPanel').hidePopup()"/>
+		      <hbox id="sipgatenotificationPanelCommands">
+				<command id="sipgatecmd_closeNotifcationPanels" oncommand="sipgateffx.onNotificationPopupClose()" />
+				<command id="sipgatecmd_closeNotifcationPanels" oncommand="sipgateffx.onNotificationPopupClose()" />
+				
+		        <button label="Go To Call List" command="sipgatecmd_showHistory"/>
+		        <button label="Close this" command="sipgatecmd_closeNotifcationPanels" />
 		      </hbox>
 		    </vbox>
-		  </hbox>
 		</panel>
 		
 	</statusbar>

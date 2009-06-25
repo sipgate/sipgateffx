@@ -272,6 +272,15 @@ var sipgateffx = {
 	onMenuItemContextCallCancel: function(e) {
 		sgffx.cancelClick2Dial();
 	},
+	
+	onNotificationPopupClose: function(e) {
+		try {
+			sgffx.log('sipgateFFX->overlay->onNotificationPopupClose: requested');
+			sgffx.runXulObjectCommand('sipgatenotificationPanel', 'hidePopup');
+		} catch(e) {
+			this.log("sipgateFFX->overlay->onNotificationPopupClose ERROR " + e);
+		}
+	},
 
 	parseClick2Dial: function() {
 		if (sgffx.getPref("extensions.sipgateffx.parsenumbers", "bool")) {

@@ -19,7 +19,27 @@
 #sipgatenotificationPanel
 {
 	-moz-binding: url("chrome://sipgateffx/content/binding-popup.xml#default");
-	border: 1px solid #000;
+  	-moz-appearance: none !important;	
+	width: 263px;
+	margin-bottom: -5px;
+}
+
+vbox#sipgatenotificationPanelHeader
+{
+	background: url("chrome://sipgateffx/skin/callprogress_head_green.gif") no-repeat;
+}
+
+#sipgatenotificationPanel vbox#sipgatenotificationPanelMessages
+{
+	background: url('chrome://sipgateffx/skin/callprogress_body.gif') no-repeat;
+	width: 263px;
+	padding-top: 5px;
+}
+
+#sipgatenotificationPanel hbox#sipgatenotificationPanelCommands
+{
+	background: url('chrome://sipgateffx/skin/callprogress_body.gif') no-repeat left bottom;
+	width: 263px;
 }
 
 #sipgateffxEventsCall,

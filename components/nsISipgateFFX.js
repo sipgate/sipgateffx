@@ -692,13 +692,19 @@ SipgateFFX.prototype = {
 							var diff = ourParsedResponse.EventSummary[i].Unread - _sgffx.unreadEvents[ourParsedResponse.EventSummary[i].TOS]['count'];
 							var msg = diff+" new "+ourParsedResponse.EventSummary[i].TOS+" event(s)";
 							_sgffx.log("getEventSummary: "+ msg);
+							
+							_sgffx.runXulObjectCommand('sipgatenotificationPanel', 'clearLines');
+							_sgffx.runXulObjectCommand('sipgatenotificationPanel', 'addLine', ['You have ' + msg]);
+							_sgffx.runXulObjectCommand('sipgatenotificationPanel', 'open');
+							
+							/*
 							var xulObj = xulObjReference['sipgatenotificationPanel'];
 							for (var k = 0; k < xulObj.length; k++) {
 									xulObj[k] = xulObj[k].QueryInterface(Components.interfaces.nsIDOMXULElement);
 									xulObj[k].clearLines();
 									xulObj[k].addLine('You have ' + msg);
 									xulObj[k].open();
-							}
+							}*/
 						}
 						// store new event count
 						_sgffx.unreadEvents[ourParsedResponse.EventSummary[i].TOS]['count'] = ourParsedResponse.EventSummary[i].Unread;
@@ -974,6 +980,23 @@ SipgateFFX.prototype = {
 			}
 		} else {
 			this.log("No reference to XUL-Objects of " + id + "!");
+		}
+	},
+	
+	runXulObjectCommand: function(id, command, params) {
+		try {
+			if (typeof(xulObjReference[id]) == 'object') {
+				var xulObj = xulObjReference[id];
+				for (var k = 0; k < xulObj.length; k++) {
+					xulObj[k] = xulObj[k].QueryInterface(Components.interfaces.nsIDOMXULElement);
+					xulObj[k][command].apply(xulObj[k], params);
+				}
+			}
+			else {
+				this.log("No reference to XUL-Objects of " + id + "!");
+			}
+		} catch(e) {
+			this.log("sipgateFFX->runXulObjectCommand ERROR " + e);
 		}
 	},
 	
