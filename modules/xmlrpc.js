@@ -395,7 +395,9 @@ function PffXmlHttpReq( aUrl, aType, aContent, aDoAuthBool, aUser, aPass) {
 	};
 	
 	this.makeCall = function () {
-	    this.request.send(this.content)
+       try {
+	   	this.request.send(this.content);
+	   }  catch (e) {}
 	};
 
 	/*

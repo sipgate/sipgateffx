@@ -225,10 +225,12 @@ SipgateFFX.prototype = {
 			var loginInfo = new nsLoginInfo(this.samuraiAuth.hostname, this.samuraiAuth.formSubmitURL, this.samuraiAuth.httprealm, username, password, "", "");
 			passwordManager.addLogin(loginInfo);
 			
+			this.samuraiAuth.username = username;
+			this.samuraiAuth.password = password;			
 		} 
 		catch (ex) {
 			// This will only happen if there is no nsILoginManager component class
-			dump(ex);
+			this.log('setSamuraiAuth: ' + ex);
 		}
 	},
 		
@@ -469,9 +471,31 @@ SipgateFFX.prototype = {
 			this.log("*** sipgateffx: logoff *** USER NOT LOGGED IN ***");
 			return;
 		}		
-			
-		this.isLoggedIn = false;
 		
+		if (this.systemArea == 'team') {
+			try {
+				this.websiteSessionLogout();
+			} catch(e) {
+				//
+			}
+		}
+		
+		// set to initial values
+		this.isLoggedIn = false;
+		this.curBalance = null;
+		
+		// close notification bubbles
+		this.runXulObjectCommand('sipgatenotificationPanel', 'hidePopup');
+		
+		// set balance to nothing
+		this.setXulObjectAttribute('BalanceText', "value", "");
+		
+		// hide notification icons
+		this.setXulObjectVisibility('sipgateffxEventsCall', 0);
+		this.setXulObjectVisibility('sipgateffxEventsSMS', 0);
+		this.setXulObjectVisibility('sipgateffxEventsFax', 0);
+		
+		// hide context menu items
 		this.setXulObjectVisibility('showcreditmenuitem', 0);
 		this.setXulObjectVisibility('pollbalance', 0);
 		this.setXulObjectVisibility('showvoicemailmenuitem', 0);
@@ -489,11 +513,19 @@ SipgateFFX.prototype = {
 		
 		this.setXulObjectVisibility('item_logon', 1);
 
+		// switch loggedin panel to logged off panel
 		this.setXulObjectVisibility('sipgateffx_loggedout', 1);
 		this.setXulObjectVisibility('sipgateffx_loggedin', 0);
 		
 		this.log("*** NOW logged off ***");
 	},
+	
+	websiteSessionLogout: function() {
+		var urlSessionCheck = 'https://secure.live.sipgate.de/auth/logout/';
+		var oHttpRequest = Components.classes["@mozilla.org/xmlextras/xmlhttprequest;1"].createInstance(Components.interfaces.nsIXMLHttpRequest);																 
+		oHttpRequest.open("GET", urlSessionCheck, true);
+		oHttpRequest.send(null);
+	},	
 	
 	getRecommendedIntervals: function() {
 		this.log("*** sipgateffx: getRecommendedIntervals *** BEGIN ***");
@@ -543,7 +575,18 @@ SipgateFFX.prototype = {
 		this.log("*** sipgateffx: getRecommendedIntervals *** END ***");
 	},
 	
-	getBalance: function() {
+	websiteSessionValid: function() {
+		var urlSessionCheck = 'https://secure.live.sipgate.de/ajax/keepalive/';
+		var oHttpRequest = Components.classes["@mozilla.org/xmlextras/xmlhttprequest;1"].createInstance(Components.interfaces.nsIXMLHttpRequest);																 
+		oHttpRequest.open("GET", urlSessionCheck,false);
+		oHttpRequest.send(null);
+		
+		var result = !oHttpRequest.responseText.match(/notloggedin/);
+
+		this.log('websiteSessionValid: ' + result);
+	},	
+
+	getBalance: function(force) {
 		this.log("*** sipgateffx: getBalance *** BEGIN ***");
 		if (!this.isLoggedIn) {
 			this.log("*** sipgateffx: sipgateffx *** USER NOT LOGGED IN ***");
@@ -561,13 +604,19 @@ SipgateFFX.prototype = {
 			}
 		};
 		
-		if(this.curBalance != null) {
+		if(typeof force == 'undefined') {
+			force = false;
+		}
+		
+		if(this.curBalance != null && !force) {
 			this.log("*** sipgateffx: getBalance: no need to do a request, we have a balance");
 			setBalance();
 			return;
 		}
 		
 		var result = function(ourParsedResponse, aXML) {
+			_sgffx.log('### getBalance. Result received.');
+			
 			if (ourParsedResponse.StatusCode && ourParsedResponse.StatusCode == 200) {
 			
 				var balance = ourParsedResponse.CurrentBalance;
@@ -609,6 +658,7 @@ SipgateFFX.prototype = {
 		try {
 			var request = bfXMLRPC.makeXML("samurai.BalanceGet", [this.samuraiServer[this.systemArea]]);
 			this._rpcCall(request, result);
+			this.log('### getBalance. Request sent.');
 		} catch(e) {
 			this.log('Exception in xmlrpc-request: ' + e);
 			this.log('Request sent: ' + request);
@@ -690,11 +740,13 @@ SipgateFFX.prototype = {
 						) 
 						{
 							var diff = ourParsedResponse.EventSummary[i].Unread - _sgffx.unreadEvents[ourParsedResponse.EventSummary[i].TOS]['count'];
-							var msg = diff+" new "+ourParsedResponse.EventSummary[i].TOS+" event(s)";
+							var msg = _sgffx.strings.getFormattedString('notification.' + ourParsedResponse.EventSummary[i].TOS, [diff]);
 							_sgffx.log("getEventSummary: "+ msg);
 							
+							var	text = _sgffx.strings.getFormattedString('notification.prefix', [msg]);
+							
 							_sgffx.runXulObjectCommand('sipgatenotificationPanel', 'clearLines');
-							_sgffx.runXulObjectCommand('sipgatenotificationPanel', 'addLine', ['You have ' + msg]);
+							_sgffx.runXulObjectCommand('sipgatenotificationPanel', 'addLine', [text]);
 							_sgffx.runXulObjectCommand('sipgatenotificationPanel', 'open');
 							
 							/*

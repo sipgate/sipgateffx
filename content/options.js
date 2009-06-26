@@ -77,6 +77,7 @@ var sipgateffx_options = {
         
         var chosenSystemArea = (document.getElementById("systemTeam").value ? 'team' : 'classic');
         if (sgffx.systemArea != chosenSystemArea) {
+			sgffx.log('options: changed systemArea from "'+sgffx.systemArea+'" to "'+chosenSystemArea+'"');
             sgffx.logoff();
             sgffx.systemArea = chosenSystemArea;
             sgffx.login();
@@ -85,15 +86,19 @@ var sipgateffx_options = {
         var auth = sgffx.getSamuraiAuth();
         
         if (auth.username != username || auth.password != password) {
+			sgffx.log('options: changed user name from "'+auth.username+'" to "'+username+'"');
             sgffx.setSamuraiAuth(username, password);
+			sgffx.log('options: logoff triggered');
             sgffx.logoff();
         }
         
         if (document.getElementById('autologin').value === true) {
             if (!sgffx.isLoggedIn) {
-                sgffx.login();
+				sgffx.log('options: login triggered');
+				sgffx.login();
             }
             else {
+				sgffx.log('options: getBalance triggered');
                 sgffx.getBalance();
             }
         }

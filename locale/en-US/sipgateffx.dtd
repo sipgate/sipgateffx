@@ -7,7 +7,7 @@
 <!ENTITY sipgateffxStatusbar.InfoNoAuth.label "not logged in">
 
 <!ENTITY showprefs.menuitem "Preferences">
-<!ENTITY getbalance.menuitem "Check balance">
+<!ENTITY getbalance.menuitem "Refresh balance">
 <!ENTITY showhistory.menuitem "Show call list">
 <!ENTITY showcredit.menuitem "Credit account">
 <!ENTITY showvoicemail.menuitem "Check voice messages">
@@ -23,7 +23,7 @@
 <!ENTITY cancelcall.menuitem "Hang Up">
 
 <!ENTITY showprefs.key "E">
-<!ENTITY getbalance.key "K">
+<!ENTITY getbalance.key "r">
 <!ENTITY showhistory.key "A">
 <!ENTITY showcredit.key "o">
 <!ENTITY showvoicemail.key "S">
@@ -35,3 +35,6 @@
 <!ENTITY dialactivate.key "a">
 <!ENTITY dialdeactivate.key "d">
 <!ENTITY logoff.key "g">
+
+<!ENTITY gotoCalllist.button "Go to call list">
+<!ENTITY gotoCloseThis.button "Close this">

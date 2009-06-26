@@ -118,8 +118,8 @@
 				<command id="sipgatecmd_closeNotifcationPanels" oncommand="sipgateffx.onNotificationPopupClose()" />
 				<command id="sipgatecmd_closeNotifcationPanels" oncommand="sipgateffx.onNotificationPopupClose()" />
 				
-		        <button label="Go To Call List" command="sipgatecmd_showHistory"/>
-		        <button label="Close this" command="sipgatecmd_closeNotifcationPanels" />
+		        <button label="&gotoCalllist.button;" command="sipgatecmd_showHistory"/>
+		        <button label="&gotoCloseThis.button;" command="sipgatecmd_closeNotifcationPanels" />
 		      </hbox>
 		    </vbox>
 		</panel>

@@ -7,7 +7,7 @@
 <!ENTITY sipgateffxStatusbar.InfoNoAuth.label "nicht angemeldet">
 
 <!ENTITY showprefs.menuitem "Einstellungen">
-<!ENTITY getbalance.menuitem "Kontostand abfragen">
+<!ENTITY getbalance.menuitem "Kontostand aktualisieren">
 <!ENTITY showhistory.menuitem "Anrufliste anzeigen">
 <!ENTITY showcredit.menuitem "Konto aufladen">
 <!ENTITY showvoicemail.menuitem "Sprachnachrichten abrufen">
@@ -23,7 +23,7 @@
 <!ENTITY cancelcall.menuitem "Auflegen">
 
 <!ENTITY showprefs.key "E">
-<!ENTITY getbalance.key "K">
+<!ENTITY getbalance.key "R">
 <!ENTITY showhistory.key "A">
 <!ENTITY showcredit.key "o">
 <!ENTITY showvoicemail.key "S">
@@ -35,3 +35,6 @@
 <!ENTITY dialactivate.key "a">
 <!ENTITY dialdeactivate.key "d">
 <!ENTITY logoff.key "b">
+
+<!ENTITY gotoCalllist.button "Zur Anrufliste">
+<!ENTITY gotoCloseThis.button "Schließen">

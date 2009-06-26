@@ -339,7 +339,7 @@ var sipgateffx = {
 				break;
 				
 			case 'pollBalance':
-				sgffx.getBalance();
+				sgffx.getBalance(true);
 				break;
 				
 			case 'logon':
