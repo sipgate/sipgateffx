@@ -133,6 +133,7 @@ var sipgateffx = {
 		}
 		
 		gBrowser.addEventListener("DOMContentLoaded", this.parseClick2Dial, false);
+		_prepareArray();
 	},
 
 	onUnload: function() {
@@ -301,7 +302,9 @@ var sipgateffx = {
 				}		
 
 				var protocol = 'https://';
-				var httpServer = 'secure.live.sipgate.de';
+				// var httpServer = 'secure.live.sipgate.de';
+				var httpServer = sgffx.sipgateCredentials.HttpServer.replace(/^www/, 'secure');				
+
 				var siteURL = protocol + httpServer + url[param];
 				
 				var dataString = 'username='+sgffx.username+'&password='+sgffx.password;

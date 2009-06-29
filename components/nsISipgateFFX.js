@@ -38,6 +38,18 @@ function SipgateFFX() {
         "username": null,
         "password": null
     };
+	
+    this.sipgateCredentials = {
+        "SipRegistrar": "sipgate.de",
+        "NtpServer": "ntp.sipgate.net",
+        "HttpServer": "www.live.sipgate.de",
+        "SipOutboundProxy": "proxy.dev.sipgate.de",
+        "XmppServer": "",
+        "StunServer": "stun.sipgate.net",
+        "SamuraiServer": "api.sipgate.net",
+        "SimpleServer": ""
+    };
+	
     this.recommendedIntervals = {
         "samurai.BalanceGet": 60,
         "samurai.RecommendedIntervalGet": 60,
@@ -451,12 +463,15 @@ SipgateFFX.prototype = {
 				_sgffx.getBalance();
 				if (_sgffx.systemArea == 'team') {
 					_sgffx.getEventSummary();
+					_sgffx.sipgateCredentials = ourParsedResponse;				
 				}
+				
 			}
 		};
 		
 		try {
-			var request = bfXMLRPC.makeXML("system.serverInfo", [this.samuraiServer[this.systemArea]]);
+			// var request = bfXMLRPC.makeXML("system.serverInfo", [this.samuraiServer[this.systemArea]]);
+			var request = bfXMLRPC.makeXML("samurai.ServerdataGet", [this.samuraiServer[this.systemArea]]);
 			this._rpcCall(request, result);
 		} catch(e) {
 			this.log('Exception in xmlrpc-request: ' + e);
@@ -470,7 +485,7 @@ SipgateFFX.prototype = {
 		if (!this.isLoggedIn) {
 			this.log("*** sipgateffx: logoff *** USER NOT LOGGED IN ***");
 			return;
-		}		
+		}
 		
 		if (this.systemArea == 'team') {
 			try {
@@ -526,6 +541,17 @@ SipgateFFX.prototype = {
 		oHttpRequest.open("GET", urlSessionCheck, true);
 		oHttpRequest.send(null);
 	},	
+		
+	websiteSessionValid: function() {
+		var urlSessionCheck = 'https://secure.live.sipgate.de/ajax/keepalive/';
+		var oHttpRequest = Components.classes["@mozilla.org/xmlextras/xmlhttprequest;1"].createInstance(Components.interfaces.nsIXMLHttpRequest);																 
+		oHttpRequest.open("GET", urlSessionCheck,false);
+		oHttpRequest.send(null);
+		
+		var result = !oHttpRequest.responseText.match(/notloggedin/);
+
+		this.log('websiteSessionValid: ' + result);
+	},	
 	
 	getRecommendedIntervals: function() {
 		this.log("*** sipgateffx: getRecommendedIntervals *** BEGIN ***");
@@ -574,17 +600,6 @@ SipgateFFX.prototype = {
 		}
 		this.log("*** sipgateffx: getRecommendedIntervals *** END ***");
 	},
-	
-	websiteSessionValid: function() {
-		var urlSessionCheck = 'https://secure.live.sipgate.de/ajax/keepalive/';
-		var oHttpRequest = Components.classes["@mozilla.org/xmlextras/xmlhttprequest;1"].createInstance(Components.interfaces.nsIXMLHttpRequest);																 
-		oHttpRequest.open("GET", urlSessionCheck,false);
-		oHttpRequest.send(null);
-		
-		var result = !oHttpRequest.responseText.match(/notloggedin/);
-
-		this.log('websiteSessionValid: ' + result);
-	},	
 
 	getBalance: function(force) {
 		this.log("*** sipgateffx: getBalance *** BEGIN ***");
@@ -728,7 +743,7 @@ SipgateFFX.prototype = {
 		};
 		
         var result = function(ourParsedResponse, aXML){
-			dumpJson(ourParsedResponse);
+			// dumpJson(ourParsedResponse);
             if (ourParsedResponse.StatusCode && ourParsedResponse.StatusCode == 200) {
 				try {
 					var timestamp = parseInt(new Date().getTime() / 1000);
@@ -799,7 +814,6 @@ SipgateFFX.prototype = {
 				}
             } else {
 				_sgffx.log("getEventSummary failed toSTRING: "+ aXML.toString());
-	
 			}
 			
 			if (_sgffx.getPref("extensions.sipgateffx.polling", "bool")) {
@@ -826,6 +840,100 @@ SipgateFFX.prototype = {
 		}
 		
 		this.log("*** getEventSummary *** END ***");		
+	},
+
+	getEventList: function() {
+		this.log("*** getEventList *** BEGIN ***");
+		if (!this.isLoggedIn) {
+			this.log("*** getEventList *** USER NOT LOGGED IN ***");
+			return;
+		}
+		
+		var params = {
+			'Labels': ['inbox'],
+			'TOS': ["voice"],
+			'Limit': 0,
+			'Offset': 0
+		};
+		
+        var result = function(ourParsedResponse, aXML){
+			dumpJson(ourParsedResponse);
+			if (ourParsedResponse.StatusCode && ourParsedResponse.StatusCode == 200) {
+            } else {
+				_sgffx.log("getEventList failed toSTRING: "+ aXML.toString());
+			}
+		};
+			
+		try {
+			var request = bfXMLRPC.makeXML("samurai.EventListGet", [this.samuraiServer[this.systemArea], params]);
+			this._rpcCall(request, result);
+		} catch(e) {
+			this.log('Exception in xmlrpc-request: ' + e);
+			this.log('Request sent: ' + request);
+		}
+		
+		this.log("*** getEventList *** END ***");		
+		
+	},	
+
+	getPhonebookList: function() {
+		this.log("*** getPhonebookList *** BEGIN ***");
+		if (!this.isLoggedIn) {
+			this.log("*** getPhonebookList *** USER NOT LOGGED IN ***");
+			return;
+		}
+		
+		var params = {};
+		
+        var result = function(ourParsedResponse, aXML){
+			dumpJson(ourParsedResponse);
+			if (ourParsedResponse.StatusCode && ourParsedResponse.StatusCode == 200) {
+            } else {
+				_sgffx.log("getPhonebookList failed toSTRING: "+ aXML.toString());
+			}
+		};
+			
+		try {
+			var request = bfXMLRPC.makeXML("samurai.PhonebookListGet", [this.samuraiServer[this.systemArea], params]);
+			this._rpcCall(request, result);
+		} catch(e) {
+			this.log('Exception in xmlrpc-request: ' + e);
+			this.log('Request sent: ' + request);
+		}
+		
+		this.log("*** getPhonebookList *** END ***");		
+		
+	},	
+
+	getPhonebookEntries: function() {
+		this.log("*** getPhonebookEntries *** BEGIN ***");
+		if (!this.isLoggedIn) {
+			this.log("*** getPhonebookEntries *** USER NOT LOGGED IN ***");
+			return;
+		}
+		
+		var params = {
+			'EntryIDList': []
+		};
+		
+        var result = function(ourParsedResponse, aXML){
+			dumpJson(ourParsedResponse);
+			if (ourParsedResponse.StatusCode && ourParsedResponse.StatusCode == 200) {
+            } else {
+				_sgffx.log("getPhonebookEntries failed toSTRING: "+ aXML.toString());
+			}
+		};
+			
+		try {
+			var request = bfXMLRPC.makeXML("samurai.PhonebookEntryGet", [this.samuraiServer[this.systemArea], params]);
+			this._rpcCall(request, result);
+		} catch(e) {
+			this.log('Exception in xmlrpc-request: ' + e);
+			this.log('Request sent: ' + request);
+		}
+		
+		this.log("*** getPhonebookEntries *** END ***");		
+		
 	},
 	
 	_rpcCall: function(request, callbackResult, callbackError) {
