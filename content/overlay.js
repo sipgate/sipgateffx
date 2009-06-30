@@ -127,7 +127,7 @@ var sipgateffx = {
 
 		document.getElementById("contentAreaContextMenu")
 			.addEventListener("popupshowing", function(e) { sipgateffx_this.showContextMenu(e); }, false);
-			
+		
 		if(sgffx.getPref("extensions.sipgateffx.autologin","bool")) {
 			this.login();
 		}

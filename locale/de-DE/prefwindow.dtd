@@ -2,9 +2,9 @@
 <!ENTITY pane1.title "sipgateFFX 2.0 preferences">
 <!ENTITY username.value "Benutzername">
 <!ENTITY password.value "Passwort">
-<!ENTITY polling.label "Aktualisierung eingeschaltet">
+<!ENTITY polling.label "Automatische Aktualisierung der Anzeige">
 <!ENTITY showDebug.label "Supportbericht anzeigen">
-<!ENTITY parsenumbers.label "Telefonnummern nach TEL-URIs umwandeln">
+<!ENTITY parsenumbers.label "click2dial für Telefonnummern einschalten">
 <!ENTITY click2dial.label "Click2Dial auf TEL-URIs anwenden">
 <!ENTITY autologin.label "Auto-Login">
 <!ENTITY click2dialExtension.label "Click2Dial-Telefon (aktuell nur im Web änderbar)">

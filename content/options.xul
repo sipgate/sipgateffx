@@ -59,18 +59,14 @@
 					<checkbox id="autologin" preference="autologin" label="&autologin.label;" accesskey="A"/>
 				</row>
 
-				<row>
-					<label/>
-					<checkbox id="systemTeam" preference="systemTeam" label="&systemTeam.label;" accesskey="s" />
-				</row>
-
 			</rows>
 		</grid>
 
 		<groupbox align="left">
+			<checkbox id="systemTeam" preference="systemTeam" label="&systemTeam.label;" accesskey="s" />
 			<checkbox id="polling" preference="polling" label="&polling.label;" accesskey="p"/>
 			<checkbox id="parsenumbers" preference="parsenumbers" label="&parsenumbers.label;" accesskey="n" />
-			<checkbox id="click2dial" preference="click2dial" label="&click2dial.label;" accesskey="c" disabled="true"/>
+			<checkbox id="click2dial" preference="click2dial" label="&click2dial.label;" accesskey="c" hidden="true"/>
 			<button label="&showDebug.label;" oncommand="doOpenDebuggingInfo(event)"/>
 		</groupbox>
 		
