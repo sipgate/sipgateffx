@@ -101,6 +101,8 @@ function SipgateFFX() {
 	this.curBalance = null;
 	this.isLoggedIn = false;
 	
+	this.windowMediator = Components.classes["@mozilla.org/appshell/window-mediator;1"].getService(Components.interfaces.nsIWindowMediator);
+	
 	// must loaded here
 	Components.utils.import("resource://sipgateffx/xmlrpc.js");
 }
@@ -300,14 +302,12 @@ SipgateFFX.prototype = {
 		};
 		
 		try {
-			var request = bfXMLRPC.makeXML("samurai.SessionInitiate", [	this.samuraiServer[this.systemArea], params]);
-			this.log(request);
+			this._rpcCall("samurai.SessionInitiate", params, result);
 		} catch(e) {
 			this.log('Exception in xmlrpc-request: ' + e);
 			this.log('Request sent: ' + request);
 		}
 		
-		this._rpcCall(request, result);
 	},
 	
 	getClick2dialStatus: function() {
@@ -378,12 +378,12 @@ SipgateFFX.prototype = {
 		};
 
 		try {
-			var request = bfXMLRPC.makeXML("samurai.SessionStatusGet", [	this.samuraiServer[this.systemArea], params]);
-			this._rpcCall(request, result);	
+			this._rpcCall("samurai.SessionStatusGet", params, result);
 		} catch(e) {
 			this.log('Exception in xmlrpc-request: ' + e);
 			this.log('Request sent: ' + request);
 		}
+
 	},
 	
 	cancelClick2Dial: function() {
@@ -401,13 +401,12 @@ SipgateFFX.prototype = {
 		};
 		
 		try {
-			var request = bfXMLRPC.makeXML("samurai.SessionClose", [	this.samuraiServer[this.systemArea], params]);
-			this._rpcCall(request, result);	
+			this._rpcCall("samurai.SessionClose", params, result);
 		} catch(e) {
 			this.log('Exception in xmlrpc-request: ' + e);
 			this.log('Request sent: ' + request);
 		}
-		
+
 	},
 	
 	login: function() {
@@ -447,9 +446,10 @@ SipgateFFX.prototype = {
 			this.getBalance();
 			return;
 		}
-		
+
 		var result = function(ourParsedResponse, aXML) {
 			if (ourParsedResponse.StatusCode && ourParsedResponse.StatusCode == 200) {
+				_sgffx.log("*** ourParsedResponse.StatusCode ***" + ourParsedResponse.StatusCode);
 			
 				showActiveMenu();
 				
@@ -470,14 +470,13 @@ SipgateFFX.prototype = {
 		};
 		
 		try {
-			// var request = bfXMLRPC.makeXML("system.serverInfo", [this.samuraiServer[this.systemArea]]);
-			var request = bfXMLRPC.makeXML("samurai.ServerdataGet", [this.samuraiServer[this.systemArea]]);
-			this._rpcCall(request, result);
+			// this._rpcCall("samurai.serverInfo", {}, result);
+			this._rpcCall("samurai.ServerdataGet", {}, result);
 		} catch(e) {
 			this.log('Exception in xmlrpc-request: ' + e);
 			this.log('Request sent: ' + request);
 		}
-		
+
 		this.log("*** sipgateffx: login *** END ***");
 	},
 	
@@ -533,6 +532,7 @@ SipgateFFX.prototype = {
 		this.setXulObjectVisibility('sipgateffx_loggedin', 0);
 		
 		this.log("*** NOW logged off ***");
+
 	},
 	
 	websiteSessionLogout: function() {
@@ -592,8 +592,7 @@ SipgateFFX.prototype = {
 		};
 		
 		try {
-			var request = bfXMLRPC.makeXML("samurai.RecommendedIntervalGet", [this.samuraiServer[this.systemArea], params]);
-			this._rpcCall(request, result);
+			this._rpcCall("samurai.RecommendedIntervalGet", params, result);
 		} catch(e) {
 			this.log('Exception in xmlrpc-request: ' + e);
 			this.log('Request sent: ' + request);
@@ -671,8 +670,7 @@ SipgateFFX.prototype = {
 		};
 	
 		try {
-			var request = bfXMLRPC.makeXML("samurai.BalanceGet", [this.samuraiServer[this.systemArea]]);
-			this._rpcCall(request, result);
+			this._rpcCall("samurai.BalanceGet", {}, result);
 			this.log('### getBalance. Request sent.');
 		} catch(e) {
 			this.log('Exception in xmlrpc-request: ' + e);
@@ -720,8 +718,7 @@ SipgateFFX.prototype = {
         };
 		
 		try {
-			var request = bfXMLRPC.makeXML("samurai.OwnUriListGet", [this.samuraiServer[this.systemArea]]);
-			this._rpcCall(request, result);
+			this._rpcCall("samurai.OwnUriListGet", {}, result);
 		} catch(e) {
 			this.log('Exception in xmlrpc-request: ' + e);
 			this.log('Request sent: ' + request);
@@ -832,8 +829,7 @@ SipgateFFX.prototype = {
         };
 		
 		try {
-			var request = bfXMLRPC.makeXML("samurai.EventSummaryGet", [this.samuraiServer[this.systemArea], params]);
-			this._rpcCall(request, result);
+			this._rpcCall("samurai.EventSummaryGet", params, result);
 		} catch(e) {
 			this.log('Exception in xmlrpc-request: ' + e);
 			this.log('Request sent: ' + request);
@@ -863,15 +859,14 @@ SipgateFFX.prototype = {
 				_sgffx.log("getEventList failed toSTRING: "+ aXML.toString());
 			}
 		};
-			
+
 		try {
-			var request = bfXMLRPC.makeXML("samurai.EventListGet", [this.samuraiServer[this.systemArea], params]);
-			this._rpcCall(request, result);
+			this._rpcCall("samurai.EventListGet", params, result);
 		} catch(e) {
 			this.log('Exception in xmlrpc-request: ' + e);
 			this.log('Request sent: ' + request);
 		}
-		
+
 		this.log("*** getEventList *** END ***");		
 		
 	},	
@@ -892,10 +887,9 @@ SipgateFFX.prototype = {
 				_sgffx.log("getPhonebookList failed toSTRING: "+ aXML.toString());
 			}
 		};
-			
+
 		try {
-			var request = bfXMLRPC.makeXML("samurai.PhonebookListGet", [this.samuraiServer[this.systemArea], params]);
-			this._rpcCall(request, result);
+			this._rpcCall("samurai.PhonebookListGet", params, result);
 		} catch(e) {
 			this.log('Exception in xmlrpc-request: ' + e);
 			this.log('Request sent: ' + request);
@@ -925,8 +919,7 @@ SipgateFFX.prototype = {
 		};
 			
 		try {
-			var request = bfXMLRPC.makeXML("samurai.PhonebookEntryGet", [this.samuraiServer[this.systemArea], params]);
-			this._rpcCall(request, result);
+			this._rpcCall("samurai.PhonebookEntryGet", params, result);
 		} catch(e) {
 			this.log('Exception in xmlrpc-request: ' + e);
 			this.log('Request sent: ' + request);
@@ -935,8 +928,9 @@ SipgateFFX.prototype = {
 		this.log("*** getPhonebookEntries *** END ***");		
 		
 	},
-	
-	_rpcCall: function(request, callbackResult, callbackError) {
+		
+	_rpcCall: function(method, params, callbackResult, callbackError) {
+		var errString = this.strings;
 		var samuraiServer = this.samuraiServer[this.systemArea];
 		var user = this.username;
 		var pass = this.password;
@@ -955,12 +949,23 @@ SipgateFFX.prototype = {
 		var _tmpSrv = this.getPref("extensions.sipgateffx.server","char");
 		if(_tmpSrv != null && typeof(_tmpSrv) == 'string' && _tmpSrv.match(/^https?(.*)\.sipgate\.net/)) {
 			samuraiServer = _tmpSrv;
-		}
+		}		
 		
-		//PffXmlHttpReq( aUrl, aType, aContent, aDoAuthBool, aUser, aPass) 
-		var theCall = new PffXmlHttpReq(samuraiServer, "POST", request, true, user, pass);
+		var request = bfXMLRPC.makeXML(method, [samuraiServer, params]);
 		
-		theCall.onResult = function(aText, aXML) {
+		var req = new Request();
+		req.url = samuraiServer;
+		req.data = request;
+		req.headers['User-Agent'] = 'sipgateFFX 0.5b1/' + this.windowMediator.getMostRecentWindow('').navigator.userAgent;
+		req.headers['Connection'] = 'close';
+		req.headers['Content-Type'] = 'text/xml';
+		req.headers['Authorization'] = 'Basic ' + btoa(user + ':' + pass);
+
+/*		req.doAuth = true;
+		req.username = user;
+		req.password = pass;*/
+		
+		req.onSuccess = function(aText, aXML) {
 			var re = /(\<\?\xml[0-9A-Za-z\D]*\?\>)/;
 			var newstr = aText.replace(re, "");
 			
@@ -968,7 +973,7 @@ SipgateFFX.prototype = {
 				var e4xXMLObject = new XML(newstr);
 			} 
 			catch (e) {
-				alert("malformedXML");
+				dump("malformedXML");
 				return;
 			}
 
@@ -976,7 +981,7 @@ SipgateFFX.prototype = {
 			!(e4xXMLObject.params.param.value.length() == 1 ||
 			e4xXMLObject.fault.value.struct.length() == 1)) {
 				if (aText != '') {
-					alert("XML Response:" + aText);
+					dump("XML Response:" + aText);
 				}
 			}
 			
@@ -994,15 +999,13 @@ SipgateFFX.prototype = {
 				}
 				callbackResult(ourParsedResponse, aXML);
 			} else {
-				alert("Good Result:" + aText);
-				alert("Good Result:" + aXML);
+				dump("Good Result:" + aText);
+				dump("Good Result:" + aXML);
 			}
-		};
+		}; 
 		
-		var errString = this.strings;
-		
-		theCall.onError = function(aStatusMsg, Msg) {
-			_sgffx.log(Msg);
+		req.onFailure = function(aStatusMsg, Msg) {
+			_sgffx.log('request failed: ' + aStatusMsg + ' - ' + Msg);
 			var errorMessage = '';
 			
 			if (typeof(callbackError) == 'function') {
@@ -1010,7 +1013,7 @@ SipgateFFX.prototype = {
 				return;
 			}
 			
-			switch (theCall.request.status) {
+			switch (aStatusMsg) {
 				case 401:
 					errorMessage = "status.401";
 					break;
@@ -1031,15 +1034,21 @@ SipgateFFX.prototype = {
 					break;
 			}
 			
-			var promptService = Components.classes["@mozilla.org/embedcomp/prompt-service;1"].getService(Components.interfaces.nsIPromptService);
-			promptService.alert(null, _sgffx.strings.getString("sipgateffxError.title"), _sgffx.strings.getString(errorMessage));
+			try {
+				var promptService = Components.classes["@mozilla.org/embedcomp/prompt-service;1"].getService(Components.interfaces.nsIPromptService);
+				promptService.alert(null, _sgffx.strings.getString("sipgateffxError.title"), _sgffx.strings.getString(errorMessage));
+			} catch (e) {
+				//
+			}
 			
 		};
+
+		// req.onCancel = function() { dump("\n\nCANCELLED\n\n"); };
+		// req.onRequest = function() {dump("\n\nREQUESTED\n\n");};
+
+		this.log('_rpcCall: sending ' + method);
+		req.send();
 		
-		theCall.prepCall(); //Set up The call (open connection, etc.)
-		theCall.request.setRequestHeader("Content-Type", "text/xml");
-		theCall.makeCall(); //Make the call
-		theCall.request.overrideMimeType('text/xml');
 	},
 	
 	niceNumber: function (_number, natprefix) {

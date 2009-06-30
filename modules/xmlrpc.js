@@ -26,7 +26,7 @@
 XMLRPC Utility code.
 ------------------------------------------------------
 */
-var EXPORTED_SYMBOLS = ["bfXMLRPC", "PffXmlHttpReq"];
+var EXPORTED_SYMBOLS = ["bfXMLRPC", "Request"];
 
 var bfXMLRPC = {
 	makeXML: function(method, myParams) {
@@ -304,41 +304,110 @@ var bfXMLRPC = {
 	
 };
 
-/*
-    Replace all Stupid XML Requests with this object
-    
-    USAGE:
-    //PffXmlHttpReq( aUrl, aType, aContent, aDoAuthBool, aUser, aPass) 
-    theCall = new PffXmlHttpReq('http://theurl.com', "GET", null, false, null, null);
-    
-    theCall.onResult = function (aText, aXML) {
-        alert("Good Result:" + aText);
-    }
-    theCall.onError = function (aStatusMsg, aXML) {
-        alert("Bad Result:" + aStatusMsg);
-    }
-    theCall.prepCall(); //Set up The call (open connection, etc.)
-    theCall.request.setRequestHeader("Content-Type", "text/xml");
-    theCall.makeCall(); //Make the call
-    theCall.makeCall();
-    theCall.request.overrideMimeType ('text/xml');
-*/
-function PffXmlHttpReq( aUrl, aType, aContent, aDoAuthBool, aUser, aPass) {
-    this.url = aUrl;
-    this.posttype = aType;
-    this.content = aContent;
+Function.prototype.bind = function(bind, args) {
+	var self = this;
+	
+	args = (args == null) ? null : args;
+	
+	return function(){
+		return self.apply(bind, args || arguments);
+	};
+};
+
+function Request(aUrl, aMethod, aData, aDoAuthBool, aUser, aPass) {
+	this.url = aUrl;
+	this.data = aData;
     this.username = aUser;
     this.password = aPass;
     this.doAuth = aDoAuthBool;
-    //this.callback = aCallBackFunc;
-    this.request = Components.classes["@mozilla.org/xmlextras/xmlhttprequest;1"].createInstance(Components.interfaces.nsIXMLHttpRequest);
+	this.headers = {
+			'Accept': 'text/javascript, text/html, application/xml, text/xml, */*'
+		};
+	this.async = true;
+	this.method = 'post';
+	this.link = 'ignore';
+	this.encoding = 'utf-8';
+	this.running = false;
+	this.status = 0;
+	this.response = {text: null, xml: null};
 	
-	this.prepCall = function () {
+	this.onSuccess = function(text, xml) {};
+	this.onFailure = function(message) {};
+	this.onCancel = function() {};
+	this.onRequest = function() {};
+	
+	this.xhr = Components.classes["@mozilla.org/xmlextras/xmlhttprequest;1"].createInstance(Components.interfaces.nsIXMLHttpRequest);
+
+	this.onStateChange = function(){
+		if (this.xhr.readyState != 4 || !this.running) return;
+		this.running = false;
+		this.status = 0;
+		
+		try {
+			this.status = this.xhr.status;
+		} catch (e) {}		
+
+		if(typeof(this.isSuccess) == 'function') {
+			var success = this.isSuccess.call(this, this.status);
+			if(success) {
+				this.response = {text: this.xhr.responseText, xml: this.xhr.responseXML};
+				this.success(this.response.text, this.response.xml);
+			} else {
+				this.response = {text: null, xml: null};
+				this.failure();
+			}
+		}
+
+		this.xhr.onreadystatechange = function(){};
+	};
+
+	this.isSuccess = function(){
+		return ((this.status >= 200) && (this.status < 300));
+	};
+
+	this.success = function(text, xml){
+		this.onSuccess(text, xml);
+	};
+	
+	this.failure = function(){
+		this.onFailure(this.xhr.status, this.xhr.responseText);
+	};
+	
+	this.check = function(caller){
+		if (!this.running) return true;
+		switch (this.link){
+			case 'cancel': this.cancel(); return true;
+			// case 'chain': this.chain(caller.bind(this, Array.slice(arguments, 1))); return false;
+		}
+		return false;
+	};
+	
+	this.send = function(options){
+		if (!this.check(arguments.callee)) return this;
+		this.running = true;
+
+		var data = this.data;
+		var url = this.url;
+		var method = this.method;
+
+		if (data && method == 'get'){
+			url = url + (url.contains('?') ? '&' : '?') + data;
+			data = null;
+		}
+
+	    if(data && method == "post"){
+	        try{
+	            this.headers['Content-Length'] = data.length;
+	        }catch(e){}
+	    }
+
+		this.xhr.mozBackgroundRequest = true;
+
 	    if(this.doAuth){
-	        this.request.open(this.posttype, this.url, true, this.username, this.password);
+			this.xhr.open(method.toUpperCase(), url, this.async, this.username, this.password);
         
 	        //Keeps stupid Authentication window from poping up
-	        this.request.channel.notificationCallbacks = {
+	        this.xhr.channel.notificationCallbacks = {
 	            QueryInterface: function (iid) { // nsISupports
 	                if (iid.equals (Components.interfaces.nsISupports) ||
 	                    iid.equals (Components.interfaces.nsIAuthPrompt) ||
@@ -368,47 +437,44 @@ function PffXmlHttpReq( aUrl, aType, aContent, aDoAuthBool, aUser, aPass) {
 	            }
 	        }
 	    }else{
-	        this.request.open(this.posttype, this.url, true);
+			this.xhr.open(method.toUpperCase(), url, this.async);
 	    }
 	    
-	    var request = this.request;
-	    var onResult = this.onResult;
-	    var onError = this.onError;
-	    this.request.onreadystatechange = function () {
-	        if(request.readyState == 4){ 
-	            if (request.status < 300) {
-	                onResult(request.responseText, request.responseXML);
-	            }else{
-					dump(request.responseText);
-	                try{
-	                    onError(request.statusMessage, request.responseText);
-	                } catch(e) { dump("Error running onError: " + e); }
-	            } 
-	        }
-	    }
-	    
-	    if(this.posttype.toLowerCase() == "post"){
-	        try{
-	            this.request.setRequestHeader('Content-Length', this.content.length );
-	        }catch(e){}
-	    }
-	};
-	
-	this.makeCall = function () {
-       try {
-	   	this.request.send(this.content);
-	   }  catch (e) {}
-	};
+		this.xhr.onreadystatechange = this.onStateChange.bind(this);
 
-	/*
-	    Defined by Inheritor
-	*/
-	this.onError = function (message) {
-	    //foo
+		for (var key in this.headers){
+			var value = this.headers[key];
+			try {
+				this.xhr.setRequestHeader(key, value);
+			} catch(e) {}
+		}
+
+		if (typeof(this.onRequest) == 'function') {
+			this.onRequest();
+		};		
+		
+		try {
+			this.xhr.send(data);
+		} catch (e) {
+			dump('xhr.send EXCEPTION: ' + e + "\n");
+		}
+		
+		if (!this.async) this.onStateChange();
+		
+		return this;
 	};
 	
-	this.onResult = function (aTestRes, aXMLRes) {
-	    //foo
+	this.cancel = function(){
+		if (!this.running) return this;
+		this.running = false;
+		this.xhr.abort();
+		this.xhr.onreadystatechange = function() {};
+		this.xhr = Components.classes["@mozilla.org/xmlextras/xmlhttprequest;1"].createInstance(Components.interfaces.nsIXMLHttpRequest);
+		if (typeof(this.onCancel) == 'function') {
+			this.onCancel();
+		};
+		
+		return this;
 	};
 	
-}
+};
