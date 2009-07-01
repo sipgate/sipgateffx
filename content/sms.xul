@@ -45,7 +45,7 @@
 	<vbox id="sipgate_sms">
 	    <groupbox>
 			<caption label="&sipgateffxSmsNumberHeader.label;"/>
-			<textbox type="autocomplete" autocompletesearch="form-history"  id="sipgate_sms_number" height="20px" />
+			<textbox type="autocomplete" autocompletesearch="form-history" enablehistory="true" id="sipgate_sms_number" height="20px" />
 		</groupbox>
 	    <groupbox>
 			<caption label="&sipgateffxSmsTextHeader.label;" id="sipgate_sms_text_header"/>

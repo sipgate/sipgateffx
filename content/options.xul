@@ -29,15 +29,10 @@
 
 <prefwindow id="sipgateffxPreferences" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" title="&prefwindow.title;">
 	
-	<script src="options.js"/>
-	
-  <prefpane id="pane1" label="&pane1.title;">
+  <prefpane id="pane1" label="&pane1.title;" image="chrome://sipgateffx/skin/preferences_account.png">
     <preferences>
       <preference id="autologin" name="extensions.sipgateffx.autologin" type="bool"/>
       <preference id="polling" name="extensions.sipgateffx.polling" type="bool"/>
-      <preference id="parsenumbers" name="extensions.sipgateffx.parsenumbers" type="bool"/>
-      <preference id="click2dial" name="extensions.sipgateffx.click2dial" type="bool"/>
-	  <preference id="defaultExtension" name="extensions.sipgateffx.defaultExtension" type="bool"/>
 	  <preference id="systemTeam" name="extensions.sipgateffx.systemTeam" type="bool"/>
     </preferences>
 
@@ -58,26 +53,49 @@
 					<label/>
 					<checkbox id="autologin" preference="autologin" label="&autologin.label;" accesskey="A"/>
 				</row>
-
 			</rows>
 		</grid>
 
 		<groupbox align="left">
 			<checkbox id="systemTeam" preference="systemTeam" label="&systemTeam.label;" accesskey="s" />
 			<checkbox id="polling" preference="polling" label="&polling.label;" accesskey="p"/>
-			<checkbox id="parsenumbers" preference="parsenumbers" label="&parsenumbers.label;" accesskey="n" />
-			<checkbox id="click2dial" preference="click2dial" label="&click2dial.label;" accesskey="c" hidden="true"/>
 			<button label="&showDebug.label;" oncommand="doOpenDebuggingInfo(event)"/>
 		</groupbox>
 		
 	</hbox>	
 
-	<label value="&click2dialExtension.label;"/>
-	<menulist id="click2DialList" flex="0" readonly="true" disabled="true">
-		<menupopup id="click2DialListMenu" control="defaultExtension" />
-	</menulist>
-	
   </prefpane>
   
-  
+  <prefpane id="pane2" label="&pane2.title;" image="chrome://sipgateffx/skin/preferences_click2dial.png">
+    <preferences>
+      <preference id="parsenumbers" name="extensions.sipgateffx.parsenumbers" type="bool"/>
+      <preference id="click2dial" name="extensions.sipgateffx.click2dial" type="bool"/>
+      <preference id="click2dialColor" name="extensions.sipgateffx.click2dialColor" type="string"/>
+	  <preference id="defaultExtension" name="extensions.sipgateffx.defaultExtension" type="bool"/>
+    </preferences>  	
+
+	<vbox>
+		<checkbox id="parsenumbers" preference="parsenumbers" label="&parsenumbers.label;" accesskey="n" />
+		<checkbox id="click2dial" preference="click2dial" label="&click2dial.label;" accesskey="c" hidden="true"/>
+
+		<hbox align="center">
+			<colorpicker id="click2dialColor" preference="click2dialColor" type="button" />
+			<label control="click2dialColor" value="&click2dialColor.value;"/>
+		</hbox>
+
+		<separator />
+		
+		<vbox>
+			<label value="&click2dialExtension.label;"/>
+			<menulist id="click2DialList" flex="0" readonly="true" disabled="true">
+				<menupopup id="click2DialListMenu" control="defaultExtension" />
+			</menulist>
+		</vbox>
+		<separator />
+	</vbox>
+			
+  </prefpane>
+
+  <script src="options.js"/>
+ 
 </prefwindow>

@@ -106,7 +106,13 @@ var sipgateffx_sms = {
 		}
 
 		sipgateffxsmsstrings = document.getElementById("sipgateffx_sms-strings");
-				
+		
+		if(sgffx.tosList.indexOf('text') == -1) {
+			promptService.alert(window, 'sipgateFFX', sipgateffxsmsstrings.getString('sipgateffxSmsNotAvailable'));
+			window.close();
+			return false;
+		}		
+		
 		if(typeof window.arguments != "undefined") {
 			if(typeof window.arguments[0] != "undefined") {
 				document.getElementById("sipgate_sms_text").setAttribute('value', window.arguments[0]);

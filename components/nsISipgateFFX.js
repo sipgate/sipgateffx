@@ -31,6 +31,9 @@ function SipgateFFX() {
     this.wrappedJSObject = this;
     _sgffx = this;
     this._strings = null;
+	
+	this.addOnVersion = null;
+	 
     this.samuraiAuth = {
         "hostname": "chrome://sipgateffx",
         "formSubmitURL": null,
@@ -69,6 +72,12 @@ function SipgateFFX() {
         "text": [],
         "fax": []
     };
+	
+    this.tosList = [
+        "voice",
+        "text",
+        "fax",
+    ];
     
     this.unreadEvents = {
         "voice": {
@@ -152,6 +161,21 @@ SipgateFFX.prototype = {
 		if(this._strings == null) {
 			this._strings = strings;
 		}
+	},
+	
+	get version() {
+		if(this.addOnVersion == null) {
+			try {
+				var extensionManager = Components.classes["@mozilla.org/extensions/manager;1"].getService(Components.interfaces.nsIExtensionManager);
+				var item = extensionManager.getItemForID('sipgateffx@michael.rotmanov');
+				if(item) {
+					this.addOnVersion = item.version;
+				}
+			} catch(except) {
+				this.addOnVersion = 'UNKNOWN';
+			}
+		} 
+		return this.addOnVersion;
 	},
 	
 	oPrefService: Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch),
@@ -251,13 +275,21 @@ SipgateFFX.prototype = {
 	click2dial: function(to) {
 		var _TOS = 'voice'; 
 		
+		if(this.tosList.indexOf(_TOS) == -1) {
+			var promptService = Components.classes["@mozilla.org/embedcomp/prompt-service;1"].getService(Components.interfaces.nsIPromptService);
+			promptService.alert(null, 'sipgateFFX', this.strings.getString('click2dial.unavailableTos'));
+			return;
+		}
+				
 		if(this.defaultExtension[_TOS] == null) {
-			alert('No default extension set for this action.');
+			var promptService = Components.classes["@mozilla.org/embedcomp/prompt-service;1"].getService(Components.interfaces.nsIPromptService);
+			promptService.alert(null, 'sipgateFFX', this.strings.getString('click2dial.noDefaultExtension'));
 			return;
 		}
 		
 		if(this.currentSessionID != null) {
-			alert('click2dial is already running.');
+			var promptService = Components.classes["@mozilla.org/embedcomp/prompt-service;1"].getService(Components.interfaces.nsIPromptService);
+			promptService.alert(null, 'sipgateFFX', this.strings.getString('click2dial.running'));
 			return;
 		}
 		
@@ -456,6 +488,7 @@ SipgateFFX.prototype = {
 				_sgffx.isLoggedIn = true;
 				
 				_sgffx.log("*** NOW logged in ***");
+				_sgffx.getTosList();
 				_sgffx.getRecommendedIntervals();
 				_sgffx.getOwnUriList();
 				
@@ -928,6 +961,38 @@ SipgateFFX.prototype = {
 		this.log("*** getPhonebookEntries *** END ***");		
 		
 	},
+
+	getTosList: function() {
+		this.log("*** getTosList *** BEGIN ***");
+		if (!this.isLoggedIn) {
+			this.log("*** getTosList *** USER NOT LOGGED IN ***");
+			return;
+		}
+		
+		var params = {
+		};
+		
+        var result = function(ourParsedResponse, aXML){
+			dumpJson(ourParsedResponse);
+			if (ourParsedResponse.StatusCode && ourParsedResponse.StatusCode == 200) {
+				if(ourParsedResponse.TosList) {
+					_sgffx.tosList = ourParsedResponse.TosList; 
+				}
+            } else {
+				_sgffx.log("getTosList failed toSTRING: "+ aXML.toString());
+			}
+		};
+			
+		try {
+			this._rpcCall("samurai.TosListGet", params, result);
+		} catch(e) {
+			this.log('Exception in xmlrpc-request: ' + e);
+			this.log('Request sent: ' + request);
+		}
+		
+		this.log("*** getTosList *** END ***");		
+		
+	},
 		
 	_rpcCall: function(method, params, callbackResult, callbackError) {
 		var errString = this.strings;
@@ -956,7 +1021,7 @@ SipgateFFX.prototype = {
 		var req = new Request();
 		req.url = samuraiServer;
 		req.data = request;
-		req.headers['User-Agent'] = 'sipgateFFX 0.5b2/' + this.windowMediator.getMostRecentWindow('').navigator.userAgent;
+		req.headers['User-Agent'] = 'sipgateFFX ' + this.version + '/' + this.windowMediator.getMostRecentWindow('').navigator.userAgent;
 		req.headers['Connection'] = 'close';
 		req.headers['Content-Type'] = 'text/xml';
 		req.headers['Authorization'] = 'Basic ' + btoa(user + ':' + pass);

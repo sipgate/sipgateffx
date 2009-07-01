@@ -116,9 +116,9 @@
 		    	</vbox>
 		      <hbox id="sipgatenotificationPanelCommands">
 				<command id="sipgatecmd_closeNotifcationPanels" oncommand="sipgateffx.onNotificationPopupClose()" />
-				<command id="sipgatecmd_closeNotifcationPanels" oncommand="sipgateffx.onNotificationPopupClose()" />
+				<command id="sipgatecmd_NotifcationPanelsGotoEventlist" oncommand="sipgateffx.onNotificationGotoEventlist()" />
 				
-		        <button label="&gotoCalllist.button;" command="sipgatecmd_showHistory"/>
+		        <button label="&gotoCalllist.button;" command="sipgatecmd_NotifcationPanelsGotoEventlist"/>
 		        <button label="&gotoCloseThis.button;" command="sipgatecmd_closeNotifcationPanels" />
 		      </hbox>
 		    </vbox>

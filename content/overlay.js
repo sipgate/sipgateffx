@@ -183,7 +183,7 @@ var sipgateffx = {
 	login: function() {
 		var retVal = sgffx.getSamuraiAuth();
 		if (retVal.username == null || retVal.password == null) {
-			window.openDialog('chrome://sipgateffx/content/options.xul', '');
+			window.openDialog('chrome://sipgateffx/content/options.xul', 'sipgatePrefs');
 			return;
 		}
 		
@@ -282,9 +282,18 @@ var sipgateffx = {
 			this.log("sipgateFFX->overlay->onNotificationPopupClose ERROR " + e);
 		}
 	},
+	
+	onNotificationGotoEventlist: function(e) {
+		try {
+			this.onStatusbarCommand('showSitePage', 'history');
+			this.onNotificationPopupClose();
+		} catch(e) {
+			this.log("sipgateFFX->overlay->onNotificationGotoEventlist ERROR " + e);
+		}
+	},
 
 	parseClick2Dial: function() {
-		if (sgffx.getPref("extensions.sipgateffx.parsenumbers", "bool")) {
+		if (sgffx.getPref("extensions.sipgateffx.parsenumbers", "bool") && sgffx.isLoggedIn) {
 			sipgateffxPageLoaded();
 		}
 	},
@@ -334,7 +343,7 @@ var sipgateffx = {
 				break;
 				
 			case 'openPrefs':
-				window.open('chrome://sipgateffx/content/options.xul', 'sipgatePrefs', 'chrome,centerscreen,resizable=no,titlebar=yes,dependent=no');
+				window.openDialog('chrome://sipgateffx/content/options.xul', 'sipgatePrefs');
 				break;
 				
 			case 'sendSMS':

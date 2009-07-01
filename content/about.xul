@@ -27,16 +27,21 @@
 
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 <!DOCTYPE dialog SYSTEM "chrome://sipgateffx/locale/about.dtd">
-<dialog title="&about; sipgate2.0-FFX" orient="vertical" autostretch="always" onload="sizeToContent()" buttons="accept" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<dialog title="&about; sipgateFFX" orient="vertical" autostretch="always" onload="sizeToContent()" buttons="accept" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 <!-- Original template by Jed Brown -->
-<groupbox align="center" orient="horizontal">
-<vbox>
-  <text value="sipgateFFX 2.0" style="font-weight: bold; font-size: x-large;"/>
-  <text value="&version; 0.5"/>
-  <separator class="thin"/>
-  <text value="&createdBy;" style="font-weight: bold;"/>
-  <text value="sipgate &lt;&initially; michael.rotmanov&gt;"/>
-  <separator class="thin"/>
-</vbox>
-</groupbox>
+	<script src="about.js"/>
+	
+	<groupbox align="center" orient="horizontal">
+		<vbox>
+			  <text value="sipgateFFX" style="font-weight: bold; font-size: x-large;"/>
+			  <hbox>
+			  <text value="&version;"/>
+			  <label id="sipgateffxAboutVersion" value="0.5"/>
+			  </hbox>
+			  <separator class="thin"/>
+			  <text value="&createdBy;" style="font-weight: bold;"/>
+			  <text value="sipgate &lt;&initially; michael.rotmanov&gt;"/>
+			  <separator class="thin"/>
+		</vbox>
+	</groupbox>
 </dialog>

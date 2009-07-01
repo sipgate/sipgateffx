@@ -245,6 +245,8 @@ var allCountries = {
 	};
 var countryCodeRegex;
 
+var click2dialBackground = '#fff1b8';
+
 function _prepareArray() {
 	var tmp="/^XXX";
 	for(i in allCountries) {
@@ -288,6 +290,9 @@ function sipgateffxPageLoaded(aEvent)
     	webphoneMetaItem.setAttribute("value","enabled");
     	headItems[0].appendChild(webphoneMetaItem);
     }
+    
+	click2dialBackground = sgffx.getPref("extensions.sipgateffx.click2dialColor", "char");
+    
 	setTimeout(sipgateffxParseDOM, 0, body);
 }
 
@@ -383,7 +388,7 @@ function sipgateffxCheckPhoneNumber(aNode)
             newNodeClick2DialIcon.alt = "sipgate Click2Dial";
             spanNode.appendChild(newNodeClick2DialIcon);
             
-	        spanNode.style.backgroundColor = '#fff1b8';
+	        spanNode.style.backgroundColor = click2dialBackground;
 	        spanNode.style.color = 'blue';
 	        spanNode.style.cursor = 'pointer';
 	        spanNode.style.MozBorderRadius = '3px';
@@ -405,7 +410,6 @@ function sipgateffxCheckPhoneNumber(aNode)
 	return 0;	
 }
 
-// invocate quando viene cliccato il popup di chiamata
 function sipgateffxCallClick(e)
 {   
     var number = this.getAttribute("sipgateffx_number");

@@ -1,11 +1,13 @@
 <!ENTITY prefwindow.title "sipgateFFX 2.0 preferences">
-<!ENTITY pane1.title "sipgateFFX 2.0 preferences">
+<!ENTITY pane1.title "Account">
+<!ENTITY pane2.title "click2dial">
 <!ENTITY username.value "Username">
 <!ENTITY password.value "Password">
 <!ENTITY polling.label "Automatic update of display">
 <!ENTITY showDebug.label "Show support log">
 <!ENTITY parsenumbers.label "Enable click2dial on phone numbers">
 <!ENTITY click2dial.label "Click2Dial on TEL-URIs">
+<!ENTITY click2dialColor.value "Color for click2dial bubbles">
 <!ENTITY autologin.label "Auto-Login">
 <!ENTITY click2dialExtension.label "Click2Dial-Phone (changeable through web interface)">
 <!ENTITY systemTeam.label "I'm using sipgate team">
