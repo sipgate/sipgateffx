@@ -24,6 +24,8 @@
 
 var sgffx;
 var sending = false;
+var sipgateffxsmsstrings;
+var promptService = Components.classes["@mozilla.org/embedcomp/prompt-service;1"].getService(Components.interfaces.nsIPromptService);
 
 function doOK() {
 	if(sending) {
@@ -34,7 +36,7 @@ function doOK() {
 	var text = document.getElementById("sipgate_sms_text").value;
 	
 	if(number == '' || text == '') {
-		alert('Number or text is empty. Won\'t send!');
+		promptService.alert(window, 'sipgateFFX', sipgateffxsmsstrings.getString('sipgateffxSmsNumberEmpty'));
 		return false;
 	}
 	
@@ -45,15 +47,14 @@ function doOK() {
 	
 	var result = function(ourParsedResponse, aXML) {
 		if (ourParsedResponse.StatusCode && ourParsedResponse.StatusCode == 200) {
-			var promptService = Components.classes["@mozilla.org/embedcomp/prompt-service;1"].getService(Components.interfaces.nsIPromptService);
-			promptService.alert(window, 'sipgateFFX', 'The message was sent successfully!');
+			promptService.alert(window, 'sipgateFFX', sipgateffxsmsstrings.getString('sipgateffxSmsSentSuccess'));
 			window.close();
 		} else {
 			document.getElementById("sipgate_sms").setAttribute('hidden', 'false');
 			document.getElementById("sipgate_sms_sending").setAttribute('hidden', 'true');
 			sending = false;
 			sgffx.log((new XMLSerializer()).serializeToString(aXML));
-			alert('Sending failed!');
+			promptService.alert(window, 'sipgateFFX', sipgateffxsmsstrings.getString('sipgateffxSmsSentFailed'));
 		}
 	};
 	
@@ -74,14 +75,9 @@ function doOK() {
 		params.Schedule	= date + 'T' + time + '+01:00';
 	}
 */
-	
-	Components.utils.import("resource://sipgateffx/xmlrpc.js");
-
-	var request = bfXMLRPC.makeXML("samurai.SessionInitiate", [sgffx.samuraiServer[sgffx.systemArea], params]);
-	sgffx.log(request + "\n");
 
 	sending = true;	
-	sgffx._rpcCall(request, result);
+	sgffx._rpcCall("samurai.SessionInitiate", params, result);
 	return false;
 }
 
@@ -91,7 +87,7 @@ function doCancel() {
 
 function countTextChars() {
 	var val = document.getElementById("sipgate_sms_text").value.length;
-	document.getElementById("sipgate_sms_text_header").setAttribute('label', 'Text (' + val + ' chars)');
+	document.getElementById("sipgate_sms_text_header").label = sipgateffxsmsstrings.getFormattedString("sipgateffxSmsText", [val]);
 	return val;
 }
 
@@ -108,6 +104,8 @@ var sipgateffx_sms = {
 			dump("ERROR: " + anError);
 			return;
 		}
+
+		sipgateffxsmsstrings = document.getElementById("sipgateffx_sms-strings");
 				
 		if(typeof window.arguments != "undefined") {
 			if(typeof window.arguments[0] != "undefined") {
@@ -117,7 +115,7 @@ var sipgateffx_sms = {
 				document.getElementById("sipgate_sms_number").setAttribute('value', window.arguments[1]);
 			}
 		}
-
+		
 		document.getElementById("sipgate_sms_text").addEventListener("keyup", function(e) {
 			var val = countTextChars();
 		}, false);
