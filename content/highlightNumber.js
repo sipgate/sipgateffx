@@ -396,6 +396,8 @@ function sipgateffxCheckPhoneNumber(aNode)
 	        spanNode.title = "sipgate Click2Dial for " +  prettyNumber;
 	        
 	        spanNode.addEventListener("click", sipgateffxCallClick, true);
+	        spanNode.addEventListener("contextmenu", sipgateffxCallRightClick, true);
+	        
         	spanNode.setAttribute("sipgateffx_number", prettyNumber);
 
     	    text = text.substr(offset + number.length);
@@ -417,4 +419,15 @@ function sipgateffxCallClick(e)
     var niceNumber = sgffx.niceNumber(number, "49");
     sgffx.click2dial(niceNumber);
     return;
+}
+
+function sipgateffxCallRightClick(e)
+{   
+	var number = this.getAttribute("sipgateffx_number");
+	if (!number) return;
+	var niceNumber = sgffx.niceNumber(number, "49");
+	e.preventDefault();
+
+	window.openDialog('chrome://sipgateffx/content/sms.xul', 'sipgateSMS', 'chrome,centerscreen,resizable=yes,titlebar=yes,alwaysRaised=yes', '', '+'+niceNumber);
+	return;
 }

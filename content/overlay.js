@@ -124,14 +124,24 @@ var sipgateffx = {
 		sgffx.setXulObjectVisibility('dialactivate', 0);
 		
 		// sgffx.setXulObjectVisibility('sipgate-c2d-status-bar', 1);
+		
+		var contextMenuHolder = "contentAreaContextMenu";
+		if(app=='thunderbird') {
+			contextMenuHolder = "mailContext";
+		}
 
-		document.getElementById("contentAreaContextMenu")
+		document.getElementById(contextMenuHolder)
 			.addEventListener("popupshowing", function(e) { sipgateffx_this.showContextMenu(e); }, false);
 		
 		if(sgffx.getPref("extensions.sipgateffx.autologin","bool")) {
 			this.login();
 		}
 		
+		if(app=='thunderbird') {
+			var threePane = Components.classes['@mozilla.org/appshell/window-mediator;1'].getService(Components.interfaces.nsIWindowMediator).getMostRecentWindow("mail:3pane");
+			gBrowser = threePane.document.getElementById("messagepane");
+		}
+
 		gBrowser.addEventListener("DOMContentLoaded", this.parseClick2Dial, false);
 		_prepareArray();
 	},
@@ -197,20 +207,21 @@ var sipgateffx = {
 	showContextMenu: function(event) {
 		// show or hide the menuitem based on what the context menu is on
 		// see http://kb.mozillazine.org/Adding_items_to_menus
-		document.getElementById("context-sipgateffx-sendassms").disabled = !gContextMenu.isTextSelected;
+		document.getElementById("context-sipgateffx-sendassms").disabled = !(gContextMenu.isTextSelected || gContextMenu.isContentSelected);
 		
 		// allow /,-,(,),.,whitespace and all numers in phonenumbers
 		var browserSelection = getBrowserSelection().match(/^[\/\(\)\ \-\.\[\]\d]+$/);
 		var niceNumber = '';
-
-		if(browserSelection !== null) {
+		
+		if (browserSelection !== null) {
 			niceNumber = sgffx.niceNumber(browserSelection, "49")
 		}
 		
-		if(browserSelection == null || niceNumber.length <  7 ) {
+		if (browserSelection == null || niceNumber.length < 7) {
 			document.getElementById("context-sipgateffx-sendTo").disabled = true;
 			document.getElementById("context-sipgateffx-callTo").disabled = true;
-		} else {
+		}
+		else {
 			document.getElementById("context-sipgateffx-sendTo").disabled = false;
 			document.getElementById("context-sipgateffx-sendTo").label = this.strings.getFormattedString("sipgateffxContextSendTo", [niceNumber]);
 			document.getElementById("context-sipgateffx-callTo").disabled = false;
@@ -255,7 +266,7 @@ var sipgateffx = {
 			niceNumber = sgffx.niceNumber(browserSelection, "49")
 		}
 		
-		window.openDialog('chrome://sipgateffx/content/sms.xul', 'sipgateSMS', 'chrome,centerscreen,resizable=yes,width=400,height=250,titlebar=yes,alwaysRaised=yes', '', '+'+niceNumber);
+		window.openDialog('chrome://sipgateffx/content/sms.xul', 'sipgateSMS', 'chrome,centerscreen,resizable=yes,titlebar=yes,alwaysRaised=yes', '', '+'+niceNumber);
 	},
 
 	onMenuItemContextCallTo: function(e) {
@@ -291,7 +302,7 @@ var sipgateffx = {
 			this.log("sipgateFFX->overlay->onNotificationGotoEventlist ERROR " + e);
 		}
 	},
-
+	
 	parseClick2Dial: function() {
 		if (sgffx.getPref("extensions.sipgateffx.parsenumbers", "bool") && sgffx.isLoggedIn) {
 			sipgateffxPageLoaded();
@@ -386,3 +397,9 @@ var sipgateffx = {
 };
 window.addEventListener("load", function(e) { sipgateffx.onLoad(e); }, false);
 window.addEventListener("unload", function(e) { sipgateffx.onUnload(e); }, false); 
+
+if(typeof "getBrowserSelection" != "function") {
+	function getBrowserSelection() {
+		return gBrowser.contentWindow.getSelection().toString();
+	}
+}

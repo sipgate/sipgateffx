@@ -34,9 +34,9 @@
     <stringbundle id="sipgateffx-strings" src="chrome://sipgateffx/locale/sipgateffx.properties"/>
   </stringbundleset>
 
-  <popup id="contentAreaContextMenu">
-	<menuseparator id="context-sipgate-sep" insertbefore="context-sep-selectall"/>
-	<menu id="context-sipgateffx" label="sipgate" insertbefore="context-sep-selectall"  image="chrome://sipgateffx/skin/icon_sipgate_active.gif" class="menu-iconic">
+  <popup id="mailContext">
+	<menuseparator id="context-sipgate-sep" insertbefore="mailContext-selectall"/>
+	<menu id="context-sipgateffx" label="sipgate" insertbefore="mailContext-selectall"  image="chrome://sipgateffx/skin/icon_sipgate_active.gif" class="menu-iconic">
 		<menupopup>
 		    <menuitem id="context-sipgateffx-sendassms"
 		              disabled="true"		    
@@ -56,11 +56,11 @@
   </popup>
   
   
-	<toolbar id="BrowserToolbarPalette">
+	<toolbar id="MailToolbarPalette">
 	  <toolbarbutton id="sipgateffx-toolbar-button"
 		label="&sipgateffxToolbar.label;"
 		tooltiptext="&sipgateffxToolbar.tooltip;"
-		insertbefore="print-button"
+		insertbefore="button-print"
 		popup="sipgatemenu"
 		class="toolbarbutton-1 chromeclass-toolbar-additional"/>
 	</toolbar>
@@ -179,8 +179,9 @@
 
   <script src="highlightNumber.js"/>
   <script type="application/x-javascript">
-  	app = 'firefox';
-  </script>  
+  	app = 'thunderbird';
+  </script>
   <script src="overlay.js"/>
+  
 
 </overlay>
