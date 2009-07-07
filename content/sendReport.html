@@ -26,8 +26,24 @@
 -->
 <head>
 <title>sipgateFFX status</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" >
+
 </head>
-<body>
+<body style="font-family: Arial, Verdana, sans-serif;">
+
+	<div id="userMessage">
+		
+	</div>
+
+	<div id="redBox" style="background:#fcc; border: 1px solid red; padding: 10px; margin-top: 10px;">
+		
+	</div>
+
+	<pre id="fileContent" style="overflow: auto; max-height: 500px; background: #eee; border: 1px dashed #000;">
+		
+	</pre>
+	
+	
 <script type="text/javascript">
 try {
 	var logAsString;
@@ -81,17 +97,26 @@ try {
 	logAsString = logAsString.replace(/>/g, '&gt;');	
 
 	if (sfobj.language == "de") {
-		document.write("Der Status von sipgateFFX wurde in die lokale Datei <PRE>" + file.path + "</PRE> protokolliert (klicken Sie <A HREF='file://" + file.path + "'>hier</A> um die Datei zu &ouml;ffnen).<BR><BR>\n");
-		document.write("Bitte schicken Sie diese Datei per E-Mail an: <a href=\"mailto:support@support.sipgate.de?subject=" + escape("Statusbericht sipgateFFX") + "\">support@support.sipgate.de</a><BR>\n");
-		document.write("<br><br>Das ist der Inhalt der Datei:<br><pre>" + logAsString + "</pre>")
+		document.getElementById('redBox').innerHTML = 'Bitte senden Sie diesen Bericht <b>nicht</b>, wenn Sie sipgateFFX erwartungsgemäß funktioniert. Dieser Report dient ausschließlich der Fehlerbehebung!';
+
+		var msg = "Der Status von sipgateFFX wurde in die lokale Datei <PRE>" + file.path + "</PRE> protokolliert (klicken Sie <A HREF='file://" + file.path + "'>hier</A> um die Datei zu &ouml;ffnen).<BR><BR>\n";
+		msg += "Bitte schicken Sie diese Datei per E-Mail an: <a href=\"mailto:support@support.sipgate.de?subject=" + escape("Statusbericht sipgateFFX") + "\">support@support.sipgate.de</a><BR>\n";
+		document.getElementById('userMessage').innerHTML = msg;
+
 	} else {
-		document.write("The state of sipgateFFX was written to the file <PRE>" + file.path + "</PRE> on your computer (click <A HREF='file://" + file.path + "'>here</A> to open the file).<BR><BR>\n");
-		document.write("Please send this file via email to <a href=\"mailto:support@support.sipgate.de?subject=" + escape("Statusbericht sipgateFFX") + "\">support@support.sipgate.de</a><BR>\n");
-		document.write("<br><br>This is the content of that file:<br><pre>" + logAsString + "</pre>")
+		document.getElementById('redBox').innerHTML = 'Please do <b>not</b> send this report, if you don\'t encounter any problems with sipgateFFX. This report is for troubleshooting purposes only!';
+
+		var msg = "The state of sipgateFFX was written to the file <PRE>" + file.path + "</PRE> on your computer (click <A HREF='file://" + file.path + "'>here</A> to open the file).<BR><BR>\n";
+		msg += "Please send this file via email to <a href=\"mailto:support@support.sipgate.de?subject=" + escape("Status report sipgateFFX") + "\">support@support.sipgate.de</a><BR>\n";
+		document.getElementById('userMessage').innerHTML = msg;
+
 	}
+
+	document.getElementById('fileContent').innerHTML = logAsString;
 
 } catch (e) {
 	alert(e);
 }
 </script>
+
 </body></html>

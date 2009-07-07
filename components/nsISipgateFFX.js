@@ -292,9 +292,29 @@ SipgateFFX.prototype = {
 			promptService.alert(null, 'sipgateFFX', this.strings.getString('click2dial.running'));
 			return;
 		}
-		
-		var from = this.defaultExtension[_TOS];
 
+		var from = this.defaultExtension[_TOS];
+		
+		// check for custom defaultExtension
+        var voiceList = this.ownUriList[_TOS];
+		var uriList = [];
+		var defaultExtensionPref = this.getPref("extensions.sipgateffx.defaultExtension", "char");
+		
+		// make a list of all available voice uris
+        for (var i = 0; i < voiceList.length; i++) {
+			uriList.push(voiceList[i].SipUri);
+		}
+		
+		// check if option's defaultExtension is in the list of available extensions
+		if(uriList.indexOf(defaultExtensionPref) == -1) {
+			this.setPref("extensions.sipgateffx.defaultExtension", from.extensionSipUri, "char");
+		} else {
+			from = {
+				'alias': defaultExtensionPref,
+				'extensionSipUri': defaultExtensionPref
+			};
+		}
+				
 		this.log('### sipgateffx (click2dial): Starting from '+ from['alias'] +' ('+ from['extensionSipUri'] +') -> ' + to);
 		
 		this.currentSessionData = {'to': to, 'from': from['alias']};
@@ -312,7 +332,7 @@ SipgateFFX.prototype = {
 					_sgffx.currentSessionID = ourParsedResponse.SessionID;
 					_sgffx.setXulObjectAttribute('sipgatecmd_c2dCancellCall', "disabled", null);
 					
-					_sgffx.log('### sipgateffx (click2dial): Initiating... (SessionID: ' + _sgffx.currentSessionID + ')');
+					_sgffx.log('sipgateffx (click2dial): Initiating... (SessionID: ' + _sgffx.currentSessionID + ')');
 					
 					_sgffx.setXulObjectVisibility('sipgateffx_c2dStatus', 1);
 					_sgffx.setXulObjectAttribute('sipgateffx_c2dStatusText', "value", _sgffx.strings.getString('click2dial.status.NOT_YET_AVAILABLE'));
@@ -357,6 +377,7 @@ SipgateFFX.prototype = {
 				if (ourParsedResponse.StatusCode && ourParsedResponse.StatusCode == 200) {
 					
 					var state = ourParsedResponse.SessionStatus.toUpperCase().replace(/ /g,"_");
+					_sgffx.log('sipgateffx (click2dial): Status: ' + state);
 					
 					// click2dial.status.
 					var key = "click2dial.status." + state;
@@ -481,8 +502,7 @@ SipgateFFX.prototype = {
 
 		var result = function(ourParsedResponse, aXML) {
 			if (ourParsedResponse.StatusCode && ourParsedResponse.StatusCode == 200) {
-				_sgffx.log("*** ourParsedResponse.StatusCode ***" + ourParsedResponse.StatusCode);
-			
+	
 				showActiveMenu();
 				
 				_sgffx.isLoggedIn = true;
@@ -499,6 +519,8 @@ SipgateFFX.prototype = {
 					_sgffx.sipgateCredentials = ourParsedResponse;				
 				}
 				
+			} else {
+				_sgffx.log("*** Login Failed with: "+ ourParsedResponse.StatusCode +" ***");
 			}
 		};
 		
@@ -726,9 +748,11 @@ SipgateFFX.prototype = {
             if (ourParsedResponse.StatusCode && ourParsedResponse.StatusCode == 200) {
                 if (ourParsedResponse.OwnUriList.length > 0) {
 					// clear old list
+					var uriList = [];
 					_sgffx.ownUriList = {"voice": [], "text": [], "fax": []};
 					
                     for (var i = 0; i < ourParsedResponse.OwnUriList.length; i++) {
+						uriList.push(ourParsedResponse.OwnUriList[i].SipUri);
                         for (var k = 0; k < ourParsedResponse.OwnUriList[i].TOS.length; k++) {
                             var extensionInfo = {
                                 'UriAlias': ourParsedResponse.OwnUriList[i].UriAlias,
@@ -740,12 +764,17 @@ SipgateFFX.prototype = {
                             _sgffx.ownUriList[ourParsedResponse.OwnUriList[i].TOS[k]].push(extensionInfo);
                             if (ourParsedResponse.OwnUriList[i].DefaultUri === true) {
                                 _sgffx.defaultExtension[ourParsedResponse.OwnUriList[i].TOS[k]] = {
-                                    'alias': ourParsedResponse.OwnUriList[i].UriAlias,
+                                    'alias': (ourParsedResponse.OwnUriList[i].UriAlias!='' ? ourParsedResponse.OwnUriList[i].UriAlias : ourParsedResponse.OwnUriList[i].SipUri),
                                     'extensionSipUri': ourParsedResponse.OwnUriList[i].SipUri
                                 };
                             }
                         }
                     }
+					
+					var defaultExtensionPref = _sgffx.getPref("extensions.sipgateffx.defaultExtension", "char");
+					if (uriList.indexOf(defaultExtensionPref) == -1) {
+						_sgffx.setPref("extensions.sipgateffx.defaultExtension", _sgffx.defaultExtension.voice.extensionSipUri, "char");
+					}					
                 }
             }
         };
@@ -1070,7 +1099,7 @@ SipgateFFX.prototype = {
 		}; 
 		
 		req.onFailure = function(aStatusMsg, Msg) {
-			_sgffx.log('request failed: ' + aStatusMsg + ' - ' + Msg);
+			_sgffx.log('request failed for method: '+ method +' with: ' + aStatusMsg + ' - ' + Msg);
 			var errorMessage = '';
 			
 			if (typeof(callbackError) == 'function') {
@@ -1081,6 +1110,9 @@ SipgateFFX.prototype = {
 			switch (aStatusMsg) {
 				case 401:
 					errorMessage = "status.401";
+					if(user.search(/[\w-]+@([\w-]+\.)+[\w-]+/) == -1 && _sgffx.systemArea == 'team') {
+						errorMessage = "status.401.wrongSystem";
+					}
 					break;
 				case 403:
 					errorMessage = "status.403";
@@ -1111,7 +1143,7 @@ SipgateFFX.prototype = {
 		// req.onCancel = function() { dump("\n\nCANCELLED\n\n"); };
 		// req.onRequest = function() {dump("\n\nREQUESTED\n\n");};
 
-		this.log('_rpcCall: sending ' + method);
+		// this.log('_rpcCall: sending ' + method);
 		req.send();
 		
 	},

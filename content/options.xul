@@ -71,7 +71,7 @@
       <preference id="parsenumbers" name="extensions.sipgateffx.parsenumbers" type="bool"/>
       <preference id="click2dial" name="extensions.sipgateffx.click2dial" type="bool"/>
       <preference id="click2dialColor" name="extensions.sipgateffx.click2dialColor" type="string"/>
-	  <preference id="defaultExtension" name="extensions.sipgateffx.defaultExtension" type="bool"/>
+	  <preference id="defaultExtension" name="extensions.sipgateffx.defaultExtension" type="string"/>
     </preferences>  	
 
 	<vbox>
@@ -87,8 +87,8 @@
 		
 		<vbox>
 			<label value="&click2dialExtension.label;"/>
-			<menulist id="click2DialList" flex="0" readonly="true" disabled="true">
-				<menupopup id="click2DialListMenu" control="defaultExtension" />
+			<menulist id="click2DialList" flex="0"  preference="defaultExtension">
+				<menupopup id="click2DialListMenu" />
 			</menulist>
 		</vbox>
 		<separator />

@@ -47,17 +47,26 @@ var sipgateffx_options = {
         document.getElementById('password').setAttribute("value", auth.password);
 		
         var voiceList = sgffx.ownUriList.voice;
+		var uriList = [];
+		var defaultExtensionPref = sgffx.getPref("extensions.sipgateffx.defaultExtension", "char");
+		
         for (var i = 0; i < voiceList.length; i++) {
             var menuItem = document.createElement("menuitem");
-            menuItem.setAttribute("label", voiceList[i].UriAlias);
+            menuItem.setAttribute("label", (voiceList[i].UriAlias != '' ? voiceList[i].UriAlias : voiceList[i].SipUri));
             menuItem.setAttribute("id", voiceList[i].SipUri);
+            menuItem.setAttribute("value", voiceList[i].SipUri);
             
             document.getElementById("click2DialListMenu").appendChild(menuItem);
-            
-            if (voiceList[i].DefaultUri === true) {
-                document.getElementById("click2DialList").selectedItem = menuItem;
-            }
+			
+			uriList.push(voiceList[i].SipUri);
         }
+		
+		if(uriList.indexOf(defaultExtensionPref) == -1) {
+			document.getElementById("click2DialList").value = sgffx.defaultExtension.voice.extensionSipUri;
+			sgffx.setPref("extensions.sipgateffx.defaultExtension", sgffx.defaultExtension.voice.extensionSipUri, "char");
+		} else {
+			document.getElementById("click2DialList").value = defaultExtensionPref;
+		}
     },
     
     onUnload: function(){

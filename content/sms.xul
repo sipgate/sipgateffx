@@ -35,11 +35,9 @@
 	buttonlabelaccept="&sipgateffxSmsButton.send.label;"
 	ondialogaccept="return doOK();"
 	ondialogcancel="return doCancel();">
-
-	<script src="sms.js"/>
 	
-	<stringbundleset id="stringbundleset">
-		<stringbundle id="sipgateffx_sms-strings" src="chrome://sipgateffx/locale/sms.properties"/>
+	<stringbundleset id="stringbundleset"> 
+		<stringbundle id="sipgateffx_sms-strings" src="chrome://sipgateffx/locale/sms.properties" />
 	</stringbundleset>
 
 	<vbox id="sipgate_sms">
@@ -66,5 +64,7 @@
 			<progressmeter mode="undetermined"/>
 	    </groupbox>
 	</vbox>
+
+	<script src="sms.js"/>
 	
 </dialog>
