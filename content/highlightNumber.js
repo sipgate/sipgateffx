@@ -256,7 +256,7 @@ function _prepareArray() {
 	countryCodeRegex = new RegExp(tmp);
 }
 
-function sipgateffxPageLoaded(aEvent)
+function sipgateffxPageLoaded(contentDocument)
 {
 	
 	try {
@@ -274,8 +274,18 @@ function sipgateffxPageLoaded(aEvent)
 //    if (aEvent.originalTarget.nodeName != "#document") return;
 //    if (!document.getElementById("sipgateffx_numberHighlight").getAttribute("checked")) return;
 //    var doc = aEvent.originalTarget;
-    var doc = content.document;
+
+	var doc;
+	
+	if(typeof contentDocument != 'undefined')
+	{
+		doc = contentDocument;
+	} else {
+	    doc = content.document;
+	}
+
     var body = doc.body;
+    
     if (!body) return;
 
     var metaItems = doc.getElementsByTagName('meta');  
@@ -292,11 +302,11 @@ function sipgateffxPageLoaded(aEvent)
     }
     
 	click2dialBackground = sgffx.getPref("extensions.sipgateffx.click2dialColor", "char");
-    
-	setTimeout(sipgateffxParseDOM, 0, body);
+
+	setTimeout(sipgateffxParseDOM, 0, body, doc);
 }
 
-function sipgateffxParseDOM(aNode)
+function sipgateffxParseDOM(aNode, document)
 {
 	var t0 = new Date().getTime();
 	const tagsOfInterest = [ "a", "abbr", "acronym", "address", "applet", "b", "bdo", "big", "blockquote", "body", "caption",
@@ -305,12 +315,14 @@ function sipgateffxParseDOM(aNode)
 	                         "strike", "s", "strong", "sub", "sup", "td", "th", "tt", "u", "var" ];
 
  	var xpath = "//text()[(parent::" + tagsOfInterest.join(" or parent::") + ")]";
- 	var candidates = content.document.evaluate(xpath, content.document, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
- 	
-	for ( var cand = null, i = 0; (cand = candidates.snapshotItem(i)); i++)
+ 	var candidates = document.evaluate(xpath, aNode, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
+
+    for ( var cand = null, i = 0; (cand = candidates.snapshotItem(i)); i++)
 	{
 	    try {
-	    	if (cand.nodeType == Node.TEXT_NODE) sipgateffxCheckPhoneNumber(cand);
+	    	if (cand.nodeType == Node.TEXT_NODE) {
+	    		sipgateffxCheckPhoneNumber(cand);
+	    	}
         } catch (e) {
         	sgffx.log('*** sipgateffx: sipgateffxCheckPhoneNumber ERROR ' + e);
         }		

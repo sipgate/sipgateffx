@@ -143,6 +143,7 @@ var sipgateffx = {
 		}
 
 		gBrowser.addEventListener("DOMContentLoaded", this.parseClick2Dial, false);
+		gBrowser.addEventListener("DOMFrameContentLoaded", this.parseClick2DialFrame, false);
 		_prepareArray();
 	},
 
@@ -309,8 +310,20 @@ var sipgateffx = {
 		}
 	},
 	
+	parseClick2DialFrame: function(evnt) {
+		if (sgffx.getPref("extensions.sipgateffx.parsenumbers", "bool") && sgffx.isLoggedIn) {
+			sipgateffxPageLoaded(evnt.target.contentDocument);
+		}
+	},
+	
 	toggleClick2Dial: function() {
-		sipgateffxPageLoaded();
+		if (content.frames.length <= 0) {
+			sipgateffxPageLoaded();
+		} else {
+		    for (var i=0; i<content.frames.length; i++) {
+		    	sipgateffxPageLoaded(content.frames[i].document);
+		    }
+		}
 	},
   
 	onStatusbarCommand: function(action, param) {
@@ -322,12 +335,11 @@ var sipgateffx = {
 				}		
 
 				var protocol = 'https://';
-				// var httpServer = 'secure.live.sipgate.de';
 				var httpServer = sgffx.sipgateCredentials.HttpServer.replace(/^www/, 'secure');				
 
 				var siteURL = protocol + httpServer + url[param];
 				
-				var dataString = 'username='+sgffx.username+'&password='+sgffx.password;
+				var dataString = 'username='+ encodeURIComponent(sgffx.username)+'&password='+ encodeURIComponent(sgffx.password);
 				
 				// POST method requests must wrap the encoded text in a MIME stream
 				var stringStream = Components.classes["@mozilla.org/io/string-input-stream;1"].
