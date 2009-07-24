@@ -35,6 +35,10 @@ function doOK() {
 	var number = document.getElementById("sipgate_sms_number").value;
 	var text = document.getElementById("sipgate_sms_text").value;
 	
+	if(sgffx.systemArea == 'classic') {
+		text = text.replace(/\n|\r/g, ' ');
+	}
+	
 	if(number == '' || text == '') {
 		promptService.alert(window, 'sipgateFFX', sipgateffxsmsstrings.getString('sipgateffxSmsNumberEmpty'));
 		return false;
