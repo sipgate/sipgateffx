@@ -70,6 +70,7 @@ var sipgateffx = {
 		sgffx.strings = this.strings;
 		
 		var allElements = [
+			'sipgateContacts',
 			'showcreditmenuitem',
 			'pollbalance',
 			'showvoicemailmenuitem',
@@ -281,7 +282,7 @@ var sipgateffx = {
 		
 		sgffx.click2dial(niceNumber);
 	},
-	
+
 	onMenuItemContextCallCancel: function(e) {
 		sgffx.cancelClick2Dial();
 	},
@@ -404,8 +405,14 @@ var sipgateffx = {
 	
 	$: function(name) {
 		return document.getElementById(name);
-	}
+	},
 	
+	dumpJson: function(obj) {
+		var nativeJSON = Components.classes["@mozilla.org/dom/json;1"]
+		                 .createInstance(Components.interfaces.nsIJSON);
+		sgffx.log(nativeJSON.encode(obj));
+	}
+		
 };
 window.addEventListener("load", function(e) { sipgateffx.onLoad(e); }, false);
 window.addEventListener("unload", function(e) { sipgateffx.onUnload(e); }, false); 

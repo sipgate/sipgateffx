@@ -75,6 +75,7 @@
     </preferences>  	
 
 	<vbox>
+		<checkbox id="previewnumber" preference="previewnumber" label="&previewnumber.label;" accesskey="e" />
 		<checkbox id="parsenumbers" preference="parsenumbers" label="&parsenumbers.label;" accesskey="n" />
 		<checkbox id="click2dial" preference="click2dial" label="&click2dial.label;" accesskey="c" hidden="true"/>
 

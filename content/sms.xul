@@ -40,10 +40,12 @@
 		<stringbundle id="sipgateffx_sms-strings" src="chrome://sipgateffx/locale/sms.properties" />
 	</stringbundleset>
 
+	<command id="sipgate_sms_contact" oncommand="sipgateffx_sms.onContactSelect(this)"/>
+
 	<vbox id="sipgate_sms">
 	    <groupbox>
 			<caption label="&sipgateffxSmsNumberHeader.label;"/>
-			<textbox type="autocomplete" autocompletesearch="form-history" enablehistory="true" id="sipgate_sms_number" height="20px" />
+			<menulist id="sipgate_sms_number" editable="true" command="sipgate_sms_contact"/>
 		</groupbox>
 	    <groupbox>
 			<caption label="&sipgateffxSmsTextHeader.label;" id="sipgate_sms_text_header"/>
@@ -64,6 +66,7 @@
 			<progressmeter mode="undetermined"/>
 	    </groupbox>
 	</vbox>
+	
 
 	<script src="sms.js"/>
 	

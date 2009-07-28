@@ -94,6 +94,8 @@ function SipgateFFX() {
         }
     };
     
+	this.contacts = {};
+	
     this.currentSessionID = null; // session for click2dial (must be NULL if there is no active session)
     this.currentSessionTime = null;
     this.currentSessionData = {
@@ -508,9 +510,6 @@ SipgateFFX.prototype = {
 				_sgffx.isLoggedIn = true;
 				
 				_sgffx.log("*** NOW logged in ***");
-				_sgffx.getTosList();
-				_sgffx.getRecommendedIntervals();
-				_sgffx.getOwnUriList();
 				
 				_sgffx.curBalance = null;
 				_sgffx.getBalance();
@@ -519,6 +518,16 @@ SipgateFFX.prototype = {
 					_sgffx.sipgateCredentials = ourParsedResponse;				
 				}
 				
+				_sgffx.getTosList();
+				_sgffx.getRecommendedIntervals();
+				_sgffx.getOwnUriList();
+				try {
+					_sgffx.clientIdentify();
+				} catch(e) {
+					_sgffx.log("*** clientIdentify FAILED");
+				}
+				_sgffx.getPhonebookList();
+								
 			} else {
 				_sgffx.log("*** Login Failed with: "+ ourParsedResponse.StatusCode +" ***");
 			}
@@ -943,8 +952,24 @@ SipgateFFX.prototype = {
 		var params = {};
 		
         var result = function(ourParsedResponse, aXML){
-			dumpJson(ourParsedResponse);
+			var neededContacts = [];
 			if (ourParsedResponse.StatusCode && ourParsedResponse.StatusCode == 200) {
+				if (ourParsedResponse.PhonebookList && ourParsedResponse.PhonebookList.length > 0) {
+					for (var i = 0; i < ourParsedResponse.PhonebookList.length; i++) {
+						
+						var entryId = ourParsedResponse.PhonebookList[i].EntryID;
+						var hash = ourParsedResponse.PhonebookList[i].EntryHash;
+						
+						if(!_sgffx.contacts[entryId] || _sgffx.contacts[entryId]['hash'] != entryHash) {
+							neededContacts.push(entryId);
+						}
+					}
+					
+					if(neededContacts.length > 0) {
+						_sgffx.getPhonebookEntries(neededContacts);
+					}
+				}
+				
             } else {
 				_sgffx.log("getPhonebookList failed toSTRING: "+ aXML.toString());
 			}
@@ -961,20 +986,51 @@ SipgateFFX.prototype = {
 		
 	},	
 
-	getPhonebookEntries: function() {
+	getPhonebookEntries: function(entryList) {
 		this.log("*** getPhonebookEntries *** BEGIN ***");
 		if (!this.isLoggedIn) {
 			this.log("*** getPhonebookEntries *** USER NOT LOGGED IN ***");
 			return;
 		}
 		
+		var vcardModule = {};
+
+		Components.utils.import("resource://sipgateffx/vcard.js", vcardModule);
+		
 		var params = {
 			'EntryIDList': []
 		};
 		
+		if(typeof(entryList) != 'undefined') {
+			params.EntryIDList = entryList;
+		}
+		
         var result = function(ourParsedResponse, aXML){
-			dumpJson(ourParsedResponse);
 			if (ourParsedResponse.StatusCode && ourParsedResponse.StatusCode == 200) {
+				
+				if (ourParsedResponse.EntryList && ourParsedResponse.EntryList.length > 0) {
+					
+					// _sgffx.runXulObjectCommand("sipgateContacts", "removeAllItems");
+					
+					for (var i = 0; i < ourParsedResponse.EntryList.length; i++) {
+						
+						// dump(ourParsedResponse.EntryList[i].Entry +"\n");
+						
+						var entryId = ourParsedResponse.EntryList[i].EntryID;
+						var entryHash = ourParsedResponse.EntryList[i].EntryHash;
+						
+						var contact = vcardModule.vCard.initialize(ourParsedResponse.EntryList[i].Entry);
+
+						_sgffx.contacts[entryId] = {
+							'hash': entryHash,
+							'name': contact['fn'],
+							'tel' : contact['tel']
+						}; 
+						
+						// _sgffx.runXulObjectCommand("sipgateContacts", 'appendItem', [contact['fn'], 'test']);
+					}
+				}
+				
             } else {
 				_sgffx.log("getPhonebookEntries failed toSTRING: "+ aXML.toString());
 			}
@@ -1022,6 +1078,35 @@ SipgateFFX.prototype = {
 		this.log("*** getTosList *** END ***");		
 		
 	},
+
+	clientIdentify: function() {
+		this.log("*** clientIdentify *** BEGIN ***");
+		if (!this.isLoggedIn) {
+			this.log("*** clientIdentify *** USER NOT LOGGED IN ***");
+			return;
+		}
+		
+		var params = {
+			'ClientName': 'sipgateFFX',
+			'ClientVersion': this.version,
+			'ClientVendor': 'sipgate (michael.rotmanov)'
+		};
+		
+		dumpJson(params);
+		
+        var result = function(ourParsedResponse, aXML){
+		};
+
+		try {
+			this._rpcCall("samurai.ClientIdentify", params, result);
+		} catch(e) {
+			this.log('Exception in xmlrpc-request: ' + e);
+			this.log('Request sent: ' + request);
+		}
+		
+		this.log("*** clientIdentify *** END ***");		
+		
+	},	
 		
 	_rpcCall: function(method, params, callbackResult, callbackError) {
 		var errString = this.strings;

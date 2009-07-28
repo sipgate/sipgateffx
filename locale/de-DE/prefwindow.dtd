@@ -6,6 +6,7 @@
 <!ENTITY polling.label "Automatische Aktualisierung der Anzeige">
 <!ENTITY showDebug.label "Supportbericht anzeigen">
 <!ENTITY parsenumbers.label "click2dial für Telefonnummern einschalten">
+<!ENTITY previewnumber.label "vor dem Wählen Nummer bearbeiten">
 <!ENTITY click2dial.label "Click2Dial auf TEL-URIs anwenden">
 <!ENTITY click2dialColor.value "Farbe für click2dial-Links">
 <!ENTITY autologin.label "Auto-Login">
