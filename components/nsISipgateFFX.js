@@ -480,6 +480,7 @@ SipgateFFX.prototype = {
 
 			_sgffx.setXulObjectVisibility('pollbalance', 1);
 			_sgffx.setXulObjectVisibility('showsmsformmenuitem', 1);
+			_sgffx.setXulObjectVisibility('showphonenumberformmenuitem', 1);
 			_sgffx.setXulObjectVisibility('item_logoff', 1);
 			_sgffx.setXulObjectVisibility('separator1', 1);
 			_sgffx.setXulObjectVisibility('separator2', 1);
@@ -579,6 +580,7 @@ SipgateFFX.prototype = {
 		this.setXulObjectVisibility('showvoicemailmenuitem', 0);
 		this.setXulObjectVisibility('showphonebookmenuitem', 0);
 		this.setXulObjectVisibility('showsmsformmenuitem', 0);
+		this.setXulObjectVisibility('showphonenumberformmenuitem', 0);
 		this.setXulObjectVisibility('showhistorymenuitem', 0);
 		this.setXulObjectVisibility('showfaxmenuitem', 0);
 		this.setXulObjectVisibility('showshopmenuitem', 0);
@@ -1195,6 +1197,9 @@ SipgateFFX.prototype = {
 			switch (aStatusMsg) {
 				case 401:
 					errorMessage = "status.401";
+					if(user.search(/\d{7,}/) == 0) {
+						errorMessage = "status.401.sipIdEntered";
+					}
 					if(user.search(/[\w-]+@([\w-]+\.)+[\w-]+/) == -1 && _sgffx.systemArea == 'team') {
 						errorMessage = "status.401.wrongSystem";
 					}
@@ -1235,6 +1240,8 @@ SipgateFFX.prototype = {
 	
 	niceNumber: function (_number, natprefix) {
 		try {
+			this.log("_niceNumber(): number before: "+_number);
+			
 			_number = _number.toString().replace(/\s+/g, "");
 			_number = _number.toString().replace(/^\+/, "");
 			_number = _number.toString().replace(/\./g, "");
@@ -1246,9 +1253,8 @@ SipgateFFX.prototype = {
 			_number = _number.toString().replace(/49\(0+\)/, "49");
 			_number = _number.toString().replace(/49\[0+\]/, "49");
 			
-			this.log("_niceNumber(): number before: "+_number);
-			if (_number.toString().match(/^\(\d\d\d\)/)) {
-				// transform american prefixes with 3-digit prefix (eg. "(123) 456789") to international format:
+			if (_number.toString().match(/^\([2-9]\d\d\)/)) {
+				// transform american prefixes with 3-digit prefix (eg. "(321) 456789") to international format:
 				_number = _number.toString().replace(/\(/, "");
 				_number = _number.toString().replace(/\)/, "");
 				_number = _number.toString().replace(/^/, "1");

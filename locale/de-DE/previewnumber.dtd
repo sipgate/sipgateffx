@@ -1,0 +1,5 @@
+<!ENTITY sipgateffxPreviewnumberWindow.title "click2dial-Nummer bearbeiten">
+<!ENTITY sipgateffxPreviewnumberButton.cancel.label "Abbrechen">
+<!ENTITY sipgateffxPreviewnumberButton.send.label "Wählen">
+<!ENTITY sipgateffxPreviewnumberButton.addcontact.label "zu Kontakten hinzufügen...">
+<!ENTITY sipgateffxPreviewnumber.number.label "Rufnummer">

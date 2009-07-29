@@ -76,6 +76,7 @@ var sipgateffx = {
 			'showvoicemailmenuitem',
 			'showphonebookmenuitem',
 			'showsmsformmenuitem',
+			'showphonenumberformmenuitem',
 			'showhistorymenuitem',
 			'showfaxmenuitem',
 			'showshopmenuitem',
@@ -113,6 +114,7 @@ var sipgateffx = {
 		sgffx.setXulObjectVisibility('showvoicemailmenuitem', 0);
 		sgffx.setXulObjectVisibility('showphonebookmenuitem', 0);
 		sgffx.setXulObjectVisibility('showsmsformmenuitem', 0);
+		sgffx.setXulObjectVisibility('showphonenumberformmenuitem', 0);
 		sgffx.setXulObjectVisibility('showhistorymenuitem', 0);
 		sgffx.setXulObjectVisibility('showfaxmenuitem', 0);
 		sgffx.setXulObjectVisibility('showshopmenuitem', 0);
@@ -158,6 +160,7 @@ var sipgateffx = {
 			'showvoicemailmenuitem',
 			'showphonebookmenuitem',
 			'showsmsformmenuitem',
+			'showphonenumberformmenuitem',
 			'showhistorymenuitem',
 			'showfaxmenuitem',
 			'showshopmenuitem',
@@ -372,6 +375,10 @@ var sipgateffx = {
 				
 			case 'sendSMS':
 				window.open('chrome://sipgateffx/content/sms.xul', 'sipgateSMS', 'chrome,centerscreen,resizable=yes,titlebar=yes,alwaysRaised=yes');
+				break;
+				
+			case 'dialPhonenumber':
+				window.open('chrome://sipgateffx/content/previewnumber.xul', 'sipgatePreviewnumber', 'chrome,centerscreen,resizable=yes,titlebar=yes,alwaysRaised=yes');
 				break;
 				
 			case 'pollBalance':

@@ -136,6 +136,7 @@
 		<command id="sipgatecmd_showVoiceMail" oncommand="sipgateffx.onStatusbarCommand('showSitePage','voicemail');"/>
 		<command id="sipgatecmd_showPhoneBook" oncommand="sipgateffx.onStatusbarCommand('showSitePage','phonebook');"/>
 		<command id="sipgatecmd_showSmsForm" oncommand="sipgateffx.onStatusbarCommand('sendSMS');"/>
+		<command id="sipgatecmd_showPhonenumberForm" oncommand="sipgateffx.onStatusbarCommand('dialPhonenumber');"/>
 
 		<command id="sipgatecmd_logon" oncommand="sipgateffx.onStatusbarCommand('logon');"/>
 		<command id="sipgatecmd_logoff" oncommand="sipgateffx.onStatusbarCommand('logoff');"/>
@@ -143,6 +144,8 @@
 	
 	<popupset>
 		<menupopup id="sipgatemenu">
+			<menuitem label="&phonenumberform.menuitem;" accesskey="&phonenumberform.key;" hidden="true"
+				id="showphonenumberformmenuitem" command="sipgatecmd_showPhonenumberForm" />
 			<menuitem label="&showsmsform.menuitem;" accesskey="&showsmsform.key;" hidden="true"
 				id="showsmsformmenuitem" command="sipgatecmd_showSmsForm" />
 			<menuitem label="&showfax.menuitem;" accesskey="&showfax.key;" hidden="true"

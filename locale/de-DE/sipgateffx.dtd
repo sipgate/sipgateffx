@@ -12,7 +12,9 @@
 <!ENTITY showcredit.menuitem "Konto aufladen">
 <!ENTITY showvoicemail.menuitem "Sprachnachrichten abrufen">
 <!ENTITY showphonebook.menuitem "Kontakte anzeigen">
-<!ENTITY showsmsform.menuitem "SMS versenden">
+<!ENTITY showsmsform.menuitem "SMS versenden...">
+<!ENTITY phonenumberform.menuitem "Telefonnummer wählen...">
+
 <!ENTITY showfax.menuitem "Fax senden">
 <!ENTITY showshop.menuitem "Online-Shop">
 <!ENTITY showitemized.menuitem "Einzelverbindungsnachweis">
@@ -29,6 +31,7 @@
 <!ENTITY showvoicemail.key "S">
 <!ENTITY showphonebook.key "t">
 <!ENTITY showsmsform.key "v">
+<!ENTITY phonenumberform.key "n">
 <!ENTITY showfax.key "F">
 <!ENTITY showshop.key "l">
 <!ENTITY showitemized.key "z">

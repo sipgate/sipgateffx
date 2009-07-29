@@ -12,7 +12,8 @@
 <!ENTITY showcredit.menuitem "Credit account">
 <!ENTITY showvoicemail.menuitem "Check voice messages">
 <!ENTITY showphonebook.menuitem "Show contacts">
-<!ENTITY showsmsform.menuitem "Send text message">
+<!ENTITY showsmsform.menuitem "Send text message...">
+<!ENTITY phonenumberform.menuitem "Dial a phone number...">
 <!ENTITY showfax.menuitem "Send Fax">
 <!ENTITY showshop.menuitem "Online shop">
 <!ENTITY showitemized.menuitem "Itemized call list">
@@ -29,6 +30,7 @@
 <!ENTITY showvoicemail.key "S">
 <!ENTITY showphonebook.key "t">
 <!ENTITY showsmsform.key "M">
+<!ENTITY phonenumberform.key "n">
 <!ENTITY showfax.key "F">
 <!ENTITY showshop.key "l">
 <!ENTITY showitemized.key "z">

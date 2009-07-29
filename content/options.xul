@@ -69,6 +69,7 @@
   <prefpane id="pane2" label="&pane2.title;" image="chrome://sipgateffx/skin/preferences_click2dial.png">
     <preferences>
       <preference id="parsenumbers" name="extensions.sipgateffx.parsenumbers" type="bool"/>
+      <preference id="previewnumber" name="extensions.sipgateffx.previewnumber" type="bool"/>
       <preference id="click2dial" name="extensions.sipgateffx.click2dial" type="bool"/>
       <preference id="click2dialColor" name="extensions.sipgateffx.click2dialColor" type="string"/>
 	  <preference id="defaultExtension" name="extensions.sipgateffx.defaultExtension" type="string"/>

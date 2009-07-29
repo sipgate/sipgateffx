@@ -162,7 +162,6 @@ var sipgateffx_sms = {
 
 	onContactSelect: function(element) {
 		document.getElementById("sipgate_sms_number").value = element.selectedItem.value; 
-		// alert(element.selectedItem.value);
 	},
 	
   onUnload: function() {

@@ -386,7 +386,7 @@ function sipgateffxCheckPhoneNumber(aNode)
 			    aNode = spanNode.nextSibling;
 	        }
 	        
-	        var prettyNumber = number.replace(/[^0-9]/g,'');
+	        var prettyNumber = number.replace(/[^\(\)0-9]/g,'');
 	        
             var newNodeClick2DialIcon = aNode.ownerDocument.createElement("IMG");
             newNodeClick2DialIcon.style.border = 0;
@@ -426,10 +426,15 @@ function sipgateffxCheckPhoneNumber(aNode)
 
 function sipgateffxCallClick(e)
 {   
+	e.preventDefault();
     var number = this.getAttribute("sipgateffx_number");
     if (!number) return;
     var niceNumber = sgffx.niceNumber(number, "49");
-    sgffx.click2dial(niceNumber);
+	if (sgffx.getPref("extensions.sipgateffx.previewnumber", "bool")) {
+		window.openDialog('chrome://sipgateffx/content/previewnumber.xul', 'sipgatePreviewnumber', 'chrome,centerscreen,resizable=no,titlebar=yes,alwaysRaised=yes', '+'+niceNumber);
+	} else {
+		sgffx.click2dial(niceNumber);
+	}
     return;
 }
 

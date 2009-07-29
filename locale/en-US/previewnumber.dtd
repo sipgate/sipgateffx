@@ -1,0 +1,5 @@
+<!ENTITY sipgateffxPreviewnumberWindow.title "Preview click2dial number">
+<!ENTITY sipgateffxPreviewnumberButton.cancel.label "Cancel">
+<!ENTITY sipgateffxPreviewnumberButton.send.label "Dial">
+<!ENTITY sipgateffxPreviewnumberButton.addcontact.label "Add to contacts...">
+<!ENTITY sipgateffxPreviewnumber.number.label "Phone number">
