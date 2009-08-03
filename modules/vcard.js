@@ -15,25 +15,28 @@ vCard = {
   },
   parse: function(_input, fields) {
     var regexps = {
-      simple: new RegExp(/^(version|fn|title|org|bday)(\;.*)?\:(.+)$/i),
+      simple: new RegExp(/^(version|n|fn|title|org|bday)(\;.*)?\:(.+)$/i),
       complex: new RegExp(/^([^\:\;]+);([^\:]+)\:(.+)$/),
       key: new RegExp(/item\d{1,2}\./),
       properties: new RegExp(/((type=)?(.+);?)+/),
-      prefix:  new RegExp(/^[^\.]*\./)
+      prefix:  new RegExp(/^[^\.\;\:]*\./),
+      trim:	  new RegExp(/^(\t|\s|\n|\r)*|(\t|\s|\n|\r)*$/g)
     }
  
     var lines = _input.split('\n');
     
     for (n in lines) {
       line = lines[n];
-      
+            
       line = line.replace(regexps['prefix'],'');
+      line = line.replace(regexps['trim'],'');
       
       if(regexps['simple'].test(line))
       {
         results = line.match(regexps['simple']);
         key = results[1].toLowerCase();
         value = results[3];
+        value = /;/.test(value) ? value.split(';') : value;
         
         fields[key] = value;
       }

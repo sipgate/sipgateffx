@@ -30,11 +30,13 @@
 
 <dialog id="sipgateffxSmsWindow" title="&sipgateffxSmsWindow.title;"
 	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-	buttons="accept,cancel"
+	buttons="accept,cancel,extra1"
 	buttonlabelcancel="&sipgateffxSmsButton.cancel.label;"
 	buttonlabelaccept="&sipgateffxSmsButton.send.label;"
+	buttonlabelextra1="&sipgateffxSmsButton.addcontact.label;"
 	ondialogaccept="return doOK();"
-	ondialogcancel="return doCancel();">
+	ondialogcancel="return doCancel();"
+	ondialogextra1="return doExtra();">
 	
 	<stringbundleset id="stringbundleset"> 
 		<stringbundle id="sipgateffx_sms-strings" src="chrome://sipgateffx/locale/sms.properties" />

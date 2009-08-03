@@ -391,7 +391,7 @@ function Request(aUrl, aMethod, aData, aDoAuthBool, aUser, aPass) {
 		var method = this.method;
 
 		if (data && method == 'get'){
-			url = url + (url.contains('?') ? '&' : '?') + data;
+			url = url + ( url.indexOf('?') !== -1 ? '&' : '?') + data;
 			data = null;
 		}
 

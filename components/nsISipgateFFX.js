@@ -114,7 +114,7 @@ function SipgateFFX() {
 	
 	this.windowMediator = Components.classes["@mozilla.org/appshell/window-mediator;1"].getService(Components.interfaces.nsIWindowMediator);
 	
-	// must loaded here
+	// must be loaded here
 	Components.utils.import("resource://sipgateffx/xmlrpc.js");
 }
 
@@ -562,6 +562,7 @@ SipgateFFX.prototype = {
 		// set to initial values
 		this.isLoggedIn = false;
 		this.curBalance = null;
+		this.contacts = {};
 		
 		// close notification bubbles
 		this.runXulObjectCommand('sipgatenotificationPanel', 'hidePopup');
@@ -962,7 +963,7 @@ SipgateFFX.prototype = {
 						var entryId = ourParsedResponse.PhonebookList[i].EntryID;
 						var hash = ourParsedResponse.PhonebookList[i].EntryHash;
 						
-						if(!_sgffx.contacts[entryId] || _sgffx.contacts[entryId]['hash'] != entryHash) {
+						if(!_sgffx.contacts[entryId] || _sgffx.contacts[entryId]['hash'] != hash) {
 							neededContacts.push(entryId);
 						}
 					}
@@ -1127,6 +1128,11 @@ SipgateFFX.prototype = {
 			pass = retVal.password;
 		}
 		
+		if (user == null || pass == null || user == '' || pass == '') {
+			this.log("Auth: Failed. Username or password is/are empty.");
+			return;
+		}
+		
 		var _tmpSrv = this.getPref("extensions.sipgateffx.server","char");
 		if(_tmpSrv != null && typeof(_tmpSrv) == 'string' && _tmpSrv.match(/^https?(.*)\.sipgate\.net/)) {
 			samuraiServer = _tmpSrv;
@@ -1233,7 +1239,7 @@ SipgateFFX.prototype = {
 		// req.onCancel = function() { dump("\n\nCANCELLED\n\n"); };
 		// req.onRequest = function() {dump("\n\nREQUESTED\n\n");};
 
-		// this.log('_rpcCall: sending ' + method);
+		this.log('_rpcCall: sending ' + method);
 		req.send();
 		
 	},

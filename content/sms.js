@@ -100,6 +100,16 @@ function doCancel() {
 	window.close();
 }
 
+function doExtra() {
+	var number = document.getElementById("sipgate_sms_number").value;
+	var niceNumber = '';
+	if (number != '')
+		niceNumber = '+' + sgffx.niceNumber(number, "49");
+
+	window.openDialog('chrome://sipgateffx/content/contactOverlay.xul', 'sipgateContact', 'chrome,centerscreen,resizable=yes,titlebar=yes,alwaysRaised=yes', niceNumber);
+	return true;
+}
+
 function countTextChars() {
 	var val = document.getElementById("sipgate_sms_text").value.length;
 	document.getElementById("sipgate_sms_text_header").label = sipgateffxsmsstrings.getFormattedString("sipgateffxSmsText", [val]);
@@ -151,9 +161,11 @@ var sipgateffx_sms = {
 			}
 		}, false);
 		
-		for(var i in sgffx.contacts) {
-			if(!sgffx.contacts[i].tel.cell) continue;
-			document.getElementById("sipgate_sms_number").appendItem(sgffx.contacts[i].name, sgffx.contacts[i].tel.cell);
+		if(typeof(sgffx.contacts) != 'undefined') {
+			for(var i in sgffx.contacts) {
+				if(!sgffx.contacts[i].tel || !sgffx.contacts[i].tel.cell) continue;
+				document.getElementById("sipgate_sms_number").appendItem(sgffx.contacts[i].name, sgffx.contacts[i].tel.cell);
+			}
 		}
 
 		countTextChars();

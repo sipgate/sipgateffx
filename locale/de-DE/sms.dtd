@@ -1,6 +1,7 @@
 <!ENTITY sipgateffxSmsWindow.title "SMS senden">
 <!ENTITY sipgateffxSmsButton.cancel.label "Abbrechen">
 <!ENTITY sipgateffxSmsButton.send.label "Senden">
+<!ENTITY sipgateffxSmsButton.addcontact.label "zu Kontakten hinzufügen...">
 <!ENTITY sipgateffxSmsSending.label "Mitteilung wird verschickt...">
 <!ENTITY sipgateffxSmsScheduleHeader.label "Geplant">
 <!ENTITY sipgateffxSmsScheduleCheck.label "Später senden">

@@ -38,10 +38,12 @@
 	ondialogcancel="return doCancel();"
 	ondialogextra1="return doExtra();">
 
+	<command id="sipgate_contact" oncommand="sipgateffx_previewnumber.onContactSelect(this)"/>
+
 	<vbox id="sipgate_previewnumber">
 	    <groupbox>
 			<caption label="&sipgateffxPreviewnumber.number.label;"/>
-			<textbox id="sipgate_number"/>
+			<menulist id="sipgate_number" editable="true" command="sipgate_contact"/>
 		</groupbox>
 	</vbox>
 

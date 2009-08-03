@@ -44,7 +44,12 @@ function doCancel() {
 }
 
 function doExtra() {
-	promptService.alert(window, 'sipgateFFX', 'To be implemented');
+	var number = document.getElementById("sipgate_number").value;
+	var niceNumber = '';
+	if (number != '')
+		niceNumber = '+' + sgffx.niceNumber(number, "49");
+
+	window.openDialog('chrome://sipgateffx/content/contactOverlay.xul', 'sipgateContact', 'chrome,centerscreen,resizable=yes,titlebar=yes,alwaysRaised=yes', niceNumber);
 	return true;
 }
 
@@ -68,12 +73,15 @@ var sipgateffx_previewnumber = {
 			}
 		}
 
-		/*
-		for(var i in sgffx.contacts) {
-			if(!sgffx.contacts[i].tel.cell) continue;
-			document.getElementById("sipgate_number").appendItem(sgffx.contacts[i].name, sgffx.contacts[i].tel.cell);
+		if(typeof(sgffx.contacts) != 'undefined') {
+			for(var i in sgffx.contacts) {
+				if(!sgffx.contacts[i].tel) continue;
+				for(var teltype in sgffx.contacts[i].tel) {
+					if(teltype == 'fax') continue;
+					document.getElementById("sipgate_number").appendItem(sgffx.contacts[i].name + ' (' + teltype.toUpperCase() + ')', sgffx.contacts[i].tel[teltype]);
+				}
+			}
 		}
-		 */
 		
 	},
 

@@ -1,0 +1,35 @@
+<!ENTITY sipgateffxPreviewnumberWindow.title "Add / edit contact">
+<!ENTITY sipgateffxPreviewnumberButton.cancel.label "Cancel">
+<!ENTITY sipgateffxPreviewnumberButton.save.label "Save">
+
+<!-- LOCALIZATION NOTE (NameField1.id) : DONT_TRANSLATE -->
+<!ENTITY NameField1.id                  "FirstName">
+<!-- LOCALIZATION NOTE (NameField2.id) : DONT_TRANSLATE -->
+<!ENTITY NameField2.id                  "LastName">
+
+<!ENTITY Organization.label             "Organization:">
+<!ENTITY Organization.accesskey         "O">
+
+<!ENTITY NameField1.label               "First Name:">
+<!ENTITY NameField1.accesskey           "F">
+<!ENTITY NameField2.label               "Last Name:">
+<!ENTITY NameField2.accesskey           "N">
+<!ENTITY DisplayName.label              "Display Name:">
+<!ENTITY DisplayName.accesskey          "D">
+
+<!ENTITY PrimaryEmail.label             "E-Mail:">
+<!ENTITY PrimaryEmail.accesskey         "E">
+<!ENTITY SecondEmail.label              "Additional E-Mail:">
+<!ENTITY SecondEmail.accesskey          "d">
+
+<!ENTITY WorkPhone.label                "Phone (work):">
+<!ENTITY WorkPhone.accesskey            "P">
+<!ENTITY HomePhone.label                "Phone (private):">
+<!ENTITY HomePhone.accesskey            "h">
+<!ENTITY FaxNumber.label                "Fax:">
+<!ENTITY FaxNumber.accesskey            "F">
+<!ENTITY CellularNumber.label           "Cell Phone:">
+<!ENTITY CellularNumber.accesskey       "C">
+
+<!ENTITY Address.label          		"Address:">
+<!ENTITY Address.accesskey  	       	"A">

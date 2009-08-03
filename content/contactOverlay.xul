@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	*****************************************************************************
+	
+	    sipgate FFX - Firefox Extension for Mozilla Firefox Webbrowser
+	    Copyright (C) 2009 sipgate GmbH, Germany
+
+	    The original code is hosted at 
+	    http://www.github.com/sipgate/sipgateffx
+	
+	    sipgateFFX is free software; you can redistribute it and/or modify
+	    it under the terms of version 2 of the GNU General Public License
+	    as published by the Free Software Foundation.
+	
+	    sipgateFFX is distributed in the hope that it will be useful,
+	    but WITHOUT ANY WARRANTY; without even the implied warranty of
+	    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	    GNU General Public License for more details.
+	
+	    You should have received a copy of the GNU General Public License
+	    along with this program; if not, write to the Free Software
+	    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+	    02110-1301, USA
+	
+	*****************************************************************************
+-->
+
+<?xml-stylesheet href="chrome://global/skin/global.css" type="text/css"?>
+<!DOCTYPE overlay SYSTEM "chrome://sipgateffx/locale/contactOverlay.dtd">
+
+<dialog id="sipgateffxContactWindow" title="&sipgateffxPreviewnumberWindow.title;"
+	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	buttons="accept,cancel"
+	buttonlabelaccept="&sipgateffxPreviewnumberButton.save.label;"
+	buttonlabelcancel="&sipgateffxPreviewnumberButton.cancel.label;"
+	ondialogaccept="return doOK();"
+	ondialogcancel="return doCancel();">
+
+	<stringbundleset id="stringbundleset"> 
+		<stringbundle id="sipgateffx_contact-strings" src="chrome://sipgateffx/locale/contactOverlay.properties" />
+	</stringbundleset>
+
+      <vbox>
+        <!-- This hbox contains two vboxes
+             left: Name/Email, right: Phonenumbers -->
+        <hbox>
+          <vbox> <!-- This box contains the Names and Emailnames -->
+            <hbox align="center">
+              <spacer flex="1"/>
+              <label control="Organization" value="&Organization.label;"
+                     accesskey="&Organization.accesskey;"/>
+              <hbox class="CardEditWidth">
+                <textbox id="Organization" flex="1" />
+              </hbox>
+            </hbox>
+            <hbox align="center">
+              <spacer flex="1"/>
+              <label control="&NameField1.id;" value="&NameField1.label;"
+                     accesskey="&NameField1.accesskey;"/>
+              <hbox class="CardEditWidth">
+                <textbox id="&NameField1.id;" flex="1"
+                         oninput="GenerateDisplayName()"/>
+              </hbox>
+            </hbox>
+            <hbox align="center">
+              <spacer flex="1"/>
+              <label control="&NameField2.id;" value="&NameField2.label;"
+                     accesskey="&NameField2.accesskey;"/>
+              <hbox class="CardEditWidth">
+                <textbox id="&NameField2.id;" flex="1"
+                         oninput="GenerateDisplayName()"/>
+              </hbox>
+            </hbox>
+            <hbox align="center">
+              <spacer flex="1"/>
+              <label control="DisplayName" value="&DisplayName.label;"
+                     accesskey="&DisplayName.accesskey;" />
+              <hbox class="CardEditWidth">
+                <textbox id="DisplayName" flex="1"
+                         oninput="DisplayNameChanged()"/>
+              </hbox>
+            </hbox>
+            <hbox align="center">
+              <spacer flex="1"/>
+              <label control="PrimaryEmail" value="&PrimaryEmail.label;"
+                     accesskey="&PrimaryEmail.accesskey;"/>
+              <hbox class="CardEditWidth">
+                <textbox id="PrimaryEmail" flex="1" class="uri-element"/>
+              </hbox>
+            </hbox>
+            <hbox id="secondaryEmailContainer" align="center">
+              <spacer flex="1"/>
+              <label control="SecondEmail" value="&SecondEmail.label;"
+                     accesskey="&SecondEmail.accesskey;"/>
+              <hbox class="CardEditWidth">
+                <textbox id="SecondEmail" flex="1" class="uri-element"/>
+              </hbox>
+            </hbox>
+          </vbox> <!-- End of Name/Email -->
+          <!-- Phone Number section -->
+          <vbox>
+            <hbox align="center">
+              <spacer flex="1"/>
+              <label control="WorkPhone" value="&WorkPhone.label;"
+                     accesskey="&WorkPhone.accesskey;" />
+              <textbox id="WorkPhone" class="PhoneEditWidth"/>
+            </hbox>
+            <hbox align="center">
+              <spacer flex="1"/>
+              <label control="HomePhone" value="&HomePhone.label;"
+                     accesskey="&HomePhone.accesskey;"/>
+              <textbox id="HomePhone" class="PhoneEditWidth"/>
+            </hbox>
+            <hbox align="center">
+              <spacer flex="1"/>
+              <label control="FaxNumber" value="&FaxNumber.label;"
+                     accesskey="&FaxNumber.accesskey;"/>
+              <textbox id="FaxNumber" class="PhoneEditWidth"/>
+            </hbox>
+            <hbox align="center">
+              <spacer flex="1"/>
+              <label control="CellularNumber" value="&CellularNumber.label;"
+                     accesskey="&CellularNumber.accesskey;"/>
+              <textbox id="CellularNumber" class="PhoneEditWidth"/>
+            </hbox>
+            <hbox align="center">
+              <spacer flex="1"/>
+              <label control="Address" value="&Address.label;"
+                     accesskey="&Address.accesskey;"/>
+              <textbox id="Address" class="PhoneEditWidth"/>
+            </hbox>
+			<hbox align="center" id="ReverseLookup" style="height: 50px" hidden="true">
+              <spacer flex="1"/>
+              <label value="Inverssuche..." />
+			  <progressmeter mode="undetermined" flex="1" />
+            </hbox>
+          </vbox> <!-- End of Phonenumbers -->
+        </hbox> <!-- End of Name/Email/Phonenumbers -->
+        <!-- Email Preferences -->
+      </vbox> <!-- End of Name Tab -->
+
+	<script src="contactOverlay.js"/>
+	
+</dialog>
