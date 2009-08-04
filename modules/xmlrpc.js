@@ -338,6 +338,16 @@ function Request(aUrl, aMethod, aData, aDoAuthBool, aUser, aPass) {
 	
 	this.xhr = Components.classes["@mozilla.org/xmlextras/xmlhttprequest;1"].createInstance(Components.interfaces.nsIXMLHttpRequest);
 
+	this.setHeader = function(key, value) {
+		this.headers[key] = value;
+	};
+
+	this.setHeaders = function(headers) {
+		for(var key in headers) {
+			this.setHeader(key, headers[key]);
+		}
+	};
+
 	this.onStateChange = function(){
 		if (this.xhr.readyState != 4 || !this.running) return;
 		this.running = false;
@@ -402,7 +412,7 @@ function Request(aUrl, aMethod, aData, aDoAuthBool, aUser, aPass) {
 	    }
 
 		this.xhr.mozBackgroundRequest = true;
-
+		
 	    if(this.doAuth){
 			this.xhr.open(method.toUpperCase(), url, this.async, this.username, this.password);
         
@@ -440,15 +450,17 @@ function Request(aUrl, aMethod, aData, aDoAuthBool, aUser, aPass) {
 			this.xhr.open(method.toUpperCase(), url, this.async);
 	    }
 	    
-		this.xhr.onreadystatechange = this.onStateChange.bind(this);
-
 		for (var key in this.headers){
 			var value = this.headers[key];
 			try {
 				this.xhr.setRequestHeader(key, value);
-			} catch(e) {}
+			} catch(e) {
+				dump("Failed to set header --- " + key + " --- \n");
+			}
 		}
 
+		this.xhr.onreadystatechange = this.onStateChange.bind(this);
+		
 		if (typeof(this.onRequest) == 'function') {
 			this.onRequest();
 		};		

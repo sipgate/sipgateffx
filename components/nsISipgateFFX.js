@@ -1141,17 +1141,13 @@ SipgateFFX.prototype = {
 		var request = bfXMLRPC.makeXML(method, [samuraiServer, params]);
 		
 		var req = new Request();
+		req.setHeader('User-Agent', 'sipgateFFX ' + this.version + '/' + this.windowMediator.getMostRecentWindow('').navigator.userAgent);
+		req.setHeader('Connection', 'close');
+		req.setHeader('Content-Type', 'text/xml');
+		req.setHeader('Authorization', 'Basic ' + btoa(user + ':' + pass));
 		req.url = samuraiServer;
 		req.data = request;
-		req.headers['User-Agent'] = 'sipgateFFX ' + this.version + '/' + this.windowMediator.getMostRecentWindow('').navigator.userAgent;
-		req.headers['Connection'] = 'close';
-		req.headers['Content-Type'] = 'text/xml';
-		req.headers['Authorization'] = 'Basic ' + btoa(user + ':' + pass);
 
-/*		req.doAuth = true;
-		req.username = user;
-		req.password = pass;*/
-		
 		req.onSuccess = function(aText, aXML) {
 			var re = /(\<\?\xml[0-9A-Za-z\D]*\?\>)/;
 			var newstr = aText.replace(re, "");
@@ -1193,6 +1189,7 @@ SipgateFFX.prototype = {
 		
 		req.onFailure = function(aStatusMsg, Msg) {
 			_sgffx.log('request failed for method: '+ method +' with: ' + aStatusMsg + ' - ' + Msg);
+			
 			var errorMessage = '';
 			
 			if (typeof(callbackError) == 'function') {
@@ -1205,6 +1202,7 @@ SipgateFFX.prototype = {
 					errorMessage = "status.401";
 					if(user.search(/\d{7,}/) == 0) {
 						errorMessage = "status.401.sipIdEntered";
+						break;
 					}
 					if(user.search(/[\w-]+@([\w-]+\.)+[\w-]+/) == -1 && _sgffx.systemArea == 'team') {
 						errorMessage = "status.401.wrongSystem";

@@ -70,6 +70,8 @@ var sipgateffx_options = {
     },
     
     onUnload: function(){
+		var relogin = false;
+		
         if (document.getElementById("parsenumbers").value) {
             sgffx.setXulObjectVisibility('dialactivate', 0);
         }
@@ -87,9 +89,8 @@ var sipgateffx_options = {
         var chosenSystemArea = (document.getElementById("systemTeam").value ? 'team' : 'classic');
         if (sgffx.systemArea != chosenSystemArea) {
 			sgffx.log('options: changed systemArea from "'+sgffx.systemArea+'" to "'+chosenSystemArea+'"');
-            sgffx.logoff();
             sgffx.systemArea = chosenSystemArea;
-            sgffx.login();
+			relogin = true;
         }
         
         var auth = sgffx.getSamuraiAuth();
@@ -97,9 +98,13 @@ var sipgateffx_options = {
         if (auth.username != username || auth.password != password) {
 			sgffx.log('options: changed user name from "'+auth.username+'" to "'+username+'"');
             sgffx.setSamuraiAuth(username, password);
+			relogin = true;
+        }
+		
+		if(relogin) {
 			sgffx.log('options: logoff triggered');
             sgffx.logoff();
-        }
+		}
         
         if (document.getElementById('autologin').value === true) {
             if (!sgffx.isLoggedIn) {

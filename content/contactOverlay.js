@@ -124,7 +124,7 @@ function getContact(number) {
 									var tmp = [];
 									for(var k=0; k<contact['adr'][i][0].length; k++)
 									{
-										if(typeof(contact['adr'][i][0][k]) != 'undefined' && contact['adr'][i][0][k] != '') {
+										if(typeof(contact['adr'][i][0][k]) != 'undefined' && contact['adr'][i][0][k].replace(/^\s*|\s$/g,'') != '') {
 											tmp.push(contact['adr'][i][0][k]);
 										}
 									}
