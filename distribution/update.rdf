@@ -39,10 +39,7 @@
                 <em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id>
                 <em:minVersion>3.0a1</em:minVersion>
                 <em:maxVersion>3.5.*</em:maxVersion>
-                <em:updateLink>https://secure.dev.sipgate.de/static/downloads/sipgateffx/sipgateffx.xpi</em:updateLink>
-                <!-- updateHash = sha1sum FILE -->
-                <!-- <em:updateHash>sha1:78fc1d2887eda35b4ad2e3a0b60120ca271ce6e6</em:updateHash> -->
-		<!-- <em:updateInfoURL>http://www.mysite.com/updateinfo2.2.xhtml</em:updateInfoURL> -->
+                <em:updateLink>https://secure.live.sipgate.de/static/downloads/sipgateffx/sipgateffx.xpi</em:updateLink>
 	      </RDF:Description>
             </em:targetApplication>
           </RDF:Description>
