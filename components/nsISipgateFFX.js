@@ -766,8 +766,9 @@ SipgateFFX.prototype = {
                     for (var i = 0; i < ourParsedResponse.OwnUriList.length; i++) {
 						uriList.push(ourParsedResponse.OwnUriList[i].SipUri);
                         for (var k = 0; k < ourParsedResponse.OwnUriList[i].TOS.length; k++) {
+							var tmp = bfXMLRPC.utf8decode(ourParsedResponse.OwnUriList[i].UriAlias);
                             var extensionInfo = {
-                                'UriAlias': ourParsedResponse.OwnUriList[i].UriAlias,
+                                'UriAlias': tmp,
                                 'DefaultUri': ourParsedResponse.OwnUriList[i].DefaultUri,
                                 'E164In': ourParsedResponse.OwnUriList[i].E164In,
                                 'E164Out': ourParsedResponse.OwnUriList[i].E164Out,

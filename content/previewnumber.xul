@@ -43,7 +43,7 @@
 	<vbox id="sipgate_previewnumber">
 	    <groupbox>
 			<caption label="&sipgateffxPreviewnumber.number.label;"/>
-			<menulist id="sipgate_number" editable="true" command="sipgate_contact"/>
+			<menulist id="sipgate_number" editable="true" command="sipgate_contact" focus="true" />
 		</groupbox>
 	</vbox>
 

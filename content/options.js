@@ -51,13 +51,11 @@ var sipgateffx_options = {
 		var defaultExtensionPref = sgffx.getPref("extensions.sipgateffx.defaultExtension", "char");
 		
         for (var i = 0; i < voiceList.length; i++) {
-            var menuItem = document.createElement("menuitem");
-            menuItem.setAttribute("label", (voiceList[i].UriAlias != '' ? voiceList[i].UriAlias : voiceList[i].SipUri));
-            menuItem.setAttribute("id", voiceList[i].SipUri);
-            menuItem.setAttribute("value", voiceList[i].SipUri);
-            
-            document.getElementById("click2DialListMenu").appendChild(menuItem);
-			
+            document.getElementById("click2DialList").appendItem(
+				(voiceList[i].UriAlias != '' ? voiceList[i].UriAlias : voiceList[i].SipUri),
+				voiceList[i].SipUri
+			);
+
 			uriList.push(voiceList[i].SipUri);
         }
 		
