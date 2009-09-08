@@ -38,6 +38,16 @@
 	<menuseparator id="context-sipgate-sep" insertbefore="context-sep-selectall"/>
 	<menu id="context-sipgateffx" label="sipgate" insertbefore="context-sep-selectall"  image="chrome://sipgateffx/skin/icon_sipgate_active.gif" class="menu-iconic">
 		<menupopup>
+		    <menuitem id="context-sipgateffx-c2dblacklistDis"
+		              label="&sipgateffxContextC2dBlacklistDis.label;"
+		              accesskey="&sipgateffxContextC2dBlacklistDis.accesskey;"
+					  hidden="true"
+		              oncommand="sipgateffx.onMenuItemBlacklist(event, 'disable')"/>
+		    <menuitem id="context-sipgateffx-c2dblacklistEn"
+		              label="&sipgateffxContextC2dBlacklistEn.label;"
+		              accesskey="&sipgateffxContextC2dBlacklistEn.accesskey;"
+					  hidden="true"
+		              oncommand="sipgateffx.onMenuItemBlacklist(event, 'enable')"/>
 		    <menuitem id="context-sipgateffx-sendassms"
 		              disabled="true"		    
 		              label="&sipgateffxContextSendAsSMS.label;"

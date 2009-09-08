@@ -1401,7 +1401,7 @@ SipgateFFX.prototype = {
 				for (var i = 0; i < xulObjReference[id].length; i++) {
 					var tmpElementStorage = xulObjReference[id].pop();
 					if (tmpElementStorage == aXulObjRef) {
-						this.log("removed a reference to element with id '" + id + "'");
+						// this.log("removed a reference to element with id '" + id + "'");
 					}
 					else {
 						xulObjReference[id].unshift(tmpElementStorage);

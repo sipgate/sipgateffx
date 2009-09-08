@@ -24,6 +24,7 @@
 
 var debug = true;
 var sgffx;
+var sgffxDB;
 
 var url = {
     "history": "/",
@@ -49,11 +50,22 @@ var sipgateffx = {
 
 			sgffx = Components.classes['@api.sipgate.net/sipgateffx;1']
 											.getService().wrappedJSObject;
+											
+			try {
+				sgffxDB = Components.classes['@api.sipgate.net/sipgateffx-storage;1']
+												.getService().wrappedJSObject;
+			} catch(e) {
+				dump("ERROR while initializing DB: " + e);
+			}
 			
 		} catch (anError) {
 			dump("ERROR: " + anError);
 			return;
 		}
+		
+		sgffxDB.getBlacklistedSites();
+		
+		this.dumpJson(sgffxDB.blacklisted);
 		
 		// set language:
 		try { 
@@ -188,6 +200,7 @@ var sipgateffx = {
 			'sipgateffxEventsSMS'
 		];
 
+		sgffx.log('closing window, removing references to elements');
 		for(var i = 0; i < allElements.length; i++)
 		{
 			sgffx.removeXulObjRef(allElements[i], document.getElementById(allElements[i]));
@@ -234,6 +247,19 @@ var sipgateffx = {
 			document.getElementById("context-sipgateffx-callTo").disabled = false;
 			document.getElementById("context-sipgateffx-callTo").label = this.strings.getFormattedString("sipgateffxContextCallTo", [niceNumber]);
 		}
+		
+		try {
+			var host = content.document.location.host.toLowerCase();;
+			if(sgffxDB.isBlacklisted(host)) {
+				document.getElementById("context-sipgateffx-c2dblacklistEn").hidden = false;
+				document.getElementById("context-sipgateffx-c2dblacklistDis").hidden = true;
+			} else {
+				document.getElementById("context-sipgateffx-c2dblacklistEn").hidden = true;
+				document.getElementById("context-sipgateffx-c2dblacklistDis").hidden = false;
+			}
+		} catch(e) {
+			//
+		}		
 	},
 
 	onToolbarButtonCommand: function(e) {
@@ -292,12 +318,29 @@ var sipgateffx = {
 		sgffx.cancelClick2Dial();
 	},
 	
+	onMenuItemBlacklist: function(e, action) {
+		try {
+			var host = content.document.location.host.toLowerCase();
+			if(action == 'disable') {
+				sgffxDB.addBlacklisting(host);
+				document.getElementById("context-sipgateffx-c2dblacklistEn").hidden = false;
+				document.getElementById("context-sipgateffx-c2dblacklistDis").hidden = true;
+			} else if(action == 'enable') {
+				sgffxDB.removeBlacklisting(host);
+				document.getElementById("context-sipgateffx-c2dblacklistEn").hidden = true;
+				document.getElementById("context-sipgateffx-c2dblacklistDis").hidden = false;
+			}
+		} catch(e) {
+			sgffx.log("sipgateFFX->overlay->onMenuItemBlacklist ERROR " + e);
+		}
+	},
+	
 	onNotificationPopupClose: function(e) {
 		try {
 			sgffx.log('sipgateFFX->overlay->onNotificationPopupClose: requested');
 			sgffx.runXulObjectCommand('sipgatenotificationPanel', 'hidePopup');
 		} catch(e) {
-			this.log("sipgateFFX->overlay->onNotificationPopupClose ERROR " + e);
+			sgffx.log("sipgateFFX->overlay->onNotificationPopupClose ERROR " + e);
 		}
 	},
 	
@@ -306,18 +349,38 @@ var sipgateffx = {
 			this.onStatusbarCommand('showSitePage', 'history');
 			this.onNotificationPopupClose();
 		} catch(e) {
-			this.log("sipgateFFX->overlay->onNotificationGotoEventlist ERROR " + e);
+			sgffx.log("sipgateFFX->overlay->onNotificationGotoEventlist ERROR " + e);
 		}
 	},
 	
 	parseClick2Dial: function() {
 		if (sgffx.getPref("extensions.sipgateffx.parsenumbers", "bool") && sgffx.isLoggedIn) {
+			var host = '';
+			try {
+				host = content.document.location.host.toLowerCase();
+			} catch(e) {
+				//		
+			}
+			if(sgffxDB.isBlacklisted(host)) {
+				// sgffx.log('isBlacklisted: The site "'+host+'" is blacklisted. Do not match for click2dial.');
+				return;
+			}
 			sipgateffxPageLoaded();
 		}
 	},
 	
 	parseClick2DialFrame: function(evnt) {
 		if (sgffx.getPref("extensions.sipgateffx.parsenumbers", "bool") && sgffx.isLoggedIn) {
+			var host = '';
+			try {
+				host = evnt.target.contentDocument.location.host.toLowerCase();
+			} catch(e) {
+				//		
+			}
+			if(sgffxDB.isBlacklisted(host)) {
+				// sgffx.log('isBlacklisted: The site "'+host+'" is blacklisted. Do not match for click2dial.');
+				return;
+			}
 			sipgateffxPageLoaded(evnt.target.contentDocument);
 		}
 	},

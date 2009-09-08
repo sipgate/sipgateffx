@@ -22,10 +22,32 @@
 
 *****************************************************************************/
 var sgffx;
+var sgffxDB;
 
 function doOpenDebuggingInfo(){
     window.opener.loadURI('chrome://sipgateffx/content/sendReport.html');
     window.close();
+}
+
+function doDeleteBlacklistedHosts(){
+	var myListBox = document.getElementById("sipgateffxTree");
+	for(var i = 0; i < myListBox.itemCount; i++) {
+		if(myListBox.getItemAtIndex(i).checked) {
+			sgffxDB.removeBlacklisting(myListBox.getItemAtIndex(i).value);
+			myListBox.removeItemAt(i);
+		}
+	}
+}
+
+function buildBlacklistLisbox() {
+		var myListBox = document.getElementById("sipgateffxTree");
+
+		for (var i = 0; i < sgffxDB.blacklisted.length; i++) {
+			
+			var b = myListBox.appendItem(sgffxDB.blacklisted[i], sgffxDB.blacklisted[i]);
+			b.setAttribute('type', 'checkbox');
+
+		}
 }
 
 var sipgateffx_options = {
@@ -35,7 +57,13 @@ var sipgateffx_options = {
             netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
             
             sgffx = Components.classes['@api.sipgate.net/sipgateffx;1'].getService().wrappedJSObject;
-            //					    .createInstance(Components.interfaces.nsISipgateFFX);
+
+			try {
+				sgffxDB = Components.classes['@api.sipgate.net/sipgateffx-storage;1']
+												.getService().wrappedJSObject;
+			} catch(e) {
+				dump("ERROR while initializing DB: " + e);
+			}			
         } 
         catch (anError) {
             dump("ERROR: " + anError);
@@ -65,6 +93,8 @@ var sipgateffx_options = {
 		} else {
 			document.getElementById("click2DialList").value = defaultExtensionPref;
 		}
+		
+		buildBlacklistLisbox();
     },
     
     onUnload: function(){

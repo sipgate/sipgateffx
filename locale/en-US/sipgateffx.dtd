@@ -1,3 +1,7 @@
+<!ENTITY sipgateffxContextC2dBlacklistDis.label "disable click2dial for this domain">
+<!ENTITY sipgateffxContextC2dBlacklistDis.accesskey "c">
+<!ENTITY sipgateffxContextC2dBlacklistEn.label "enable click2dial for this domain">
+<!ENTITY sipgateffxContextC2dBlacklistEn.accesskey "c">
 <!ENTITY sipgateffxContextSendAsSMS.label "Text this">
 <!ENTITY sipgateffxContextSendAsSMS.accesskey "t">
 <!ENTITY sipgateffxContextSendTo.label "Send text message">

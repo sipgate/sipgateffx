@@ -1,6 +1,9 @@
 <!ENTITY prefwindow.title "sipgateFFX Einstellungen">
 <!ENTITY pane1.title "Account">
 <!ENTITY pane2.title "click2dial">
+<!ENTITY pane3.title "click2dial Blacklist">
+<!ENTITY c2dBlacklist.description "Folgende Domains werden aus der Rufnummererkennung ausgeschlossen:">
+<!ENTITY c2dBlacklistEnable.label "Ausgewählte Elemente von der Blacklist entfernen">
 <!ENTITY username.value "Benutzername">
 <!ENTITY password.value "Passwort">
 <!ENTITY polling.label "Automatische Aktualisierung der Anzeige">
