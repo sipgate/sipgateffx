@@ -36,6 +36,14 @@ vCard = {
         results = line.match(regexps['simple']);
         key = results[1].toLowerCase();
         value = results[3];
+
+        if(results[2] && results[2].match(/quoted-printable/i)) {
+        	value = value.replace(/=\r\n/gm, '');
+        	value = value.replace(/=([0-9A-F]{2})/gim, function(sMatch, sHex) {
+        		return String.fromCharCode(parseInt(sHex, 16));
+        	});
+        }
+        
         value = /;/.test(value) ? value.split(';') : value;
         
         fields[key] = value;

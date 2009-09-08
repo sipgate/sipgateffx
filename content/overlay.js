@@ -215,11 +215,11 @@ var sipgateffx = {
 		document.getElementById("context-sipgateffx-sendassms").disabled = !(gContextMenu.isTextSelected || gContextMenu.isContentSelected);
 		
 		// allow /,-,(,),.,whitespace and all numers in phonenumbers
-		var browserSelection = getBrowserSelection().match(/^[\/\(\)\ \-\.\[\]\d]+$/);
+		var browserSelection = getBrowserSelection().match(/^[^a-zA-Z]+$/);
 		var niceNumber = '';
 		
 		if (browserSelection !== null) {
-			niceNumber = sgffx.niceNumber(browserSelection, "49")
+			niceNumber = sgffx.niceNumber(browserSelection);
 		}
 		
 		if (browserSelection == null || niceNumber.length < 7) {
@@ -268,7 +268,7 @@ var sipgateffx = {
 		var niceNumber = '';
 
 		if(browserSelection !== null) {
-			niceNumber = sgffx.niceNumber(browserSelection, "49")
+			niceNumber = sgffx.niceNumber(browserSelection);
 		}
 		
 		window.openDialog('chrome://sipgateffx/content/sms.xul', 'sipgateSMS', 'chrome,centerscreen,resizable=yes,titlebar=yes,alwaysRaised=yes', '', '+'+niceNumber);
@@ -280,7 +280,7 @@ var sipgateffx = {
 		var niceNumber = '';
 
 		if(browserSelection !== null) {
-			niceNumber = sgffx.niceNumber(browserSelection, "49")
+			niceNumber = sgffx.niceNumber(browserSelection);
 		}
 		
 		sgffx.click2dial(niceNumber);

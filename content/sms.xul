@@ -53,6 +53,14 @@
 			<caption label="&sipgateffxSmsTextHeader.label;" id="sipgate_sms_text_header"/>
 			<textbox multiline="true" id="sipgate_sms_text" />
 		</groupbox>
+	    <groupbox id="sipgate_sms_senderbox">
+			<caption label="&sipgateffxSmsSendAs.label;"/>
+			<menulist id="sipgate_sms_sendernumber">
+				<menupopup>
+					<menuitem label="sipgate" value=""/>
+				</menupopup>
+			</menulist>
+	    </groupbox>
 	    <groupbox>
 			<caption label="&sipgateffxSmsScheduleHeader.label;"/>
 			<hbox>
@@ -68,7 +76,6 @@
 			<progressmeter mode="undetermined"/>
 	    </groupbox>
 	</vbox>
-	
 
 	<script src="sms.js"/>
 	

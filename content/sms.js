@@ -57,7 +57,7 @@ function doOK() {
 	if(numbers.length == 1) {
 		
 		apiFunction = 'SessionInitiate';
-		remoteUri = "sip:"+ sgffx.niceNumber(numbers[0], 49) +"\@sipgate.net";
+		remoteUri = "sip:"+ sgffx.niceNumber(numbers[0]) +"\@sipgate.net";
 		
 	} else {
 		
@@ -65,12 +65,18 @@ function doOK() {
 		remoteUri = [];
 		
 		for (var i = 0; i < numbers.length; i++) {
-			remoteUri.push("sip:"+ sgffx.niceNumber(numbers[i], 49) +"\@sipgate.net");
+			remoteUri.push("sip:"+ sgffx.niceNumber(numbers[i]) +"\@sipgate.net");
 		}
 	}
 
 	var params = { 'RemoteUri': remoteUri, 'TOS': "text", 'Content': text };
 	
+	// set sender
+	if(document.getElementById("sipgate_sms_sendernumber").value) {
+		params.LocalUri = "sip:" + document.getElementById("sipgate_sms_sendernumber").value + "\@sipgate.net";
+	}
+	
+	// set if scheduled
 	if(document.getElementById("sipgate_sms_schedule_check").checked) {
 		var date = document.getElementById("sipgate_sms_schedule_date").dateValue;
 		var time = document.getElementById("sipgate_sms_schedule_time");	
@@ -104,7 +110,7 @@ function doExtra() {
 	var number = document.getElementById("sipgate_sms_number").value;
 	var niceNumber = '';
 	if (number != '')
-		niceNumber = '+' + sgffx.niceNumber(number, "49");
+		niceNumber = '+' + sgffx.niceNumber(number);
 
 	window.openDialog('chrome://sipgateffx/content/contactOverlay.xul', 'sipgateContact', 'chrome,centerscreen,resizable=yes,titlebar=yes,alwaysRaised=yes', niceNumber);
 	return true;
@@ -137,6 +143,35 @@ var sipgateffx_sms = {
 			window.close();
 			return false;
 		}		
+
+		// get verified numbers if systemarea is classic
+		if(sgffx.systemArea == 'classic') {
+			
+			document.getElementById("sipgate_sms_senderbox").setAttribute('hidden', 'true');
+			
+		} else {
+			
+			var senderNumberPref = sgffx.getPref("extensions.sipgateffx.smsSenderNumber", "char");
+			
+			var result = function(ourParsedResponse, aXML) {
+				if (ourParsedResponse.StatusCode && ourParsedResponse.StatusCode == 200) {
+					if (ourParsedResponse.NumbersList && ourParsedResponse.NumbersList.length > 0) {
+						for (var i = 0; i < ourParsedResponse.NumbersList.length; i++) {
+							
+							var entry = ourParsedResponse.NumbersList[i];
+
+							document.getElementById("sipgate_sms_sendernumber").appendItem('+' + entry.E164, entry.E164);
+							
+							if(entry.E164 == senderNumberPref) {
+								document.getElementById("sipgate_sms_sendernumber").value = senderNumberPref;
+							}
+						}
+					}
+				}
+			};
+
+			sgffx._rpcCall("samurai.VerifiedNumbersGet", {}, result);
+		}
 		
 		if(typeof window.arguments != "undefined") {
 			if(typeof window.arguments[0] != "undefined") {
@@ -145,6 +180,10 @@ var sipgateffx_sms = {
 			if(typeof window.arguments[1] != "undefined") {
 				document.getElementById("sipgate_sms_number").setAttribute('value', window.arguments[1]);
 			}
+		}
+
+		if(sgffx.systemArea == 'classic') {
+			document.getElementById("sipgateffxSmsWindow").buttons = "accept,cancel";
 		}
 		
 		document.getElementById("sipgate_sms_text").addEventListener("keyup", function(e) {
@@ -177,7 +216,11 @@ var sipgateffx_sms = {
 	},
 	
   onUnload: function() {
-
+	if(document.getElementById("sipgate_sms_sendernumber").value) {
+		sgffx.setPref("extensions.sipgateffx.smsSenderNumber", document.getElementById("sipgate_sms_sendernumber").value, "char");
+	} else {
+		sgffx.setPref("extensions.sipgateffx.smsSenderNumber", "", "char");
+	}
   }
 
 };

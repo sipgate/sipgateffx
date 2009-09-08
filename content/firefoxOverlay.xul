@@ -81,7 +81,6 @@
 				<label id="sipgateffxEventsFax" value="0/0" hidden="true" />
 				<label id="sipgateffxEventsSMS" value="0/0" hidden="true" />
 			</hbox>
-			
 		</statusbarpanel>
 		
 		<!--
@@ -90,9 +89,9 @@
 			gelb: #fff1b8
 			rot: #f9c7c6		
 		-->
-		<statusbarpanel class="statusbarpanel-iconic" id="sipgateffx_c2dStatus" contextmenu="sipgatec2dmenu" hidden="true">
+		<statusbarpanel id="sipgateffx_c2dStatus" contextmenu="sipgatec2dmenu" hidden="true">
 			<hbox align="center" style="background-color: #F3DA2B">
-				<image src="chrome://sipgateffx/skin/icon_click2dial.gif" />
+				<image src="chrome://sipgateffx/skin/icon_click2dial.gif" onclick="sipgateffx.onMenuItemContextCallCancel()" style="cursor:pointer;" tooltiptext="Click here to hangup" />
 				<label id="sipgateffx_c2dStatusText" />
 			</hbox>
 			

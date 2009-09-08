@@ -33,7 +33,7 @@ function doOK() {
 		return false;
 	}
 	
-    var niceNumber = sgffx.niceNumber(number, "49");
+    var niceNumber = sgffx.niceNumber(number);
 	sgffx.click2dial(niceNumber);
 	
 	return true;
@@ -47,7 +47,7 @@ function doExtra() {
 	var number = document.getElementById("sipgate_number").value;
 	var niceNumber = '';
 	if (number != '')
-		niceNumber = '+' + sgffx.niceNumber(number, "49");
+		niceNumber = '+' + sgffx.niceNumber(number);
 
 	window.openDialog('chrome://sipgateffx/content/contactOverlay.xul', 'sipgateContact', 'chrome,centerscreen,resizable=yes,titlebar=yes,alwaysRaised=yes', niceNumber);
 	return true;
@@ -73,6 +73,10 @@ var sipgateffx_previewnumber = {
 			}
 		}
 
+		if(sgffx.systemArea == 'classic') {
+			document.getElementById("sipgateffxPreviewnumberWindow").buttons = "accept,cancel";
+		}
+		
 		if(typeof(sgffx.contacts) != 'undefined') {
 			for(var i in sgffx.contacts) {
 				if(!sgffx.contacts[i].tel) continue;

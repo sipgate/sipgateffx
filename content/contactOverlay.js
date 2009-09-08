@@ -51,7 +51,7 @@ function DisplayNameChanged() {
 }
 
 function getContact(number) {
-	var niceNumber = sgffx.niceNumber(number, '49');
+	var niceNumber = sgffx.niceNumber(number);
 	if(niceNumber.match(/^49[2-9]/) == null)
 		return;
 	else
@@ -188,16 +188,16 @@ function doOK() {
 		vCard.push('EMAIL;INTERNET:'+ document.getElementById("SecondEmail").value);
 	
 	if(document.getElementById("WorkPhone").value != '')
-		vCard.push('TEL;WORK;ISDN:'+ sgffx.niceNumber(document.getElementById("WorkPhone").value, '49'));
+		vCard.push('TEL;WORK;ISDN:'+ sgffx.niceNumber(document.getElementById("WorkPhone").value));
 	
 	if(document.getElementById("HomePhone").value != '')
-		vCard.push('TEL;HOME;ISDN:'+ sgffx.niceNumber(document.getElementById("HomePhone").value, '49'));
+		vCard.push('TEL;HOME;ISDN:'+ sgffx.niceNumber(document.getElementById("HomePhone").value));
 	
 	if(document.getElementById("FaxNumber").value != '')
-		vCard.push('TEL;FAX:'+ sgffx.niceNumber(document.getElementById("FaxNumber").value, '49'));
+		vCard.push('TEL;FAX:'+ sgffx.niceNumber(document.getElementById("FaxNumber").value));
 	
 	if(document.getElementById("CellularNumber").value != '')
-		vCard.push('TEL;CELL:'+ sgffx.niceNumber(document.getElementById("CellularNumber").value, '49'));
+		vCard.push('TEL;CELL:'+ sgffx.niceNumber(document.getElementById("CellularNumber").value));
 	
 	if(document.getElementById("Address").value != '')
 		vCard.push('ADR;HOME:'+ document.getElementById("Address").value + ';;;;;;');

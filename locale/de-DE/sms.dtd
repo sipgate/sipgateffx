@@ -7,3 +7,4 @@
 <!ENTITY sipgateffxSmsScheduleCheck.label "Später senden">
 <!ENTITY sipgateffxSmsTextHeader.label "Mitteilung">
 <!ENTITY sipgateffxSmsNumberHeader.label "Nummer">
+<!ENTITY sipgateffxSmsSendAs.label "Absendernummer">

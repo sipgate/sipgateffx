@@ -1,7 +1,10 @@
 // highlighNumber.js  FIREFOX
 var sgffx;
 
-var phoneRegExp = /((\+[1-9]\d)|(00[1-9]\d)|(0[^0]|([(\[][ \t\f]*[\d \t\f]+[ \t\f]*[)\]])))((((([ \t\f]*[(\[][ \t\f]*[\d \t\f]+[)\]][ \t\f]*)|([\d \t\f]{1,}[\.]?)))|(\(\d{3,}\)))[/]?(([ \t\f]*[\[(][\-\d \t\f]{3,}[\])][ \t\f]*)|([\-\d \t\f]{3,}))+)|(\+[1-9][\.\d]{4,})/;
+// var phoneRegExp = /((\+[1-9]\d)|(00[1-9]\d)|(0[^0]|([(\[][ \t\f]*[\d \t\f]+[ \t\f]*[)\]])))((((([ \t\f]*[(\[][ \t\f]*[\d \t\f]+[)\]][ \t\f]*)|([\d \t\f]{1,}[\.]?)))|(\(\d{3,}\)))[/]?(([ \t\f]*[\[(][\-\d \t\f]{3,}[\])][ \t\f]*)|([\-\d \t\f]{3,}))+)|(\+[1-9][\.\d]{4,})/;
+var phoneRegExp = /((\+[2-9]\d)|(00[1-9]\d)|(0[1-9]|([\(\[][\ \t]*[\d\ \t]+[\ \t]*[)\]])))((((([\ \t]*[\(\[][\ \t]*[\d\ \t]+[)\]][\ \t]*)|([\d\ \t]{1,}[\.]?)))|(\(\d{3,}\)))[\/]?(([\ \t]*[\[(][\-\d\ \t]{3,}[\]\)][\ \t]*)|([\-\d ]{3,}))+)|(\+[1-9][\.\/\-\ \t\d]{4,})|(1[\ \t\.\-\/])?\(?[2-9]\d{2}\)?[\ \t\.\-\/]\d{3}[\ \t\.\-\/]\d{4}/;
+var nbspRegExp = new RegExp(String.fromCharCode(0xa0), 'g'); 
+
 var allCountries = {
 	"1[2-9]": "North America",
 	"7": "Russia",
@@ -231,7 +234,6 @@ var allCountries = {
 	"996": "Kyrgyzstan",
 	"998": "Uzbekistan",
 	"5399": "Cuba (Guantanamo Bay)",
-	"5399": "Guantanamo Bay",
 	"8810": "ICO Global (Mobile Satellite Service)",
 	"8812": "Ellipso (Mobile Satellite service)",
 	"8816": "Iridium (Mobile Satellite service)",
@@ -286,7 +288,7 @@ function sipgateffxPageLoaded(contentDocument)
 
     var body = doc.body;
     
-    if (!body) return;
+    if (!body || body.className.match(/editable/)) return;
 
     var metaItems = doc.getElementsByTagName('meta');  
     for (var i=0; i<metaItems.length; i++)
@@ -339,14 +341,15 @@ function sipgateffxCheckPhoneNumber(aNode)
     var offset = 0;
 
     var i = 0;
-    
+
     while(1)
     {
 	    if(i > 5) {
 	    	sgffx.log('sipgateffxCheckPhoneNumber: too many iterations. exiting on "' + text.replace(/^\s+|\s+$/g, "") + '"');
 	    	return 1;
 	    }
-
+	    
+	    text = text.replace(nbspRegExp, ' ');
 	    var results = text.match(phoneRegExp);
 	    if (!results) {	    
 	    	return 0;
@@ -365,8 +368,8 @@ function sipgateffxCheckPhoneNumber(aNode)
 		    	sgffx.log('sipgateffxCheckPhoneNumber: possible false negative found "' + text.replace(/^\s+|\s+$/g, "") + '"');
 		    	return 1;
 		    }
-
-		    if(number.match(/^\+|^00|^011/) && !countryCodeRegex.test(number.replace(/^\+|^00|^011|\D/g, ""))) {
+		    
+		    if(number.match(/^[\(\[]?\+|^[\(\[]?00|^011/) && !countryCodeRegex.test(number.replace(/^\+|^00|^011|\D/g, ""))) {
 		    	sgffx.log('sipgateffxCheckPhoneNumber: unknown country code on "' + number.replace(/^\+|^00|^011|\D/g, "") + '"');
 		    	return 1;
 		    }
@@ -386,7 +389,9 @@ function sipgateffxCheckPhoneNumber(aNode)
 			    aNode = spanNode.nextSibling;
 	        }
 	        
-	        var prettyNumber = number.replace(/[^\(\)0-9]/g,'');
+	        var prettyNumber = number.replace(/[^\(\)\[\]0-9]/g,'').replace(/\(0\)|\[0\]/g,'');
+	        
+	    	var country = allCountries[countryCodeRegex.exec(number.replace(/^\+|^00|^011|\D/g, ""))];
 	        
             var newNodeClick2DialIcon = aNode.ownerDocument.createElement("IMG");
             newNodeClick2DialIcon.style.border = 0;
@@ -397,7 +402,7 @@ function sipgateffxCheckPhoneNumber(aNode)
             newNodeClick2DialIcon.src = "chrome://sipgateffx/skin/icon_click2dial.gif";
             newNodeClick2DialIcon.width = "16";
             newNodeClick2DialIcon.height = "16";
-            newNodeClick2DialIcon.alt = "sipgate Click2Dial";
+            //newNodeClick2DialIcon.alt = "sipgate Click2Dial";
             spanNode.appendChild(newNodeClick2DialIcon);
             
 	        spanNode.style.backgroundColor = click2dialBackground;
@@ -405,12 +410,12 @@ function sipgateffxCheckPhoneNumber(aNode)
 	        spanNode.style.cursor = 'pointer';
 	        spanNode.style.MozBorderRadius = '3px';
 	        spanNode.style.border = '1px solid #AAAAAA';
-	        spanNode.title = "sipgate Click2Dial for " +  prettyNumber;
+	        spanNode.title = "sipgate Click2Dial for " +  prettyNumber + (country ? ' ('+country+')' : '');
 	        
 	        spanNode.addEventListener("click", sipgateffxCallClick, true);
 	        spanNode.addEventListener("contextmenu", sipgateffxCallRightClick, true);
 	        
-        	spanNode.setAttribute("sipgateffx_number", prettyNumber);
+        	spanNode.setAttribute("sipgateffx_number", number);
 
     	    text = text.substr(offset + number.length);
     	    offset = 0;
@@ -429,7 +434,7 @@ function sipgateffxCallClick(e)
 	e.preventDefault();
     var number = this.getAttribute("sipgateffx_number");
     if (!number) return;
-    var niceNumber = sgffx.niceNumber(number, "49");
+    var niceNumber = sgffx.niceNumber(number);
 	if (sgffx.getPref("extensions.sipgateffx.previewnumber", "bool")) {
 		window.openDialog('chrome://sipgateffx/content/previewnumber.xul', 'sipgatePreviewnumber', 'chrome,centerscreen,resizable=no,titlebar=yes,alwaysRaised=yes', '+'+niceNumber);
 	} else {
@@ -442,7 +447,7 @@ function sipgateffxCallRightClick(e)
 {   
 	var number = this.getAttribute("sipgateffx_number");
 	if (!number) return;
-	var niceNumber = sgffx.niceNumber(number, "49");
+	var niceNumber = sgffx.niceNumber(number);
 	e.preventDefault();
 
 	window.openDialog('chrome://sipgateffx/content/sms.xul', 'sipgateSMS', 'chrome,centerscreen,resizable=yes,titlebar=yes,alwaysRaised=yes', '', '+'+niceNumber);

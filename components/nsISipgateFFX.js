@@ -103,6 +103,7 @@ function SipgateFFX() {
         'from': ''
     };
 	this.clientLang = 'en';
+	this.userCountryPrefix = '49';
 	this.mLogBuffer = Components.classes["@mozilla.org/supports-array;1"].createInstance(Components.interfaces.nsISupportsArray);
 	this.mLogBufferMaxSize = 1000;
 	this.getBalanceTimer = Components.classes["@mozilla.org/timer;1"].createInstance(Components.interfaces.nsITimer);
@@ -347,7 +348,9 @@ SipgateFFX.prototype = {
 					
 				}
 				else {
-					alert('click2dial failed. Internal system error has occurred.');
+					_sgffx.log('click2dial failed. Internal system error has occurred.');
+					dumpJson(params);
+					dumpJson(ourParsedResponse);
 					_sgffx.currentSessionID = null;
 				}
 			} catch(ex) {
@@ -516,7 +519,10 @@ SipgateFFX.prototype = {
 				_sgffx.getBalance();
 				if (_sgffx.systemArea == 'team') {
 					_sgffx.getEventSummary();
-					_sgffx.sipgateCredentials = ourParsedResponse;				
+					_sgffx.sipgateCredentials = ourParsedResponse;
+					if(ourParsedResponse.HttpServer.match(/com$/)) {
+						_sgffx.userCountryPrefix = '1';
+					}				
 				}
 				
 				_sgffx.getTosList();
@@ -603,22 +609,13 @@ SipgateFFX.prototype = {
 	},
 	
 	websiteSessionLogout: function() {
-		var urlSessionCheck = 'https://secure.live.sipgate.de/auth/logout/';
+		var protocol = 'https://';
+		var httpServer = this.sipgateCredentials.HttpServer.replace(/^www/, 'secure');				
+		var urlSessionCheck = protocol + httpServer + '/auth/logout/';
 		var oHttpRequest = Components.classes["@mozilla.org/xmlextras/xmlhttprequest;1"].createInstance(Components.interfaces.nsIXMLHttpRequest);																 
 		oHttpRequest.open("GET", urlSessionCheck, true);
 		oHttpRequest.send(null);
-	},	
-		
-	websiteSessionValid: function() {
-		var urlSessionCheck = 'https://secure.live.sipgate.de/ajax/keepalive/';
-		var oHttpRequest = Components.classes["@mozilla.org/xmlextras/xmlhttprequest;1"].createInstance(Components.interfaces.nsIXMLHttpRequest);																 
-		oHttpRequest.open("GET", urlSessionCheck,false);
-		oHttpRequest.send(null);
-		
-		var result = !oHttpRequest.responseText.match(/notloggedin/);
-
-		this.log('websiteSessionValid: ' + result);
-	},	
+	},
 	
 	getRecommendedIntervals: function() {
 		this.log("*** sipgateffx: getRecommendedIntervals *** BEGIN ***");
@@ -1243,36 +1240,65 @@ SipgateFFX.prototype = {
 		
 	},
 	
-	niceNumber: function (_number, natprefix) {
+	niceNumber: function (_number) {
 		try {
+			var natprefix = this.userCountryPrefix;
+			
 			this.log("_niceNumber(): number before: "+_number);
 			
-			_number = _number.toString().replace(/\s+/g, "");
-			_number = _number.toString().replace(/^\+/, "");
-			_number = _number.toString().replace(/\./g, "");
-			_number = _number.toString().replace(/-/g, "");
-			_number = _number.toString().replace(/43\(0+\)/, "43");
-			_number = _number.toString().replace(/43\[0+\]/, "43");
-			_number = _number.toString().replace(/44\(0+\)/, "44");
-			_number = _number.toString().replace(/44\[0+\]/, "44");
-			_number = _number.toString().replace(/49\(0+\)/, "49");
-			_number = _number.toString().replace(/49\[0+\]/, "49");
+			// checking for E.123 number (USA)
+			// will match for (XXX) YYY ZZZZ
+			var usNumberRegEx = new RegExp([
+				'^(1[\\s\\.\\-\\/])?',			// prefixed 1 with some trailing chars 
+				'(',						// start search here
+				'\\(?[2-9]\\d{2}\\)?',			// area code matching for optional brackets 
+				'[\\s\\.\\-\\/]',				// trailing char
+				'\\d{3}',					// 3-digit number block
+				'[\\s\\.\\-\\/]',				// trailing char
+				'\\d{4}',					// 4-digit number block
+				')'							// end search here
+			].join(''));
 			
-			if (_number.toString().match(/^\([2-9]\d\d\)/)) {
-				// transform american prefixes with 3-digit prefix (eg. "(321) 456789") to international format:
-				_number = _number.toString().replace(/\(/, "");
-				_number = _number.toString().replace(/\)/, "");
-				_number = _number.toString().replace(/^/, "1");
-			} else if (_number.toString().match(/^\(0[^0]\d+\)/)) { 
-				// prefix like "(0211) ...":
-				_number = _number.toString().replace(/\(0/, natprefix);
-				_number = _number.toString().replace(/\)/, "");
-			} else if (_number.toString().match(/^0[^0]/)) { 
-				// prefix like "0211 ...":
-				_number = _number.toString().replace(/^0/, natprefix);
+			if(usNumberRegEx.test(_number.toString())) {
+				// this.log("_niceNumber(): USA number found");
+				var numberParts = usNumberRegEx.exec(_number.toString());
+				_number = "1" + numberParts[2].replace(/\D/g,'');
 			}
+
+			// -----------------------------------------------------
+			
+			var removeCandidates = [
+				"^00",						// prefixed 00
+				"\\s",						// whitespaces
+				"-",						// dashes
+				"\\[0\\]",					// smth like 49 [0] 211 to 49 211
+				"\\(0\\)",					// smth like 49 (0) 211 to 49 211
+				"\\.",						// all points
+				"\\/",						// all points
+				String.fromCharCode(0xa0)	// &nbsp;
+			];
+			var removeRegEx = new RegExp(removeCandidates.join('|'), 'g');
+			
+			_number = _number.toString().replace(removeRegEx, "");
+			
+			// this.log("_niceNumber(): After removing characters: " + _number);
+
+			// -----------------------------------------------------			
+
+			var nationalPrefixCandidates = [
+				'^\\(0([1-9]\\d+)\\)',		// prefix like "(0211) ..."
+				'^0([1-9]\\d+)'				// prefix like "0211 ..."
+			];
+
+			var nationalPrefixRegEx = new RegExp(nationalPrefixCandidates.join('|'));
+
+			_number = _number.toString().replace(nationalPrefixRegEx, natprefix + "$1$2");
+
+			// this.log("_niceNumber(): After nationalPrefixRegEx: " + _number);
+
+			// -----------------------------------------------------	
+
 			_number = _number.toString().replace(/[^\d]/g, "");
-			_number = _number.toString().replace(/^00/, "");
 			this.log("_niceNumber(): number after: "+_number);
 		} catch (ex) {
 			this.log("Error in _niceNumber(): "+ex);
