@@ -4,6 +4,7 @@
 <!ENTITY username.value "Username">
 <!ENTITY password.value "Password">
 <!ENTITY polling.label "Automatic update of display">
+<!ENTITY dontshowbalance.label "Don't show balance">
 <!ENTITY showDebug.label "Show support log">
 <!ENTITY parsenumbers.label "Enable click2dial on phone numbers">
 <!ENTITY previewnumber.label "Edit phone number before dialing">

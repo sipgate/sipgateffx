@@ -202,7 +202,9 @@ var sipgateffx = {
 			return;
 		}
 		
-		sgffx.login();
+		if (!sgffx.loggedOutByUser) {
+			sgffx.login();
+		}
 	},
 
 	logoff: function() {
@@ -386,10 +388,12 @@ var sipgateffx = {
 				break;
 				
 			case 'logon':
+				sgffx.loggedOutByUser = false;
 				this.login();
 				break;
 				
 			case 'logoff':
+				sgffx.loggedOutByUser = true;
 				this.logoff();
 				break;
 				

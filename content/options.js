@@ -76,6 +76,12 @@ var sipgateffx_options = {
         else {
             sgffx.setXulObjectVisibility('dialactivate', 1);
         }
+		
+		if(document.getElementById("dontshowbalance").value) {
+			sgffx.setXulObjectAttribute('BalanceText', "value", "");			
+		} else {
+			sgffx.getBalance();
+		}
         
         var username = document.getElementById('username').value;
         var password = document.getElementById('password').value;
@@ -103,8 +109,8 @@ var sipgateffx_options = {
 			sgffx.log('options: logoff triggered');
             sgffx.logoff();
 		}
-        
-        if (document.getElementById('autologin').value === true) {
+
+        if (document.getElementById('autologin').value === true && sgffx.loggedOutByUser === false) {
             if (!sgffx.isLoggedIn) {
 				sgffx.log('options: login triggered');
 				sgffx.login();

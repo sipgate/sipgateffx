@@ -112,6 +112,7 @@ function SipgateFFX() {
 	this.c2dTimer = Components.classes["@mozilla.org/timer;1"].createInstance(Components.interfaces.nsITimer);
 	this.curBalance = null;
 	this.isLoggedIn = false;
+	this.loggedOutByUser = false;
 	
 	this.windowMediator = Components.classes["@mozilla.org/appshell/window-mediator;1"].getService(Components.interfaces.nsIWindowMediator);
 	
@@ -670,6 +671,12 @@ SipgateFFX.prototype = {
 			this.log("*** sipgateffx: sipgateffx *** USER NOT LOGGED IN ***");
 			return;
 		}
+		
+		// return if user enabled "don't show balance" in preferences box
+		if (this.getPref("extensions.sipgateffx.dontshowbalance", "bool")) {
+			this.log("*** sipgateffx: sipgateffx *** show balance disabled -> END ***");
+			return;
+		}		
 		
 		var setBalance = function() {
 			_sgffx.setXulObjectAttribute('BalanceText', "value", _sgffx.curBalance[0]);
