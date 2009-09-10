@@ -27,9 +27,12 @@ var sgffx;
 var sgffxDB;
 
 var url = {
-    "history": "/",
+    "history": "/#filter_inbox",
+    "historycall": "/#type_call",
+    "historyfax": "/#type_fax",
+    "historysms": "/#type_sms",
     "credit": "/settings/account/creditaccount",
-    "voicemail": "/",
+    "voicemail": "/#type_voicemail",
     "fax": "/fax",
     "phonebook": "/contacts",
     "itemized": "/settings/account/evn",
@@ -65,8 +68,6 @@ var sipgateffx = {
 		
 		sgffxDB.getBlacklistedSites();
 		
-		this.dumpJson(sgffxDB.blacklisted);
-		
 		// set language:
 		try { 
 			if (navigator.language.match(/de/) == "de") {
@@ -91,7 +92,6 @@ var sipgateffx = {
 			'showphonenumberformmenuitem',
 			'showhistorymenuitem',
 			'showfaxmenuitem',
-			'showshopmenuitem',
 			'showitemizedmenuitem',
 			'dialactivate',
 			'item_logoff',
@@ -129,7 +129,6 @@ var sipgateffx = {
 		sgffx.setXulObjectVisibility('showphonenumberformmenuitem', 0);
 		sgffx.setXulObjectVisibility('showhistorymenuitem', 0);
 		sgffx.setXulObjectVisibility('showfaxmenuitem', 0);
-		sgffx.setXulObjectVisibility('showshopmenuitem', 0);
 		sgffx.setXulObjectVisibility('showitemizedmenuitem', 0);
 		sgffx.setXulObjectVisibility('item_logoff', 0);
 		sgffx.setXulObjectVisibility('separator1', 0);
@@ -147,6 +146,11 @@ var sipgateffx = {
 
 		document.getElementById(contextMenuHolder)
 			.addEventListener("popupshowing", function(e) { sipgateffx_this.showContextMenu(e); }, false);
+		
+		document.getElementById('sipgateLogo').addEventListener("click", function(e) {
+			// more Info: https://developer.mozilla.org/en/XUL%3aMethod%3aopenPopup
+			document.getElementById('sipgatemenu').openPopup( document.getElementById('sipgateffx_loggedin'), "before_end", 0, 0, true);
+		}, false);
 		
 		if(sgffx.getPref("extensions.sipgateffx.autologin","bool")) {
 			this.login();
@@ -175,7 +179,6 @@ var sipgateffx = {
 			'showphonenumberformmenuitem',
 			'showhistorymenuitem',
 			'showfaxmenuitem',
-			'showshopmenuitem',
 			'showitemizedmenuitem',
 			'dialactivate',
 			'item_logoff',
@@ -401,10 +404,20 @@ var sipgateffx = {
 				if (!sgffx.isLoggedIn) {
 					sgffx.log("*** sipgateffx: showSitePage *** USER NOT LOGGED IN ***");
 					return;
+				}
+				
+				if(sgffx.systemArea == 'classic') {
+					sgffx.log("*** sipgateffx->showSitePage: wrong system area");
+					return;
+				}		
+				
+				if(typeof(url[param]) == 'undefined') {
+					sgffx.log("*** sipgateffx->showSitePage: no url for action");
+					return;
 				}		
 
 				var protocol = 'https://';
-				var httpServer = sgffx.sipgateCredentials.HttpServer.replace(/^www/, 'secure');				
+				var httpServer = sgffx.sipgateCredentials.HttpServer.replace(/^www/, 'secure');
 
 				var siteURL = protocol + httpServer + url[param];
 				

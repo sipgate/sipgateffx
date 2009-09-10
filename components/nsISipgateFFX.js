@@ -176,6 +176,7 @@ SipgateFFX.prototype = {
 					this.addOnVersion = item.version;
 				}
 			} catch(except) {
+				this.log(except);
 				this.addOnVersion = 'UNKNOWN';
 			}
 		} 
@@ -478,7 +479,6 @@ SipgateFFX.prototype = {
 				_sgffx.setXulObjectVisibility('showphonebookmenuitem', 1);
 				_sgffx.setXulObjectVisibility('showhistorymenuitem', 1);
 				_sgffx.setXulObjectVisibility('showfaxmenuitem', 1);
-				_sgffx.setXulObjectVisibility('showshopmenuitem', 1);
 				_sgffx.setXulObjectVisibility('showitemizedmenuitem', 1);
 			}
 
@@ -591,7 +591,6 @@ SipgateFFX.prototype = {
 		this.setXulObjectVisibility('showphonenumberformmenuitem', 0);
 		this.setXulObjectVisibility('showhistorymenuitem', 0);
 		this.setXulObjectVisibility('showfaxmenuitem', 0);
-		this.setXulObjectVisibility('showshopmenuitem', 0);
 		this.setXulObjectVisibility('showitemizedmenuitem', 0);
 		this.setXulObjectVisibility('dialactivate', 0);
 		this.setXulObjectVisibility('dialdeactivate', 0);
@@ -683,9 +682,9 @@ SipgateFFX.prototype = {
 			
 			// display the balance value:
 			if (_sgffx.curBalance[1] < 5.0) {
-				_sgffx.setXulObjectAttribute('BalanceText', "style", "cursor: pointer; color: red;");
+				_sgffx.setXulObjectAttribute('BalanceText', "style", "color: red;");
 			} else {
-				_sgffx.setXulObjectAttribute('BalanceText', "style", "cursor: pointer;");
+				// _sgffx.setXulObjectAttribute('BalanceText', "style", "cursor: pointer;");
 			}
 		};
 		
@@ -710,13 +709,13 @@ SipgateFFX.prototype = {
 				
 				var balanceValueString = balanceValueDouble;
 				
+				balanceValueString = (Math.floor(balanceValueDouble*100)/100).toFixed(2).toString();
+				// balanceValueString = balanceValueDouble.toFixed(2).toString();
+				
 				// dirty hack to localize floats:
 				if (_sgffx.clientLang == "de") {
 					// german floats use "," as delimiter for mantissa:
-					balanceValueString = balanceValueDouble.toFixed(2).toString();
 					balanceValueString = balanceValueString.replace(/\./, ",");
-				} else {
-					balanceValueString = balanceValueDouble.toFixed(2).toString();
 				}
 				
 				_sgffx.curBalance = [balanceValueString + " " + currency, balanceValueDouble];

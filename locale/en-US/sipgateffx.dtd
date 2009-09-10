@@ -1,6 +1,6 @@
-<!ENTITY sipgateffxContextC2dBlacklistDis.label "disable click2dial for this domain">
+<!ENTITY sipgateffxContextC2dBlacklistDis.label "Disable click2dial for this domain">
 <!ENTITY sipgateffxContextC2dBlacklistDis.accesskey "c">
-<!ENTITY sipgateffxContextC2dBlacklistEn.label "enable click2dial for this domain">
+<!ENTITY sipgateffxContextC2dBlacklistEn.label "Enable click2dial for this domain">
 <!ENTITY sipgateffxContextC2dBlacklistEn.accesskey "c">
 <!ENTITY sipgateffxContextSendAsSMS.label "Text this">
 <!ENTITY sipgateffxContextSendAsSMS.accesskey "t">
@@ -12,14 +12,13 @@
 
 <!ENTITY showprefs.menuitem "Preferences">
 <!ENTITY getbalance.menuitem "Refresh balance">
-<!ENTITY showhistory.menuitem "Show call list">
+<!ENTITY showhistory.menuitem "Show inbox">
 <!ENTITY showcredit.menuitem "Credit account">
-<!ENTITY showvoicemail.menuitem "Check voice messages">
+<!ENTITY showvoicemail.menuitem "Check voicemails">
 <!ENTITY showphonebook.menuitem "Show contacts">
 <!ENTITY showsmsform.menuitem "Send text message...">
 <!ENTITY phonenumberform.menuitem "Dial a phone number...">
 <!ENTITY showfax.menuitem "Send Fax">
-<!ENTITY showshop.menuitem "Online shop">
 <!ENTITY showitemized.menuitem "Itemized call list">
 <!ENTITY dialactivate.menuitem "Activate 'Click2Dial'">
 <!ENTITY dialdeactivate.menuitem "Deactivate 'Click2Dial'">
@@ -36,7 +35,6 @@
 <!ENTITY showsmsform.key "M">
 <!ENTITY phonenumberform.key "n">
 <!ENTITY showfax.key "F">
-<!ENTITY showshop.key "l">
 <!ENTITY showitemized.key "z">
 <!ENTITY dialactivate.key "a">
 <!ENTITY dialdeactivate.key "d">

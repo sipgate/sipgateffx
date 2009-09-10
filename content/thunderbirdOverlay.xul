@@ -129,7 +129,6 @@
 		<command id="sipgatecmd_toggledial" oncommand="sipgateffx.onStatusbarCommand('toggleClick2Dial');"/>
 		<command id="sipgatecmd_showHistory" oncommand="sipgateffx.onStatusbarCommand('showSitePage','history');"/>
 		<command id="sipgatecmd_showFax" oncommand="sipgateffx.onStatusbarCommand('showSitePage','fax');"/>
-		<command id="sipgatecmd_showShop" disabled="true" oncommand="sipgateffx.onStatusbarCommand('showSitePage','shop');"/>
 		<command id="sipgatecmd_showItemized" oncommand="sipgateffx.onStatusbarCommand('showSitePage','itemized');"/>
 
 		<command id="sipgatecmd_showCredit" oncommand="sipgateffx.onStatusbarCommand('showSitePage','credit');"/>
@@ -155,8 +154,6 @@
 				id="showvoicemailmenuitem" command="sipgatecmd_showVoiceMail" />
 			<menuitem label="&showphonebook.menuitem;" accesskey="&showphonebook.key;" hidden="true"
 				id="showphonebookmenuitem" command="sipgatecmd_showPhoneBook"   />
-			<menuitem label="&showshop.menuitem;" accesskey="&showshop.key;" hidden="true"
-				id="showshopmenuitem" command="sipgatecmd_showShop" />
 			<menuitem label="&showitemized.menuitem;" accesskey="&showitemized.key;" hidden="true"
 				id="showitemizedmenuitem" command="sipgatecmd_showItemized" />
 				

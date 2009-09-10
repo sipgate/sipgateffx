@@ -166,6 +166,9 @@ var sipgateffx_sms = {
 								document.getElementById("sipgate_sms_sendernumber").value = senderNumberPref;
 							}
 						}
+						document.getElementById("sipgate_sms_sendernumber").removeItemAt(0);
+						document.getElementById("sipgate_sms_sendernumber").selectedIndex = 0;
+	
 					}
 				}
 			};

@@ -50,6 +50,7 @@ vbox#sipgatenotificationPanelHeader
   padding-left: 20px;
   height: 16px;
   margin: 0 1px;
+  cursor: pointer;
 }
 
 #sipgateffxEventsCall

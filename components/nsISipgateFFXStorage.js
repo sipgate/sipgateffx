@@ -53,10 +53,11 @@ SipgateFFXStorage.prototype = {
 			if(!file.exists()) {
 				this.log("Database file does not exist.");
 				var manager = Cc["@mozilla.org/extensions/manager;1"].getService(Ci.nsIExtensionManager);
-		        var defaultFile = manager.getInstallLocation(this.classID).getItemLocation(this.classID);
+		        var defaultFile = manager.getInstallLocation('sipgateffx@michael.rotmanov').getItemLocation('sipgateffx@michael.rotmanov');
 		        defaultFile.append("defaults");
 		        defaultFile.append("sipgateffx.sqlite");
 		        defaultFile.copyTo(file.parent, file.leafName);
+		        file.permissions = 420;
 		        this.log("Copy database file\n");
 			}
 	

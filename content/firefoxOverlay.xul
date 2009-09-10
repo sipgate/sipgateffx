@@ -77,19 +77,31 @@
 	<!--	oncommand="sipgateffx.onToolbarButtonCommand()" -->
 			
 	<statusbar id="status-bar">
-		<statusbarpanel class="statusbarpanel-iconic" id="sipgateffx_statusbar_noauth" contextmenu="sipgatemenu" style="cursor: pointer;" >
+		<statusbarpanel id="sipgateffx_statusbar_noauth" contextmenu="sipgatemenu" >
 			<hbox align="center" hidden="false" id="sipgateffx_loggedout">
 				<image src="chrome://sipgateffx/skin/icon_sipgate_inactive.gif" />
 				<label value="&sipgateffxStatusbar.InfoNoAuth.label;" style="color: red;" />
 			</hbox>
 			
 			<hbox align="center" hidden="true" id="sipgateffx_loggedin">
-				<image src="chrome://sipgateffx/skin/icon_sipgate_active.gif" />
+				<image id="sipgateLogo" src="chrome://sipgateffx/skin/icon_sipgate_active.gif" />
 				<label id="BalanceText" />
 				
-				<label id="sipgateffxEventsCall" value="0/0" hidden="true" />
-				<label id="sipgateffxEventsFax" value="0/0" hidden="true" />
-				<label id="sipgateffxEventsSMS" value="0/0" hidden="true" />
+				<label 	id="sipgateffxEventsCall"
+						value="0/0"
+						hidden="true"
+						tooltiptext="Click here to go to call events"
+						onclick="sipgateffx.onStatusbarCommand('showSitePage','historycall')" />
+				<label 	id="sipgateffxEventsFax"
+						value="0/0"
+						hidden="true"
+						tooltiptext="Click here to go to fax events"
+						onclick="sipgateffx.onStatusbarCommand('showSitePage','historyfax')" />
+				<label 	id="sipgateffxEventsSMS"
+						value="0/0"
+						hidden="true"
+						tooltiptext="Click here to go to sms events"
+						onclick="sipgateffx.onStatusbarCommand('showSitePage','historysms')" />
 			</hbox>
 		</statusbarpanel>
 		
@@ -138,7 +150,6 @@
 		<command id="sipgatecmd_toggledial" oncommand="sipgateffx.onStatusbarCommand('toggleClick2Dial');"/>
 		<command id="sipgatecmd_showHistory" oncommand="sipgateffx.onStatusbarCommand('showSitePage','history');"/>
 		<command id="sipgatecmd_showFax" oncommand="sipgateffx.onStatusbarCommand('showSitePage','fax');"/>
-		<command id="sipgatecmd_showShop" disabled="true" oncommand="sipgateffx.onStatusbarCommand('showSitePage','shop');"/>
 		<command id="sipgatecmd_showItemized" oncommand="sipgateffx.onStatusbarCommand('showSitePage','itemized');"/>
 
 		<command id="sipgatecmd_showCredit" oncommand="sipgateffx.onStatusbarCommand('showSitePage','credit');"/>
@@ -167,8 +178,6 @@
 				id="showvoicemailmenuitem" command="sipgatecmd_showVoiceMail" />
 			<menuitem label="&showphonebook.menuitem;" accesskey="&showphonebook.key;" hidden="true"
 				id="showphonebookmenuitem" command="sipgatecmd_showPhoneBook"   />
-			<menuitem label="&showshop.menuitem;" accesskey="&showshop.key;" hidden="true"
-				id="showshopmenuitem" command="sipgatecmd_showShop" />
 			<menuitem label="&showitemized.menuitem;" accesskey="&showitemized.key;" hidden="true"
 				id="showitemizedmenuitem" command="sipgatecmd_showItemized" />
 				
