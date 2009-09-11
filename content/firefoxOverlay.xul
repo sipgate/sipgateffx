@@ -86,7 +86,7 @@
 			<hbox align="center" hidden="true" id="sipgateffx_loggedin">
 				<image id="sipgateLogo" src="chrome://sipgateffx/skin/icon_sipgate_active.gif" />
 				<label id="BalanceText" />
-				
+
 				<label 	id="sipgateffxEventsCall"
 						value="0/0"
 						hidden="true"
@@ -102,6 +102,20 @@
 						hidden="true"
 						tooltiptext="Click here to go to sms events"
 						onclick="sipgateffx.onStatusbarCommand('showSitePage','historysms')" />
+						
+				<hbox id="sipgateffxDND" hidden="true">
+					<image	id="sipgateffxDNDon"
+							src="chrome://sipgateffx/skin/dnd_on.gif"
+							hidden="true"
+							tooltiptext="Do Not Disturb is enabled. Click here to disable it."
+							onclick="sipgateffx.onMenuItemDoNotDisturb(event, 'disable')" />
+					<image 	id="sipgateffxDNDoff"
+							src="chrome://sipgateffx/skin/dnd_off.gif"
+							hidden="true"
+							tooltiptext="Do Not Disturb is disabled. Click here to enable it."
+							onclick="sipgateffx.onMenuItemDoNotDisturb(event, 'enable')" />
+				</hbox>
+						
 			</hbox>
 		</statusbarpanel>
 		
@@ -113,8 +127,9 @@
 		-->
 		<statusbarpanel id="sipgateffx_c2dStatus" contextmenu="sipgatec2dmenu" hidden="true">
 			<hbox align="center" style="background-color: #F3DA2B">
-				<image src="chrome://sipgateffx/skin/icon_click2dial.gif" onclick="sipgateffx.onMenuItemContextCallCancel()" style="cursor:pointer;" tooltiptext="Click here to hangup" />
+				<image src="chrome://sipgateffx/skin/icon_click2dial.gif" />
 				<label id="sipgateffx_c2dStatusText" />
+				<image src="chrome://sipgateffx/skin/icon_click2dial_hangup.gif" onclick="sipgateffx.onMenuItemContextCallCancel()" style="cursor:pointer;" tooltiptext="Click here to hangup" />
 			</hbox>
 			
 			<command id="sipgatecmd_c2dCancellCall" oncommand="sipgateffx.onMenuItemContextCallCancel()" disabled="true"/>

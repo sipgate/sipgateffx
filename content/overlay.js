@@ -111,6 +111,10 @@ var sipgateffx = {
 			
 			'sipgatenotificationPanel',
 			
+			'sipgateffxDND',
+			'sipgateffxDNDon',
+			'sipgateffxDNDoff',
+			
 			'sipgateffxEventsCall',
 			'sipgateffxEventsFax',
 			'sipgateffxEventsSMS'
@@ -335,6 +339,18 @@ var sipgateffx = {
 			}
 		} catch(e) {
 			sgffx.log("sipgateFFX->overlay->onMenuItemBlacklist ERROR " + e);
+		}
+	},
+	
+	onMenuItemDoNotDisturb: function(e, action) {
+		try {
+			if(action == 'disable') {
+				sgffx.setDoNotDisturb(false);
+			} else if(action == 'enable') {
+				sgffx.setDoNotDisturb(true);
+			}
+		} catch(e) {
+			sgffx.log("sipgateFFX->overlay->onMenuItemDoNotDisturb ERROR " + e);
 		}
 	},
 	

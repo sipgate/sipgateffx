@@ -186,7 +186,6 @@ SipgateFFX.prototype = {
 	oPrefService: Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch),
 	
 	setPref: function(aName, aValue, aType) {
-		this.log(aName);
 		try {
 			if (aType == "bool") {
 				this.oPrefService.setBoolPref(aName, aValue);
@@ -480,6 +479,9 @@ SipgateFFX.prototype = {
 				_sgffx.setXulObjectVisibility('showhistorymenuitem', 1);
 				_sgffx.setXulObjectVisibility('showfaxmenuitem', 1);
 				_sgffx.setXulObjectVisibility('showitemizedmenuitem', 1);
+				_sgffx.setXulObjectVisibility('sipgateffxDND', 1);
+			} else {
+				_sgffx.setXulObjectVisibility('sipgateffxDND', 0);
 			}
 
 			_sgffx.setXulObjectVisibility('pollbalance', 1);
@@ -523,7 +525,18 @@ SipgateFFX.prototype = {
 					_sgffx.sipgateCredentials = ourParsedResponse;
 					if(ourParsedResponse.HttpServer.match(/com$/)) {
 						_sgffx.userCountryPrefix = '1';
-					}				
+					} else
+					if(ourParsedResponse.HttpServer.match(/de$/)) {
+						_sgffx.userCountryPrefix = '49';
+					} else
+					if(ourParsedResponse.HttpServer.match(/at$/)) {
+						_sgffx.userCountryPrefix = '43';
+					} else
+					if(ourParsedResponse.HttpServer.match(/co\.uk$/)) {
+						_sgffx.userCountryPrefix = '44';
+					}
+					
+					_sgffx.getDoNotDisturb();				
 				}
 				
 				_sgffx.getTosList();
@@ -1065,7 +1078,6 @@ SipgateFFX.prototype = {
 		};
 		
         var result = function(ourParsedResponse, aXML){
-			dumpJson(ourParsedResponse);
 			if (ourParsedResponse.StatusCode && ourParsedResponse.StatusCode == 200) {
 				if(ourParsedResponse.TosList) {
 					_sgffx.tosList = ourParsedResponse.TosList; 
@@ -1114,7 +1126,77 @@ SipgateFFX.prototype = {
 		this.log("*** clientIdentify *** END ***");		
 		
 	},	
+	
+	getDoNotDisturb: function() {
+		this.log("*** getDoNotDisturb *** BEGIN ***");
+		if (!this.isLoggedIn) {
+			this.log("*** getDoNotDisturb *** USER NOT LOGGED IN ***");
+			return;
+		}
 		
+        var result = function(ourParsedResponse, aXML){
+			dumpJson(ourParsedResponse);
+			if (ourParsedResponse.StatusCode && ourParsedResponse.StatusCode == 200) {
+				if(ourParsedResponse.DND) {
+					_sgffx.setXulObjectVisibility('sipgateffxDNDon', 1);
+					_sgffx.setXulObjectVisibility('sipgateffxDNDoff', 0);
+				} else {
+					_sgffx.setXulObjectVisibility('sipgateffxDNDon', 0);
+					_sgffx.setXulObjectVisibility('sipgateffxDNDoff', 1);
+				}
+            } else {
+				_sgffx.log("getDoNotDisturb failed toSTRING: "+ aXML.toString());
+			}
+		};
+
+		try {
+			this._rpcCall("samurai.DoNotDisturbGet", {}, result);
+		} catch(e) {
+			this.log('Exception in xmlrpc-request: ' + e);
+			this.log('Request sent: ' + request);
+		}
+		
+		this.log("*** getDoNotDisturb *** END ***");		
+		
+	},	
+
+	setDoNotDisturb: function(dndEnabled) {
+		this.log("*** setDoNotDisturb *** BEGIN ***");
+		if (!this.isLoggedIn) {
+			this.log("*** setDoNotDisturb *** USER NOT LOGGED IN ***");
+			return;
+		}
+		
+		var params = {
+			DND: (dndEnabled==true ? 1 : 0)
+		};
+		
+        var result = function(ourParsedResponse, aXML){
+			dumpJson(ourParsedResponse);
+			if (ourParsedResponse.StatusCode && ourParsedResponse.StatusCode == 200) {
+				if(dndEnabled) {
+					_sgffx.setXulObjectVisibility('sipgateffxDNDon', 1);
+					_sgffx.setXulObjectVisibility('sipgateffxDNDoff', 0);
+				} else {
+					_sgffx.setXulObjectVisibility('sipgateffxDNDon', 0);
+					_sgffx.setXulObjectVisibility('sipgateffxDNDoff', 1);
+				}
+            } else {
+				_sgffx.log("setDoNotDisturb failed toSTRING: "+ aXML.toString());
+			}
+		};
+
+		try {
+			this._rpcCall("samurai.DoNotDisturbSet", params, result);
+		} catch(e) {
+			this.log('Exception in xmlrpc-request: ' + e);
+			this.log('Request sent: ' + request);
+		}
+		
+		this.log("*** setDoNotDisturb *** END ***");		
+		
+	},	
+
 	_rpcCall: function(method, params, callbackResult, callbackError) {
 		var errString = this.strings;
 		var samuraiServer = this.samuraiServer[this.systemArea];
@@ -1252,6 +1334,7 @@ SipgateFFX.prototype = {
 			
 			this.log("_niceNumber(): number before: "+_number);
 			
+			/*
 			// checking for E.123 number (USA)
 			// will match for (XXX) YYY ZZZZ
 			var usNumberRegEx = new RegExp([
@@ -1270,17 +1353,21 @@ SipgateFFX.prototype = {
 				var numberParts = usNumberRegEx.exec(_number.toString());
 				_number = "1" + numberParts[2].replace(/\D/g,'');
 			}
+			*/
 
 			// -----------------------------------------------------
 			
 			var removeCandidates = [
-				"^00",						// prefixed 00
 				"\\s",						// whitespaces
 				"-",						// dashes
 				"\\[0\\]",					// smth like 49 [0] 211 to 49 211
 				"\\(0\\)",					// smth like 49 (0) 211 to 49 211
 				"\\.",						// all points
 				"\\/",						// all points
+				"\\[",						// bracket [
+				"\\]",						// bracket ]
+				"\\(",						// bracket (
+				"\\)",						// bracket )
 				String.fromCharCode(0xa0)	// &nbsp;
 			];
 			var removeRegEx = new RegExp(removeCandidates.join('|'), 'g');
@@ -1288,17 +1375,22 @@ SipgateFFX.prototype = {
 			_number = _number.toString().replace(removeRegEx, "");
 			
 			// this.log("_niceNumber(): After removing characters: " + _number);
+			
+			if(!_number.match(/^0|^\+/)) {
+				_number = natprefix + _number;
+			} else {
+				_number = _number.toString().replace(/^00|^011|\+/, "");
+			}
 
 			// -----------------------------------------------------			
 
 			var nationalPrefixCandidates = [
-				'^\\(0([1-9]\\d+)\\)',		// prefix like "(0211) ..."
 				'^0([1-9]\\d+)'				// prefix like "0211 ..."
 			];
 
 			var nationalPrefixRegEx = new RegExp(nationalPrefixCandidates.join('|'));
 
-			_number = _number.toString().replace(nationalPrefixRegEx, natprefix + "$1$2");
+			_number = _number.toString().replace(nationalPrefixRegEx, natprefix + "$1");
 
 			// this.log("_niceNumber(): After nationalPrefixRegEx: " + _number);
 
