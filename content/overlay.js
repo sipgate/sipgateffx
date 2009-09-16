@@ -27,17 +27,29 @@ var sgffx;
 var sgffxDB;
 
 var url = {
-    "history": "/#filter_inbox",
-    "historycall": "/#type_call",
-    "historyfax": "/#type_fax",
-    "historysms": "/#type_sms",
-    "credit": "/settings/account/creditaccount",
-    "voicemail": "/#type_voicemail",
-    "fax": "/fax",
-    "phonebook": "/contacts",
-    "itemized": "/settings/account/evn",
-    "default": "/user/index.php"
-};
+	'team': {
+	    "history": "/#filter_inbox",
+	    "historycall": "/#type_call",
+	    "historyfax": "/#type_fax",
+	    "historysms": "/#type_sms",
+	    "credit": "/settings/account/creditaccount",
+	    "voicemail": "/#type_voicemail",
+	    "fax": "/fax",
+	    "phonebook": "/contacts",
+	    "itemized": "/settings/account/evn",
+	    "default": "/"
+	},
+	'classic': {
+	    "history": "/user/calls.php",
+	    "credit": "/user/kontoaufladen.php",
+	    "voicemail": "/user/voicemail.php",
+	    "fax": "/user/fax/index.php",
+	    "phonebook": "/user/phonebook.php",
+	    "itemized": "/user/konto_einzel.php?show=all",
+	    "default": "/user/index.php"
+	}
+}
+
 var sipgateffx_this;
 
 var sipgateffx = {
@@ -434,6 +446,24 @@ var sipgateffx = {
 		}
 	},
   
+	websiteSessionLoginClassic: function(user, pass) {
+		if ((user == null) && (pass == null)) {
+			user = this.mUserName;
+			pass = this.mUserPass;
+		}
+		
+		var protocol = 'https://';
+		var httpServer = sgffx.sipgateCredentials.HttpServer.replace(/^www/, 'secure');
+		var urlSessionLogin = protocol + httpServer + "/user/slogin.php";
+
+		var oHttpRequest = Components.classes["@mozilla.org/xmlextras/xmlhttprequest;1"]
+																 .getService(Components.interfaces.nsIJSXMLHttpRequest);
+		oHttpRequest.open("POST",urlSessionLogin,false);
+		oHttpRequest.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+		oHttpRequest.send("username="+user+"&password="+pass);
+		return oHttpRequest.responseText.match(/\d\d\d/).toString();
+	},
+ 
 	onStatusbarCommand: function(action, param) {
 		switch (action) {
 			case 'showSitePage':
@@ -442,33 +472,36 @@ var sipgateffx = {
 					return;
 				}
 				
-				if(sgffx.systemArea == 'classic') {
-					sgffx.log("*** sipgateffx->showSitePage: wrong system area");
-					return;
-				}		
-				
-				if(typeof(url[param]) == 'undefined') {
+				if(typeof(url[sgffx.systemArea][param]) == 'undefined') {
 					sgffx.log("*** sipgateffx->showSitePage: no url for action");
 					return;
 				}		
 
 				var protocol = 'https://';
 				var httpServer = sgffx.sipgateCredentials.HttpServer.replace(/^www/, 'secure');
+				var siteURL = protocol + httpServer + url[sgffx.systemArea][param];
+				sgffx.log("*** sipgateffx->showSitePage: link = " + siteURL);
+				
+				var postData = null;
+				
+				if (sgffx.systemArea == 'team') {
 
-				var siteURL = protocol + httpServer + url[param];
-				
-				var dataString = 'username='+ encodeURIComponent(sgffx.username)+'&password='+ encodeURIComponent(sgffx.password);
-				
-				// POST method requests must wrap the encoded text in a MIME stream
-				var stringStream = Components.classes["@mozilla.org/io/string-input-stream;1"].
-				                   createInstance(Components.interfaces.nsIStringInputStream);
-				stringStream.data = dataString;
-				
-				var postData = Components.classes["@mozilla.org/network/mime-input-stream;1"].
-				               createInstance(Components.interfaces.nsIMIMEInputStream);
-				postData.addHeader("Content-Type", "application/x-www-form-urlencoded");
-				postData.addContentLength = true;
-				postData.setData(stringStream);
+					var dataString = 'username=' + encodeURIComponent(sgffx.username) + '&password=' + encodeURIComponent(sgffx.password);
+					
+					// POST method requests must wrap the encoded text in a MIME stream
+					var stringStream = Components.classes["@mozilla.org/io/string-input-stream;1"].createInstance(Components.interfaces.nsIStringInputStream);
+					stringStream.data = dataString;
+					
+					postData = Components.classes["@mozilla.org/network/mime-input-stream;1"].createInstance(Components.interfaces.nsIMIMEInputStream);
+					postData.addHeader("Content-Type", "application/x-www-form-urlencoded");
+					postData.addContentLength = true;
+					postData.setData(stringStream);
+
+				} else {
+
+					this.websiteSessionLoginClassic(encodeURIComponent(sgffx.username), encodeURIComponent(sgffx.password));
+					
+				}
 				
 				var referrer = null;  
 				var flags = Components.interfaces.nsIWebNavigation.LOAD_FLAGS_NONE;  

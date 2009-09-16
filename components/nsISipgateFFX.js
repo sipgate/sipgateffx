@@ -475,17 +475,17 @@ SipgateFFX.prototype = {
 
 		var showActiveMenu = function() {
 			if (_sgffx.systemArea == 'team') {
-				_sgffx.setXulObjectVisibility('showcreditmenuitem', 1);
-				_sgffx.setXulObjectVisibility('showvoicemailmenuitem', 1);
-				_sgffx.setXulObjectVisibility('showphonebookmenuitem', 1);
-				_sgffx.setXulObjectVisibility('showhistorymenuitem', 1);
-				_sgffx.setXulObjectVisibility('showfaxmenuitem', 1);
-				_sgffx.setXulObjectVisibility('showitemizedmenuitem', 1);
 				_sgffx.setXulObjectVisibility('sipgateffxDND', 1);
 			} else {
 				_sgffx.setXulObjectVisibility('sipgateffxDND', 0);
 			}
-
+			
+			_sgffx.setXulObjectVisibility('showcreditmenuitem', 1);
+			_sgffx.setXulObjectVisibility('showvoicemailmenuitem', 1);
+			_sgffx.setXulObjectVisibility('showphonebookmenuitem', 1);
+			_sgffx.setXulObjectVisibility('showhistorymenuitem', 1);
+			_sgffx.setXulObjectVisibility('showfaxmenuitem', 1);
+			_sgffx.setXulObjectVisibility('showitemizedmenuitem', 1);
 			_sgffx.setXulObjectVisibility('pollbalance', 1);
 			_sgffx.setXulObjectVisibility('showsmsformmenuitem', 1);
 			_sgffx.setXulObjectVisibility('showphonenumberformmenuitem', 1);
@@ -522,9 +522,11 @@ SipgateFFX.prototype = {
 				
 				_sgffx.curBalance = null;
 				_sgffx.getBalance();
+				
+				_sgffx.sipgateCredentials = ourParsedResponse;
+				
 				if (_sgffx.systemArea == 'team') {
 					_sgffx.getEventSummary();
-					_sgffx.sipgateCredentials = ourParsedResponse;
 					if(ourParsedResponse.HttpServer.match(/com$/)) {
 						_sgffx.userCountryPrefix = '1';
 					} else
@@ -572,13 +574,11 @@ SipgateFFX.prototype = {
 			this.log("*** sipgateffx: logoff *** USER NOT LOGGED IN ***");
 			return;
 		}
-		
-		if (this.systemArea == 'team') {
-			try {
-				this.websiteSessionLogout();
-			} catch(e) {
-				//
-			}
+	
+		try {
+			this.websiteSessionLogout();
+		} catch(e) {
+			//
 		}
 		
 		// set to initial values
@@ -626,9 +626,15 @@ SipgateFFX.prototype = {
 	websiteSessionLogout: function() {
 		var protocol = 'https://';
 		var httpServer = this.sipgateCredentials.HttpServer.replace(/^www/, 'secure');				
-		var urlSessionCheck = protocol + httpServer + '/auth/logout/';
+		var urlSessionLogout = protocol + httpServer;
+		if(this.systemArea == 'team') {
+			urlSessionLogout += '/auth/logout/'; 
+		} else {
+			urlSessionLogout += '/user/slogout.php'; 
+		}
+		
 		var oHttpRequest = Components.classes["@mozilla.org/xmlextras/xmlhttprequest;1"].createInstance(Components.interfaces.nsIXMLHttpRequest);																 
-		oHttpRequest.open("GET", urlSessionCheck, true);
+		oHttpRequest.open("GET", urlSessionLogout, true);
 		oHttpRequest.send(null);
 	},
 	
