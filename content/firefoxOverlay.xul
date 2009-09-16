@@ -90,19 +90,16 @@
 				<label 	id="sipgateffxEventsCall"
 						value="0/0"
 						hidden="true"
-						tooltiptext="Click here to go to call events"
-						onclick="sipgateffx.onStatusbarCommand('showSitePage','historycall')" />
+						tooltiptext="Click here to go to call events" />
 				<label 	id="sipgateffxEventsFax"
 						value="0/0"
 						hidden="true"
-						tooltiptext="Click here to go to fax events"
-						onclick="sipgateffx.onStatusbarCommand('showSitePage','historyfax')" />
+						tooltiptext="Click here to go to fax events" />
 				<label 	id="sipgateffxEventsSMS"
 						value="0/0"
 						hidden="true"
-						tooltiptext="Click here to go to sms events"
-						onclick="sipgateffx.onStatusbarCommand('showSitePage','historysms')" />
-						
+						tooltiptext="Click here to go to sms events" />
+				
 				<hbox id="sipgateffxDND" hidden="true">
 					<image	id="sipgateffxDNDon"
 							src="chrome://sipgateffx/skin/dnd_on.gif"

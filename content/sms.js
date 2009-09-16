@@ -217,7 +217,7 @@ var sipgateffx_sms = {
 	},
 
 	onContactSelect: function(element) {
-		document.getElementById("sipgate_sms_number").value = element.selectedItem.value; 
+		document.getElementById("sipgate_sms_number").value = '+' + element.selectedItem.value; 
 	},
 	
   onUnload: function() {

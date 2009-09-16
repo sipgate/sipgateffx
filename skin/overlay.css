@@ -67,3 +67,7 @@ vbox#sipgatenotificationPanelHeader
 {
 	background-position: 0px -67px;
 }
+
+#sipgateffxDND {
+	margin-left: 2px;
+}

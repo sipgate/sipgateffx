@@ -56,7 +56,8 @@ function SipgateFFX() {
     this.recommendedIntervals = {
         "samurai.BalanceGet": 60,
         "samurai.RecommendedIntervalGet": 60,
-        "samurai.EventSummaryGet": 60
+        "samurai.EventSummaryGet": 60,
+		"samurai.DoNotDisturbGet": 60
     };
 	
     this.samuraiServer = {'team': "https://api.sipgate.net/RPC2", 'classic': "https://samurai.sipgate.net/RPC2"};
@@ -109,6 +110,7 @@ function SipgateFFX() {
 	this.getBalanceTimer = Components.classes["@mozilla.org/timer;1"].createInstance(Components.interfaces.nsITimer);
 	this.getRecommendedIntervalsTimer = Components.classes["@mozilla.org/timer;1"].createInstance(Components.interfaces.nsITimer);
 	this.getEventSummaryTimer = Components.classes["@mozilla.org/timer;1"].createInstance(Components.interfaces.nsITimer);
+	this.getDoNotDisturbTimer = Components.classes["@mozilla.org/timer;1"].createInstance(Components.interfaces.nsITimer);
 	this.c2dTimer = Components.classes["@mozilla.org/timer;1"].createInstance(Components.interfaces.nsITimer);
 	this.curBalance = null;
 	this.isLoggedIn = false;
@@ -470,7 +472,7 @@ SipgateFFX.prototype = {
 	
 	login: function() {
 		this.log("*** sipgateffx: login *** BEGIN ***");
-		
+
 		var showActiveMenu = function() {
 			if (_sgffx.systemArea == 'team') {
 				_sgffx.setXulObjectVisibility('showcreditmenuitem', 1);
@@ -665,7 +667,7 @@ SipgateFFX.prototype = {
 		};
 		
 		var params = {
-			'MethodList': ["samurai.RecommendedIntervalGet", "samurai.BalanceGet", "samurai.EventSummaryGet"]
+			'MethodList': ["samurai.RecommendedIntervalGet", "samurai.BalanceGet", "samurai.EventSummaryGet", "samurai.DoNotDisturbGet"]
 		};
 		
 		try {
@@ -1147,6 +1149,17 @@ SipgateFFX.prototype = {
             } else {
 				_sgffx.log("getDoNotDisturb failed toSTRING: "+ aXML.toString());
 			}
+		
+			var delay = _sgffx.recommendedIntervals["samurai.DoNotDisturbGet"];
+		
+			_sgffx.getDoNotDisturbTimer.initWithCallback({
+				notify: function(timer) {
+					_sgffx.getDoNotDisturb();
+				}
+			}, delay * 1000, Components.interfaces.nsITimer.TYPE_ONE_SHOT);
+			
+			_sgffx.log("getDoNotDisturb: polling enabled. set to " + delay + " seconds");
+			
 		};
 
 		try {
@@ -1280,6 +1293,10 @@ SipgateFFX.prototype = {
 			
 			if (typeof(callbackError) == 'function') {
 				callbackError(aStatusMsg, Msg);
+				return;
+			}
+			
+			if(["samurai.ServerdataGet"].indexOf(method) == -1 ) {
 				return;
 			}
 			

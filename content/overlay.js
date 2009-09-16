@@ -155,6 +155,26 @@ var sipgateffx = {
 			// more Info: https://developer.mozilla.org/en/XUL%3aMethod%3aopenPopup
 			document.getElementById('sipgatemenu').openPopup( document.getElementById('sipgateffx_loggedin'), "before_end", 0, 0, true);
 		}, false);
+
+		if (sgffx.systemArea == 'team') {
+			document.getElementById('sipgateffxEventsCall').addEventListener("click", function(e){
+				if (e.button != 0) 
+					return;
+				sipgateffx_this.onStatusbarCommand('showSitePage', 'historycall');
+			}, false);
+			
+			document.getElementById('sipgateffxEventsFax').addEventListener("click", function(e){
+				if (e.button != 0) 
+					return;
+				sipgateffx_this.onStatusbarCommand('showSitePage', 'historyfax');
+			}, false);
+			
+			document.getElementById('sipgateffxEventsSMS').addEventListener("click", function(e){
+				if (e.button != 0) 
+					return;
+				sipgateffx_this.onStatusbarCommand('showSitePage', 'historysms');
+			}, false);
+		}
 		
 		if(sgffx.getPref("extensions.sipgateffx.autologin","bool")) {
 			this.login();

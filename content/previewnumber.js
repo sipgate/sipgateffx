@@ -90,7 +90,7 @@ var sipgateffx_previewnumber = {
 	},
 
 	onContactSelect: function(element) {
-		document.getElementById("sipgate_number").value = element.selectedItem.value; 
+		document.getElementById("sipgate_number").value = '+' + element.selectedItem.value; 
 	},
 	
   onUnload: function() {
