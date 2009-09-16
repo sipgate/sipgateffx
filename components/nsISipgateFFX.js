@@ -705,7 +705,7 @@ SipgateFFX.prototype = {
 			if (_sgffx.curBalance[1] < 5.0) {
 				_sgffx.setXulObjectAttribute('BalanceText', "style", "color: red;");
 			} else {
-				// _sgffx.setXulObjectAttribute('BalanceText', "style", "cursor: pointer;");
+				_sgffx.setXulObjectAttribute('BalanceText', "style", "color: inherit;");
 			}
 		};
 		
@@ -874,36 +874,31 @@ SipgateFFX.prototype = {
 						_sgffx.unreadEvents[ourParsedResponse.EventSummary[i].TOS]['time'] = timestamp;
 						
 						// update toolBar
-						var toolBarText = ourParsedResponse.EventSummary[i].Unread + "/" + ourParsedResponse.EventSummary[i].Read;
+						var TOSElement = '';
 						switch(ourParsedResponse.EventSummary[i].TOS) {
 							case 'voice':
-								if (toolBarText == '0/0') {
-									_sgffx.setXulObjectVisibility('sipgateffxEventsCall', 0);
-								}
-								else {
-									_sgffx.setXulObjectVisibility('sipgateffxEventsCall', 1);
-									_sgffx.setXulObjectAttribute('sipgateffxEventsCall', 'value', toolBarText);
-								}
+								TOSElement = 'sipgateffxEventsCall';
 								break;
 							case 'text':
-								if (toolBarText == '0/0') {
-									_sgffx.setXulObjectVisibility('sipgateffxEventsSMS', 0);
-								}
-								else {
-									_sgffx.setXulObjectVisibility('sipgateffxEventsSMS', 1);
-									_sgffx.setXulObjectAttribute('sipgateffxEventsSMS', 'value', toolBarText);
-								}
+								TOSElement = 'sipgateffxEventsSMS';
 								break;
 							case 'fax':
-								if (toolBarText == '0/0') {
-									_sgffx.setXulObjectVisibility('sipgateffxEventsFax', 0);
-								}
-								else {
-									_sgffx.setXulObjectVisibility('sipgateffxEventsFax', 1);
-									_sgffx.setXulObjectAttribute('sipgateffxEventsFax', 'value', toolBarText);
-								}
+								TOSElement = 'sipgateffxEventsFax';
 								break; 
 						}
+
+						var toolBarText = ourParsedResponse.EventSummary[i].Unread; // + "/" + ourParsedResponse.EventSummary[i].Read;
+						var noEvents = '0'; // .'/0';
+
+						if (toolBarText == noEvents && TOSElement != '') {
+							_sgffx.setXulObjectVisibility(TOSElement, 0);
+						}
+						else if (toolBarText != noEvents && TOSElement != '') {
+							_sgffx.setXulObjectVisibility(TOSElement, 1);
+							_sgffx.setXulObjectAttribute(TOSElement, 'value', toolBarText);
+						}
+						
+						
 					}
 				} catch(e) {
 					_sgffx.log("getEventSummary: Error occured during parsing ("+e+")");
@@ -1252,7 +1247,7 @@ SipgateFFX.prototype = {
 		req.setHeader('Authorization', 'Basic ' + btoa(user + ':' + pass));
 		req.url = samuraiServer;
 		req.data = request;
-
+		
 		req.onSuccess = function(aText, aXML) {
 			var re = /(\<\?\xml[0-9A-Za-z\D]*\?\>)/;
 			var newstr = aText.replace(re, "");
@@ -1303,6 +1298,9 @@ SipgateFFX.prototype = {
 			}
 			
 			if(["samurai.ServerdataGet"].indexOf(method) == -1 ) {
+				if (typeof(callbackResult) == 'function') {
+					callbackResult({}, new XML());
+				}
 				return;
 			}
 			

@@ -33,13 +33,14 @@ vbox#sipgatenotificationPanelHeader
 {
 	background: url('chrome://sipgateffx/skin/callprogress_body.gif') no-repeat;
 	width: 263px;
-	padding-top: 5px;
+	padding: 5px 5px 0px 5px;
 }
 
 #sipgatenotificationPanel hbox#sipgatenotificationPanelCommands
 {
 	background: url('chrome://sipgateffx/skin/callprogress_body.gif') no-repeat left bottom;
 	width: 263px;
+	padding: 0px 5px 5px 5px;
 }
 
 #sipgateffxEventsCall,
@@ -51,6 +52,7 @@ vbox#sipgatenotificationPanelHeader
   height: 16px;
   margin: 0 1px;
   cursor: pointer;
+  font-weight: bold;
 }
 
 #sipgateffxEventsCall
@@ -69,5 +71,5 @@ vbox#sipgatenotificationPanelHeader
 }
 
 #sipgateffxDND {
-	margin-left: 2px;
+	margin-left: 3px;
 }

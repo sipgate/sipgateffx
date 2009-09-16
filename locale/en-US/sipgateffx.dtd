@@ -41,4 +41,4 @@
 <!ENTITY logoff.key "g">
 
 <!ENTITY gotoCalllist.button "Go to call list">
-<!ENTITY gotoCloseThis.button "Close this">
+<!ENTITY gotoCloseThis.button "Close">

@@ -168,6 +168,11 @@ var sipgateffx = {
 			document.getElementById('sipgatemenu').openPopup( document.getElementById('sipgateffx_loggedin'), "before_end", 0, 0, true);
 		}, false);
 
+		document.getElementById('sipgateLogoOff').addEventListener("click", function(e) {
+			// more Info: https://developer.mozilla.org/en/XUL%3aMethod%3aopenPopup
+			document.getElementById('sipgatemenu').openPopup( document.getElementById('sipgateffx_loggedout'), "before_end", 0, 0, true);
+		}, false);
+
 		if (sgffx.systemArea == 'team') {
 			document.getElementById('sipgateffxEventsCall').addEventListener("click", function(e){
 				if (e.button != 0) 

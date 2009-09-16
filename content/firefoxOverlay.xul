@@ -79,12 +79,12 @@
 	<statusbar id="status-bar">
 		<statusbarpanel id="sipgateffx_statusbar_noauth" contextmenu="sipgatemenu" >
 			<hbox align="center" hidden="false" id="sipgateffx_loggedout">
-				<image src="chrome://sipgateffx/skin/icon_sipgate_inactive.gif" />
+				<image id="sipgateLogoOff" src="chrome://sipgateffx/skin/icon_sipgate_inactive.gif" style="cursor: pointer;" />
 				<label value="&sipgateffxStatusbar.InfoNoAuth.label;" style="color: red;" />
 			</hbox>
 			
 			<hbox align="center" hidden="true" id="sipgateffx_loggedin">
-				<image id="sipgateLogo" src="chrome://sipgateffx/skin/icon_sipgate_active.gif" />
+				<image id="sipgateLogo" src="chrome://sipgateffx/skin/icon_sipgate_active.gif" style="cursor: pointer;" />
 				<label id="BalanceText" />
 
 				<label 	id="sipgateffxEventsCall"
