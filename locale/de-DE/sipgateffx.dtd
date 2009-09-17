@@ -9,6 +9,13 @@
 <!ENTITY sipgateffxToolbar.label "sipgateFFX">
 <!ENTITY sipgateffxToolbar.tooltip "sipgateFFX">
 <!ENTITY sipgateffxStatusbar.InfoNoAuth.label "nicht angemeldet">
+<!ENTITY sipgateffxStatusbar.Events.Fax.tooltip "Hier klicken für eingegangene Faxe">
+<!ENTITY sipgateffxStatusbar.Events.Call.tooltip "Hier klicken für eingegangene Voicemails">
+<!ENTITY sipgateffxStatusbar.Events.SMS.tooltip "Hier klicken für eingegangene SMS">
+<!ENTITY sipgateffxStatusbar.DNDon.tooltip "Alle Telefone stumm geschaltet. Zum Aktivieren hier klicken.">
+<!ENTITY sipgateffxStatusbar.DNDoff.tooltip "Telefone nicht stumm geschaltet. Zum Stummschalten hier klicken.">
+<!ENTITY sipgateffxStatusbar.C2DBlacklistOn.tooltip "Rufnummernerkennung aktiv für diese Domain. Zum Ausschalten hier klicken.">
+<!ENTITY sipgateffxStatusbar.C2DBlacklistOff.tooltip "Rufnummernerkennung für diese Domain deaktiviert. Zum Einschalten hier klicken.">
 
 <!ENTITY showprefs.menuitem "Einstellungen">
 <!ENTITY getbalance.menuitem "Kontostand aktualisieren">

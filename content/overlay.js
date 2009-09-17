@@ -205,6 +205,18 @@ var sipgateffx = {
 		gBrowser.addEventListener("DOMContentLoaded", this.parseClick2Dial, false);
 		gBrowser.addEventListener("DOMFrameContentLoaded", this.parseClick2DialFrame, false);
 		_prepareArray();
+		
+		if (sgffx.version != null && sgffx.version != sgffx.getPref("extensions.sipgateffx.lastInstalledVersion", "char")) {
+			sgffx.setPref("extensions.sipgateffx.lastInstalledVersion", sgffx.version, "char");
+			var siteURL = 'chrome://sipgateffx/content/firststart/welcome_'+sgffx.language+'.html';
+			if ((typeof(gBrowser.selectedTab.id) != "undefined") && (gBrowser.selectedTab.id == "TabBySipgateFirefoxExtensionStatusbarShortcut")) {
+				gBrowser.loadURI(siteURL);  
+			} else {
+				var theTab = gBrowser.addTab(siteURL);
+				gBrowser.selectedTab = theTab;
+				theTab.id = "TabBySipgateFirefoxExtensionStatusbarShortcut";
+			}
+		}
 	},
 
 	onUnload: function() {
@@ -369,10 +381,14 @@ var sipgateffx = {
 				sgffxDB.addBlacklisting(host);
 				document.getElementById("context-sipgateffx-c2dblacklistEn").hidden = false;
 				document.getElementById("context-sipgateffx-c2dblacklistDis").hidden = true;
+				document.getElementById("sipgateffxC2DBlacklistOn").hidden = true;
+				document.getElementById("sipgateffxC2DBlacklistOff").hidden = false;
 			} else if(action == 'enable') {
 				sgffxDB.removeBlacklisting(host);
 				document.getElementById("context-sipgateffx-c2dblacklistEn").hidden = true;
 				document.getElementById("context-sipgateffx-c2dblacklistDis").hidden = false;
+				document.getElementById("sipgateffxC2DBlacklistOn").hidden = false;
+				document.getElementById("sipgateffxC2DBlacklistOff").hidden = true;
 			}
 		} catch(e) {
 			sgffx.log("sipgateFFX->overlay->onMenuItemBlacklist ERROR " + e);
@@ -410,6 +426,20 @@ var sipgateffx = {
 	},
 	
 	parseClick2Dial: function() {
+		try {
+			var host = content.document.location.host.toLowerCase();
+			if(sgffxDB.isBlacklisted(host)) {
+				document.getElementById("sipgateffxC2DBlacklistOn").hidden = true;
+				document.getElementById("sipgateffxC2DBlacklistOff").hidden = false;
+				return;
+			} else {
+				document.getElementById("sipgateffxC2DBlacklistOn").hidden = false;
+				document.getElementById("sipgateffxC2DBlacklistOff").hidden = true;
+			}
+		} catch(e) {
+			//
+		}		
+		
 		if (sgffx.getPref("extensions.sipgateffx.parsenumbers", "bool") && sgffx.isLoggedIn) {
 			var host = '';
 			try {

@@ -95,6 +95,8 @@ function SipgateFFX() {
         }
     };
     
+	this.DND = null;
+	
 	this.contacts = {};
 	
     this.currentSessionID = null; // session for click2dial (must be NULL if there is no active session)
@@ -507,6 +509,12 @@ SipgateFFX.prototype = {
 		if (this.isLoggedIn) {
 			this.log("*** sipgateffx: login *** ALREADY LOGGED IN ***");
 			showActiveMenu();
+			
+			if(this.systemArea == 'team') {
+				this.showEventSummary();
+				this.showDoNotDisturb();
+			}
+			
 			this.getBalance();
 			return;
 		}
@@ -826,6 +834,41 @@ SipgateFFX.prototype = {
 		this.log("*** getOwnUriList *** END ***");		
 	},
 	
+	showEventSummary: function() {
+		if (!this.isLoggedIn) {
+			this.log("*** showEventSummary *** USER NOT LOGGED IN ***");
+			return;
+		}
+		
+		for(var TOS in this.unreadEvents) {
+			var TOSElement = '';
+			switch(TOS) {
+				case 'voice':
+					TOSElement = 'sipgateffxEventsCall';
+					break;
+				case 'text':
+					TOSElement = 'sipgateffxEventsSMS';
+					break;
+				case 'fax':
+					TOSElement = 'sipgateffxEventsFax';
+					break; 
+			}
+			
+			var toolBarText = this.unreadEvents[TOS].count;
+			var noEvents = '0';
+
+			if (toolBarText == noEvents && TOSElement != '' && toolBarText != null) {
+				_sgffx.setXulObjectVisibility(TOSElement, 0);
+			}
+			else if (toolBarText != noEvents && TOSElement != '' && toolBarText != null) {
+				_sgffx.setXulObjectVisibility(TOSElement, 1);
+				_sgffx.setXulObjectAttribute(TOSElement, 'value', toolBarText);
+			}
+									
+		}
+	
+	},
+	
 	getEventSummary: function () {
 		this.log("*** getEventSummary *** BEGIN ***");
 		if (!this.isLoggedIn) {
@@ -859,46 +902,14 @@ SipgateFFX.prototype = {
 							_sgffx.runXulObjectCommand('sipgatenotificationPanel', 'clearLines');
 							_sgffx.runXulObjectCommand('sipgatenotificationPanel', 'addLine', [text]);
 							_sgffx.runXulObjectCommand('sipgatenotificationPanel', 'open');
-							
-							/*
-							var xulObj = xulObjReference['sipgatenotificationPanel'];
-							for (var k = 0; k < xulObj.length; k++) {
-									xulObj[k] = xulObj[k].QueryInterface(Components.interfaces.nsIDOMXULElement);
-									xulObj[k].clearLines();
-									xulObj[k].addLine('You have ' + msg);
-									xulObj[k].open();
-							}*/
+	
+
 						}
 						// store new event count
 						_sgffx.unreadEvents[ourParsedResponse.EventSummary[i].TOS]['count'] = ourParsedResponse.EventSummary[i].Unread;
 						_sgffx.unreadEvents[ourParsedResponse.EventSummary[i].TOS]['time'] = timestamp;
 						
-						// update toolBar
-						var TOSElement = '';
-						switch(ourParsedResponse.EventSummary[i].TOS) {
-							case 'voice':
-								TOSElement = 'sipgateffxEventsCall';
-								break;
-							case 'text':
-								TOSElement = 'sipgateffxEventsSMS';
-								break;
-							case 'fax':
-								TOSElement = 'sipgateffxEventsFax';
-								break; 
-						}
-
-						var toolBarText = ourParsedResponse.EventSummary[i].Unread; // + "/" + ourParsedResponse.EventSummary[i].Read;
-						var noEvents = '0'; // .'/0';
-
-						if (toolBarText == noEvents && TOSElement != '') {
-							_sgffx.setXulObjectVisibility(TOSElement, 0);
-						}
-						else if (toolBarText != noEvents && TOSElement != '') {
-							_sgffx.setXulObjectVisibility(TOSElement, 1);
-							_sgffx.setXulObjectAttribute(TOSElement, 'value', toolBarText);
-						}
-						
-						
+						_sgffx.showEventSummary();
 					}
 				} catch(e) {
 					_sgffx.log("getEventSummary: Error occured during parsing ("+e+")");
@@ -1130,6 +1141,26 @@ SipgateFFX.prototype = {
 		
 	},	
 	
+	showDoNotDisturb: function() {
+		if (!this.isLoggedIn) {
+			this.log("*** showDoNotDisturb *** USER NOT LOGGED IN ***");
+			return;
+		}
+		
+		if(this.DND == null) {
+			return;
+		}
+
+		if(this.DND) {
+			this.setXulObjectVisibility('sipgateffxDNDon', 1);
+			this.setXulObjectVisibility('sipgateffxDNDoff', 0);
+		} else {
+			this.setXulObjectVisibility('sipgateffxDNDon', 0);
+			this.setXulObjectVisibility('sipgateffxDNDoff', 1);
+		}
+				
+	},
+	
 	getDoNotDisturb: function() {
 		this.log("*** getDoNotDisturb *** BEGIN ***");
 		if (!this.isLoggedIn) {
@@ -1140,13 +1171,8 @@ SipgateFFX.prototype = {
         var result = function(ourParsedResponse, aXML){
 			dumpJson(ourParsedResponse);
 			if (ourParsedResponse.StatusCode && ourParsedResponse.StatusCode == 200) {
-				if(ourParsedResponse.DND) {
-					_sgffx.setXulObjectVisibility('sipgateffxDNDon', 1);
-					_sgffx.setXulObjectVisibility('sipgateffxDNDoff', 0);
-				} else {
-					_sgffx.setXulObjectVisibility('sipgateffxDNDon', 0);
-					_sgffx.setXulObjectVisibility('sipgateffxDNDoff', 1);
-				}
+				_sgffx.DND = ourParsedResponse.DND;
+				_sgffx.showDoNotDisturb();
             } else {
 				_sgffx.log("getDoNotDisturb failed toSTRING: "+ aXML.toString());
 			}

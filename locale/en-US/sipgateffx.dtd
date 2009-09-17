@@ -9,6 +9,13 @@
 <!ENTITY sipgateffxToolbar.label "sipgateFFX">
 <!ENTITY sipgateffxToolbar.tooltip "sipgateFFX">
 <!ENTITY sipgateffxStatusbar.InfoNoAuth.label "not logged in">
+<!ENTITY sipgateffxStatusbar.Events.Fax.tooltip "Click here to go to fax events">
+<!ENTITY sipgateffxStatusbar.Events.Call.tooltip "Click here to go to call events">
+<!ENTITY sipgateffxStatusbar.Events.SMS.tooltip "Click here to go to sms events">
+<!ENTITY sipgateffxStatusbar.DNDon.tooltip "Do Not Disturb is enabled. Click here to disable it.">
+<!ENTITY sipgateffxStatusbar.DNDoff.tooltip "Do Not Disturb is disabled. Click here to enable it.">
+<!ENTITY sipgateffxStatusbar.C2DBlacklistOn.tooltip "Number detection is enabled for this domain. Click here to disable it.">
+<!ENTITY sipgateffxStatusbar.C2DBlacklistOff.tooltip "Number detection is disabled for this domain. Click here to enable it.">
 
 <!ENTITY showprefs.menuitem "Preferences">
 <!ENTITY getbalance.menuitem "Refresh balance">

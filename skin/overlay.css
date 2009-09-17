@@ -70,6 +70,10 @@ vbox#sipgatenotificationPanelHeader
 	background-position: 0px -67px;
 }
 
+#sipgateffxC2DBlacklist,
 #sipgateffxDND {
 	margin-left: 3px;
+	cursor: pointer;
 }
+
+

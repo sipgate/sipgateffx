@@ -99,7 +99,7 @@
 	</vbox>
   </prefpane>
 
-  <prefpane id="pane3" label="&pane3.title;" image="chrome://sipgateffx/skin/preferences_click2dial.png">
+  <prefpane id="pane3" label="&pane3.title;" image="chrome://sipgateffx/skin/preferences_click2dial_blacklist.gif">
 	<description value="&c2dBlacklist.description;"/>
 
   	<listbox id="sipgateffxTree" height="100px">

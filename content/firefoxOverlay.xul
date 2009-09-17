@@ -90,27 +90,40 @@
 				<label 	id="sipgateffxEventsCall"
 						value="0/0"
 						hidden="true"
-						tooltiptext="Click here to go to call events" />
+						tooltiptext="&sipgateffxStatusbar.Events.Call.tooltip;" />
 				<label 	id="sipgateffxEventsFax"
 						value="0/0"
 						hidden="true"
-						tooltiptext="Click here to go to fax events" />
+						tooltiptext="&sipgateffxStatusbar.Events.Fax.tooltip;" />
 				<label 	id="sipgateffxEventsSMS"
 						value="0/0"
 						hidden="true"
-						tooltiptext="Click here to go to sms events" />
+						tooltiptext="&sipgateffxStatusbar.Events.SMS.tooltip;" />
 				
 				<hbox id="sipgateffxDND" hidden="true">
 					<image	id="sipgateffxDNDon"
 							src="chrome://sipgateffx/skin/dnd_on.gif"
 							hidden="true"
-							tooltiptext="Do Not Disturb is enabled. Click here to disable it."
+							tooltiptext="&sipgateffxStatusbar.DNDon.tooltip;"
 							onclick="sipgateffx.onMenuItemDoNotDisturb(event, 'disable')" />
 					<image 	id="sipgateffxDNDoff"
 							src="chrome://sipgateffx/skin/dnd_off.gif"
 							hidden="true"
-							tooltiptext="Do Not Disturb is disabled. Click here to enable it."
+							tooltiptext="&sipgateffxStatusbar.DNDoff.tooltip;"
 							onclick="sipgateffx.onMenuItemDoNotDisturb(event, 'enable')" />
+				</hbox>
+				
+				<hbox id="sipgateffxC2DBlacklist">
+					<image	id="sipgateffxC2DBlacklistOn"
+							src="chrome://sipgateffx/skin/icon_click2dial_blacklist_enabled.gif"
+							hidden="true"
+							tooltiptext="&sipgateffxStatusbar.C2DBlacklistOn.tooltip;"
+							onclick="sipgateffx.onMenuItemBlacklist(event, 'disable')" />
+					<image 	id="sipgateffxC2DBlacklistOff"
+							src="chrome://sipgateffx/skin/icon_click2dial_blacklist_disabled.gif"
+							hidden="true"
+							tooltiptext="&sipgateffxStatusbar.C2DBlacklistOff.tooltip;"
+							onclick="sipgateffx.onMenuItemBlacklist(event, 'enable')" />
 				</hbox>
 						
 			</hbox>
