@@ -25,7 +25,13 @@ var sgffx;
 var sgffxDB;
 
 function doOpenDebuggingInfo(){
-    window.opener.loadURI('chrome://sipgateffx/content/sendReport.html');
+    window.opener.getBrowser().selectedTab = window.opener.getBrowser().addTab('chrome://sipgateffx/content/sendReport.html');
+    window.close();
+}
+
+function doOpenNewVersionInfo(){
+	var siteURL = 'chrome://sipgateffx/content/firststart/welcome_'+sgffx.language+'.html';
+    window.opener.getBrowser().selectedTab = window.opener.getBrowser().addTab(siteURL);
     window.close();
 }
 

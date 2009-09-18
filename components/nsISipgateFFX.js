@@ -415,6 +415,11 @@ SipgateFFX.prototype = {
 						_sgffx.currentSessionID = null;
 						_sgffx.currentSessionTime = null;
 						
+						if (state == 'CALL_1_FAILED') {
+							var promptService = Components.classes["@mozilla.org/embedcomp/prompt-service;1"].getService(Components.interfaces.nsIPromptService);
+							promptService.alert(null, _sgffx.strings.getString("sipgateffxError.title"), _sgffx.strings.getString('click2dial.status.CALL_1_FAILED.detail'));
+						}
+						
 						_sgffx.c2dTimer.initWithCallback({
 							notify: function(timer){
 								_sgffx.setXulObjectVisibility('sipgateffx_c2dStatus', 0);

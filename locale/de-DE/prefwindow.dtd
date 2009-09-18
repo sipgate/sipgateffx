@@ -9,6 +9,7 @@
 <!ENTITY polling.label "Automatische Aktualisierung der Anzeige">
 <!ENTITY dontshowbalance.label "Kontostand nicht anzeigen">
 <!ENTITY showDebug.label "Supportbericht anzeigen">
+<!ENTITY showChangelog.label "Was ist neu in dieser Version?">
 <!ENTITY parsenumbers.label "click2dial für Telefonnummern einschalten">
 <!ENTITY previewnumber.label "vor dem Wählen Nummer bearbeiten">
 <!ENTITY click2dial.label "Click2Dial auf TEL-URIs anwenden">

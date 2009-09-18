@@ -27,7 +27,11 @@
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 <!DOCTYPE prefwindow SYSTEM "chrome://sipgateffx/locale/prefwindow.dtd">
 
-<prefwindow id="sipgateffxPreferences" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" title="&prefwindow.title;">
+<prefwindow
+	id="sipgateffxPreferences"
+	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	buttons="accept,cancel"
+	title="&prefwindow.title;">
 	
   <prefpane id="pane1" label="&pane1.title;" image="chrome://sipgateffx/skin/preferences_account.png">
     <preferences>
@@ -61,7 +65,8 @@
 			<checkbox id="systemTeam" preference="systemTeam" label="&systemTeam.label;" accesskey="s" />
 			<checkbox id="polling" preference="polling" label="&polling.label;" accesskey="p"/>
 			<checkbox id="dontshowbalance" preference="dontshowbalance" label="&dontshowbalance.label;" accesskey="b"/>
-			<button label="&showDebug.label;" oncommand="doOpenDebuggingInfo(event)"/>
+			<label class="text-link" onclick="doOpenDebuggingInfo(event)" value="&showDebug.label;"/>
+			<label class="text-link" onclick="doOpenNewVersionInfo(event)" value="&showChangelog.label;"/>
 		</groupbox>
 		
 	</hbox>	

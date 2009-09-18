@@ -194,29 +194,35 @@ var sipgateffx = {
 		}
 		
 		if(sgffx.getPref("extensions.sipgateffx.autologin","bool")) {
-			this.login();
+			setTimeout(this.login);
 		}
 		
 		if(app=='thunderbird') {
 			var threePane = Components.classes['@mozilla.org/appshell/window-mediator;1'].getService(Components.interfaces.nsIWindowMediator).getMostRecentWindow("mail:3pane");
 			gBrowser = threePane.document.getElementById("messagepane");
 		}
-
+		
 		gBrowser.addEventListener("DOMContentLoaded", this.parseClick2Dial, false);
 		gBrowser.addEventListener("DOMFrameContentLoaded", this.parseClick2DialFrame, false);
 		_prepareArray();
 		
-		if (sgffx.version != null && sgffx.version != sgffx.getPref("extensions.sipgateffx.lastInstalledVersion", "char")) {
-			sgffx.setPref("extensions.sipgateffx.lastInstalledVersion", sgffx.version, "char");
-			var siteURL = 'chrome://sipgateffx/content/firststart/welcome_'+sgffx.language+'.html';
-			if ((typeof(gBrowser.selectedTab.id) != "undefined") && (gBrowser.selectedTab.id == "TabBySipgateFirefoxExtensionStatusbarShortcut")) {
-				gBrowser.loadURI(siteURL);  
-			} else {
-				var theTab = gBrowser.addTab(siteURL);
-				gBrowser.selectedTab = theTab;
-				theTab.id = "TabBySipgateFirefoxExtensionStatusbarShortcut";
-			}
-		}
+		gBrowser.tabContainer.addEventListener("select", function(e) {
+			try {
+				var host = content.document.location.host.toLowerCase();
+				if(sgffxDB.isBlacklisted(host)) {
+					document.getElementById("sipgateffxC2DBlacklistOn").hidden = true;
+					document.getElementById("sipgateffxC2DBlacklistOff").hidden = false;
+					return;
+				} else {
+					document.getElementById("sipgateffxC2DBlacklistOn").hidden = false;
+					document.getElementById("sipgateffxC2DBlacklistOff").hidden = true;
+				}
+			} catch(e) {
+				//
+			}		
+		}, false);
+		
+		setTimeout(this.showUpdateInfo, 1000);
 	},
 
 	onUnload: function() {
@@ -262,6 +268,14 @@ var sipgateffx = {
 			sgffx.removeXulObjRef(allElements[i], document.getElementById(allElements[i]));
 		}
 		
+	},
+	
+	showUpdateInfo: function() {
+		if (sgffx.version != null && sgffx.version != sgffx.getPref("extensions.sipgateffx.lastInstalledVersion", "char")) {
+			var siteURL = 'chrome://sipgateffx/content/firststart/welcome_'+sgffx.language+'.html';
+			gBrowser.selectedTab = gBrowser.addTab(siteURL);
+			sgffx.setPref("extensions.sipgateffx.lastInstalledVersion", sgffx.version, "char");
+		}
 	},
 	
 	login: function() {

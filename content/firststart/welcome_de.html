@@ -1,536 +1,165 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
-	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-		<title>Willkommen beim sipgateFFX</title>
+    <head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>sipgateFFX</title>
 		<style type="text/css" media="screen"> 
-			
-			/* common
-			--------------------------------------------------*/
-			
-			body {
-				font-family: Arial, sans-serif;
-				margin: 0px;
-				padding: 0px;
-			}
-			* #BodyImposter {
-				font-family: Arial, sans-serif;
-				color: #666;
-				background: #fff;
-				width: 100%;
-				margin: 0px;
-				padding: 0px;
-			}
-			* #BodyImposter dd,
-			* #BodyImposter dt,
-			* #BodyImposter li,
-			* #BodyImposter p,
-			* #BodyImposter td {
-				font-size: 12px;
-				line-height: 1.5em;
-				font-family: Arial, sans-serif;
-			}
-			* #BodyImposter dl,
-			* #BodyImposter p,
-			* #BodyImposter ol,
-			* #BodyImposter ul {
-				margin: 0em 0em 1em 0em;
-			}
-			* #BodyImposter img {
-				border: 0px;
-			}
-			* #BodyImposter small {
-				font-size: 10px;
-				line-height: 1.3em;
-			}
-			* #BodyImposter ol {
-				padding-left: 1em;
-			}
-			* .Primary ul {
-				padding-left: 1.6em;
-				padding-right: 1em;
-			}
-			* .Secondary ul {
-				padding: 0px 0px 0px 15px;
-				margin: 0px;
-			}
-			* #BodyImposter ol li {
-				margin: 0px;
-				padding: 0px;
-			}
-			
-			/* links
-			--------------------------------------------------*/
-			
-			* #BodyImposter a {
-				font-family: Arial, sans-serif;
-				text-decoration: underline;
-			}
-			* .Primary a:link,
-			* .Primary a:visited,
-			* .Secondary a:link,
-			* .Secondary a:visited {
-				font-family: Arial, sans-serif;
-				color: #000;
-				background: #fff;
-			}
-			
-			* #BodyImposter h2 a,
-			* #BodyImposter h2 a:link,
-			* #BodyImposter h2 a:hover,
-			* #BodyImposter h2 a:active,
-			* #BodyImposter h2 a:visited {
-				font-family: Arial, sans-serif;
-			  text-decoration: none;
-			  color: #0097e5;
-			  background: #fff;
-			}
-			
-			* #BodyImposter #Tertiary h2 a,
-			* #BodyImposter #Tertiary h2 a:link,
-			* #BodyImposter #Tertiary h2 a:hover,
-			* #BodyImposter #Tertiary h2 a:active,
-			* #BodyImposter #Tertiary h2 a:visited {
-				font-family: Arial, sans-serif;
-			  text-decoration: none;
-			  color: #FFFFFF;
-			  background: #FF7700;
-			}
-			
-			* #Helpful a:link,
-			* #Helpful a:visited {
-				font-family: Arial, sans-serif;
-				color: #c2c2c2;
-				background: #fff;
-			}
-			* #Legal a:link,
-			* #Legal a:visited {
-				font-family: Arial, sans-serif;
-				color: #666666;
-				background: #f7f7e7;
-			}
-			* #BodyImposter #Legal a {
-				font-family: Arial, sans-serif;
-				background: #f7f7e7;
-			}	
-			* #Tertiary a:link,
-			* #Tertiary a:visited {
-				font-family: Arial, sans-serif;
-				color: #FFFFFF;
-				background: #ff7700;
-			}
-			* #BodyImposter a:hover {
-				font-family: Arial, sans-serif;
-				text-decoration: none;
-			}
-		 
-			* #BodyImposter a:active {
-				font-family: Arial, sans-serif;
-				color: #000;
-				background: #fff;
-				text-decoration: none;
-			}
-			* #Legal a:active {
-				font-family: Arial, sans-serif;
-				color: #000;
-				background: #f7f7e7;
-				text-decoration: none;
-			}
-			
-			* .hardware_footer td.hf_left a:link,
-			* .hardware_footer td.hf_left a:visited {
-				font-family: Arial, sans-serif;
-				color: #000;
-				background: #fff;
-			}
-			
-			* #BodyImposter .hardware_footer td.hf_right a,
-			* #BodyImposter .hardware_footer td.hf_right a:link,
-			* #BodyImposter .hardware_footer td.hf_right a:visited {
-				font-family: Arial, sans-serif;
-				color: #0097e5;
-				text-decoration: none;
-				font-weight: bold;
-			}
-			
-			/* heads
-			--------------------------------------------------*/
-			
-			* #BodyImposter h1,
-			* #BodyImposter h2 {
-				color: #0097e5;
-				background: #fff;
-				font-family: Arial, sans-serif;
-				font-weight: bold;
-				line-height: normal;
-				margin: 0em 0em 0.75em;
-				padding: 0px;
-			}
-			* #BodyImposter #Masthead h1 {
-				background: #0097e5;
-				margin-bottom: 10px;
-			}
-			* .Primary h2 {
-				font-size: 18px;
-			}
-			* .Primary h3 {
-				font-size: 14px;
-				margin: 0em 0em 0.75em;
-			}	
-			* .Secondary h2,
-			* #Tertiary h2 {
-				font-size: 14px;
-			}
-			
-			* #BodyImposter #Tertiary h2 {
-			  color: #FFFFFF;
-			  background: #FF7700;
-			}
-			
-			* #BodyImposter #legal h2 {
-			  color: #0097e5;
-			  background: #f7f7e7;
-			  margin: 0em 0em 0.75em;
-			}	
-			
-			/* boxes
-			--------------------------------------------------*/
-			
-			* #Box {
-				width: 100%;
-				text-align: center;
-				margin-top: 15px;
-			}
-			* .Content {
-				margin: 10px auto;
-				text-align: left;
-		 
-			}
-			* .Content td {
-				padding: 0px 10px 10px;
-			}
-			* .Content td.Primary img.float_right {
-				float: right;
-				margin: 5px 0px 10px 15px;
-			}
-			
-			* .hardware_footer {
-				width: 550px;
-				margin: 0px auto 30px;
-				text-align: left;
-			}
-			* .hardware_footer td {
-				padding: 0px 5px 0px;
-				height: 24px;
-			}
-		 
-			* .hardware_footer td.hf_left {
-				width: 450px;
-				border-top: 1px dashed #CCCCCC; 
-				border-bottom:1px dashed #CCCCCC; 
-				border-left:1px dashed #CCCCCC;
-			}
-			
-			* .hardware_footer td.hf_right {
-				border: 1px solid #0097e5;
-			}	
-			
-			* .hardware_footer td.hf_right img.shopping_cart{
-				float: right;
-				margin-top: 4px;	
-			}	
-			
-			* #BodyImposter .hardware_footer td.sternchentext {
-				font-size: 10px;
-				color: #c2c2c2;
-			}
-			
-			* #Helpful table {
-				color: #c2c2c2;
-				background: #fff;
-				margin: 0px auto;
-			}
-			* #Helpful p {
-				width: 550px;
-				margin: 0px auto;
-				padding: 0px 20px;
-				text-align: left;
-			}
-			* #Legal {
-				padding: 20px 0px;
-			}
-			* #Legal table {
-				color: #666666;
-				background: #f7f7e7;
-				margin: 0px auto;
-			}
-			* #Legal p {
-				width: 550px;
-				margin: 0px auto;
-				padding: 0px 20px;
-				text-align: left;
-			}
-			* #Masthead {
-				padding: 20px 0px;
-			}
-			* #Masthead table {
-				color: #fff;
-				background: #0097e5;
-				margin: 0px auto;
-			}
-			* #Masthead h1,
-			* #Masthead p {
-				width: 550px;
-				margin: 0px auto;
-				padding: 0px 20px;
-				text-align: left;
-			}
-			* #Masthead p {
-				font-size: 14px;
-			}
-			* #Masthead h1 {
-				margin-bottom: 2px;
-			}
-			* #Masthead p #Date {
-				float: right;
-			}
-			* #Tertiary {
-				padding: 20px 0px;
-			}
-			* #Tertiary table {
-				color: #ffffff;
-				background: #ff7700;
-				margin: 0px auto;
-			}
-			* #Tertiary h2 {
-				color: #fff;
-				background: #ff7700;
-				padding: 0em 0em 0.5em 0em;
-			}
-			* #Legal h2,
-			* #Legal p,
-			* #Tertiary h2,
-			* #Tertiary p {
-				width: 550px;
-				margin: 0px auto;
-				padding: 0px 20px;
-				text-align: left;
-			}
-			* #Helpful,
-			* #Legal,
-			* #Masthead,
-			* #Tertiary {
-				width: 100%;
-				text-align: center;
-			}
-			/*
-			The asterisks preceding every selector ensure styles are rendered in Dot Mac.
-			The inline styles in headlines are for Outlook 2007.
-			*/
-			
-		</style> 		
-	</head>
-	<body>
-		<div id="BodyImposter"> 
-			<table cellspacing="0" width="100%"> 
-				<tr> 
-					<td id="Masthead" style="color: #fff; background: #0097e5; padding: 20px 0px;"> 
-						<table cellspacing="0" cellpadding="0" width="550" style="margin: 0px auto;"> 
-							<tr> 
-								<td style="color: #fff; background: #0097e5; font-family: Arial, sans-serif;"> 
-									<h1 style="margin-bottom: 10px;"><img src="http://www.sipgate.de/img/newsletter/sipgate_logo_white.gif" alt="sipgate" /></h1> 
-									<p>Kunden-Newsletter August 2009, Deutschland</p> 
-								</td> 
-							</tr> 
-						</table> 
-					</td> 
-				</tr> 
-			</table> 
-			<div id="Box" style="margin-top: 15px;"> 
-				<table class="Content" style="margin: 10px auto;" cellspacing="0" width="580"> 
-					<tr valign="top"> 
-						<td class="Primary" style="font-family: Arial, sans-serif; font-size: 12px; padding: 0px 15px 10px; line-height: 1.5em;"> 
-							<h2 style="font-size: 18px; color: #0097e5; margin: 0em 0em 0.75em;">Liebe sipgate Kunden,</h2>					
-								<p>sipgate geht in diesem Sommer in die Preisoffensive. So stellt Ihnen unsere Festnetz-Flatrate jetzt 28 und damit 13 zus�tzliche L�nderziele bereit � und das zum alten Preis. Mit Senkung von 55 au�ereurop�ischen Auslandstarifen geht sipgate zudem in die direkte Preiskonkurrenz zu skype. Zus�tzlich haben wir unseren f�r alle Handynetze g�ltigen SMS-Tarif f�r Sie um 20 Prozent verbilligt. Seit Kurzem ist ebenso unser Mobilfunktarif Deutschland erheblich g�nstiger. Telefonie via sipgate ist damit so preiswert wie nie!</p> 
-								<p>F�r Selbst�ndige und Firmen mit bis zu 100 Mitarbeitern bietet sipgate jetzt eine eigene Businessl�sung an. 'sipgate team' ersetzt Festnetz und TK-Anlagen, ist inklusive Rufnummernbl�cken sofort verf�gbar und erlaubt eine neue, direkte Kommunikation zu allen Gesch�ftspartnern und Kollegen. Testen Sie unsere Firmenl�sung jetzt sowie f�r 30 Tage kostenlos und unverbindlich!</p> 
-								<p>Dar�ber hinaus bietet Ihnen unser Shop diesmal AVM- Hardware zum Schn�ppchenpreis an � zugreifen lohnt sich!</p> 
-								<p>Ich bedanke mich f�r Ihr Interesse und w�nsche Ihnen viel Spa� beim Lesen.</p> 
-							<img src="http://www.sipgate.de/img/newsletter/ts.gif" alt="[Bild: Unterschrift]" style="margin-top: 10px;"/> 
-							<p>Thilo Salmon<br /> 
-							Gesch�ftsf�hrung sipgate GmbH</p> 
-						</td> 
-						<td width="180"class="Secondary" style="font-family: Arial, sans-serif; font-size: 12px; padding: 0px 15px 10px; line-height: 1.5em;"> 
-							<h2 style="font-size: 14px; color: #0097e5; margin: 0em 0em 0.75em;">Inhalt</h2> 
-							<ul style="padding: 0px 0px 0px 15px;">  
-								<li><a href="#flat" style="color: #000000;">sipgate flat: Statt 15 jetzt 28 L�nder zum alten Preis</a></li> 
-								<li><a href="#int" style="color: #000000;">sipgate senkt 55 au�ereurop�ische Auslandstarife </a></li> 
-								<li><a href="#sms" style="color: #000000;">sipgate senkt global g�ltigen SMS-Tarif</a></li>			
-								<li><a href="#tarifvergleich" style="color: #000000;">sipgate: Tarifvergleich Mobilfunk Deutschland</a></li>			
-								<li><a href="#team" style="color: #000000;">'sipgate team' f�r Firmen mit bis zu 100 Mitarbeitern</a></li>		
-								<li><a href="#voip-im-urlaub" style="color: #000000;">News: 'VoIP im Urlaub 2009'</a></li>		
-								<li><a href="#hardware" style="color: #000000;">Hardware-Highlights August 2009 </a></li> 
-								<li><a href="#jobs" style="color: #000000;">Jobs bei sipgate </a></li> 
-							</ul><br> 
-							<p><strong>Neu: sipgate bei Twitter!</strong><br></p><p><a href="http://www.twitter.com/sipgateDE" target="_blank"><img src="http://www.sipgate.de/img/newsletter/2007/2009_08_twitter.jpg" border="0" align="center"></p> 
-						</td> 
-					</tr> 
-				</table> 			
-					  
-		 		<table class="Content" style="margin: 10px auto;" cellspacing="0" width="580"> 
-			 		<tr valign="top"> 
-			 			<td class="Primary" style="font-family: Arial, sans-serif; font-size: 12px; padding: 0px 15px 0px; line-height: 1.5em;"> 
-			 				<a name="flat"></a><h2 style="color: #0097e5; margin: 0em 0em 0.75em;">'sipgate flat': Statt 15 jetzt 28 L�nder zum alten Preis</h2>		 					
-							<p><img src="http://www.sipgate.de/img/newsletter/2007/2009_08_sipgate_flat.gif" align="left">'sipgate flat'** deckt ab sofort alle Festnetztelefonate in alle EU-L�nder plus Schweiz ab. sipgate erh�ht die Gratis-Destinationen somit von 15 auf 28. Der Preis bleibt mit 8,90 bzw. 6,90 EUR/Monat* f�r 'sipgate plus'-Kunden der alte. sipgate bietet aktuell damit eine der g�nstigsten und umfangreichsten Telefon-Flatrates an.</p> 
-							<p>'sipgate flat' hat eine Mindestlaufzeit von sechs Monaten und verl�ngert sich danach jeweils um einen Monat. Die K�ndigungsfrist betr�gt 30 Tage zum Monatsende. Die Abrechnung erfolgt via Prepaid per EC-Lastschrift oder Kreditkarten-Abbuchung.</p> 
-							<p>Alle Informationen und Buchung unter <a href="http://www.sipgate.de/flat" style="color: #0097e5; font-weight: bold;">www.sipgate.de/flat</a>.</p> 
-						</td>			
-				  </tr> 
-				</table> 
-				
-				<br> 
-				
-		 		<table class="Content" style="margin: 10px auto;" cellspacing="0" width="580"> 
-			 		<tr valign="top"> 
-			 			<td class="Primary" style="font-family: Arial, sans-serif; font-size: 12px; padding: 0px 15px 0px; line-height: 1.5em;"> 
-			 				<a name="int"></a><h2 style="color: #0097e5; margin: 0em 0em 0.75em;">sipgate senkt 55 au�ereurop�ische Auslandstarife</h2>		
-							<p><img src="http://www.sipgate.de/img/newsletter/2007/2009_08_flags.jpg" align="left">sipgate senkt in einer Preisoffensive 55 au�ereurop�ische Auslandstarife. Zu den Tarifzielen geh�ren vorrangig L�nder in S�damerika, Afrika, Asien und im Nahen Osten. Sie telefonieren dadurch in die jeweiligen Auslandsnetze ab sofort erheblich g�nstiger als �ber skype.</p> 
-							<p>Festnetzanrufe bspw. nach Indien kosten jetzt 5,9 ct/min* (skype: 7,9), Vietnam 17,9 ct/min* (skype: 30,7 ct/min), Marokko 19,9 ct/min* (skype: 24 ct/min), Kamerun 19,9 ct/min* (skype: 26,6 ct/min) und Jordanien 9,9 ct/min* (skype: 19 ct/min). Gleichfalls k�nnen Sie bei Mobilfunkanrufen zu beliebten L�nderzielen wie z.B. Venezuela, Panama und Philippinen gegen�ber skype sparen.</p> 
-							<p><a href="http://www.sipgate.de/tarife" style="color: #0097e5; font-weight: bold;" target="_blank">Tarif�bersicht Privatkunden</a> | <a href="http://www.live.sipgate.de/rates" style="color: #0097e5; font-weight: bold;" target="_blank">Tarif�bersicht Firmenkunden</a></p> 
-						</td>			
-				  </tr> 
-				</table> 
-				
-				<br> 
-				
-		 		<table class="Content" style="margin: 10px auto;" cellspacing="0" width="580"> 
-			 		<tr valign="top"> 
-			 			<td class="Primary" style="font-family: Arial, sans-serif; font-size: 12px; padding: 0px 15px 0px; line-height: 1.5em;"> 
-			 				<a name="sms"></a><h2 style="color: #0097e5; margin: 0em 0em 0.75em;">sipgate senkt global g�ltigen SMS-Tarif</h2>			
-							<p><img src="http://www.sipgate.de/img/newsletter/2007/2009_08_sms.jpg" align="right">sipgate verbilligt seinen SMS-Tarif um 20 Prozent von 9,9 auf 7,9 ct/SMS*. Der Tarif gilt sowohl f�r die deutschen Mobilfunknetze von T-Mobile, Vodafone, E-Plus und O2 als auch f�r alle anderen Handynetze weltweit. sipgate bietet damit in Deutschland einen der g�nstigsten SMS-Tarife f�r den nationalen wie auch den globalen SMS-Versand an. Die Tarifeinheit stellt 160 Zeichen zur Verf�gung, wobei eine Kurznachricht bis zu 460 Zeichen umfassen kann. F�r R�ckantworten l�sst sich die eigene Handynummer in den sipgate Einstellungen als Absenderrufnummer abspeichern.</p> 
-						</td>			
-				  </tr> 
-				</table> 
-				
-				<br> 
-				
-		 		<table class="Content" style="margin: 10px auto;" cellspacing="0" width="580"> 
-			 		<tr valign="top"> 
-			 			<td class="Primary" style="font-family: Arial, sans-serif; font-size: 12px; padding: 0px 15px 0px; line-height: 1.5em;"> 
-			 				<a name="tarifvergleich"></a><h2 style="color: #0097e5; margin: 0em 0em 0.75em;">sipgate: Tarifvergleich Mobilfunk Deutschland</h2>			
-							<p>Vor Kurzem senkte sipgate seinen Mobilfunktarif Deutschland von 16,9 auf 14,9 bzw. 12,9 ct/min* f�r 'sipgate plus' und Firmenkunden von 'sipgate team'. Wie g�nstig sipgate im Vergleich zu Festnetz- und anderen VoIP-Anbietern ist, zeigt die Vergleichstabelle. Ergebnis: Mit sipgate telefonieren Sie konstant g�nstig. Seit dem Start 2004 hat sipgate keinen einzigen Tarif erh�ht!</p> 
-							<p align="center"><img src="http://www.sipgate.de/img/newsletter/2007/2009_08_kostentabelle.jpg"></p> 
-							<p>'sipgate basic' Kunden sparen gegen�ber z.B. 1&1 so rund 50 Prozent, 'sipgate plus' Kunden sogar fast 60 Prozent ein. 5 Minuten pro Tag ergeben eine monatliche Einsparung je nach sipgate Anschluss von 22 bzw. 26 EUR.</p> 
-						</td>			
-				  </tr> 
-				</table> 
-				
-				<br> 
-				
-		 		<table class="Content" style="margin: 10px auto;" cellspacing="0" width="580"> 
-			 		<tr valign="top"> 
-			 			<td class="Primary" style="font-family: Arial, sans-serif; font-size: 12px; padding: 0px 15px 0px; line-height: 1.5em;"> 
-			 				<a name="team"></a><h2 style="color: #0097e5; margin: 0em 0em 0.75em;">'sipgate team' f�r Firmen mit bis zu 100 Mitarbeitern</h2>			
-							<p><img src="http://www.sipgate.de/img/newsletter/2007/2009_08_team.jpg" align="left">Businesskunden erhalten Telefonie bei sipgate via Web als funktionsstarke SaaS (Software as a Service). Mit 'sipgate team' sind Arbeitspl�tze sofort nutzbar, Firmenstandorte zentral verwaltbar, Rufnummernbl�cke direkt abrufbereit. Dabei ist 'sipgate team' jederzeit in allen Bereichen nahtlos erweiterbar.</p> 
-							<p>Mitarbeitern stehen alle Telefoniedienste inkl. Fax, SMS und Voicemails global zur Verf�gung � samt In/Out Box zur direkten Einsicht, Beantwortung, Verteilung und Archivierung ihrer Verbindungen. Anrufe lassen sich u.a. parallel und priorisiert jedem Telefon zustellen, weiter durchstellen und aufnehmen.</p> 
-							<p>Anstatt hoher Investitionen in Hard- und Software, den Festnetzanschluss sowie Erweiterungs-, Wartungs- und Updatearbeiten kostet Sie 'sipgate team' nur ab 1,49 EUR* pro Monat und Mitarbeiter. F�r Anrufe ins deutsche Festnetz fallen lediglich 1 ct/min*, in die deutschen Mobilfunknetze nur 12,9 ct/min* an.</p> 
-							<p><b>Jeder Tarif kann 30 Tage kostenlos und unverbindlich getestet werden</b> - egal ob f�r 3, 5, 10, 25, 50 oder 100 Mitarbeiter. Testen Sie unsere neue Firmenl�sung, vergleichen Sie diese mit herk�mmlichen TK-Anlagen und Sie werden von den Vorz�gen von 'sipgate team' �berzeugt sein!</p> 
-							<p>Alle Informationen und Buchung unter <a href="http://www.sipgate.de/team" style="color: #0097e5; font-weight: bold;">www.sipgate.de/team</a>.</p> 
-						</td>			
-				  </tr> 
-				</table> 
-				
-				<br> 
-				
-		 		<table class="Content" style="margin: 10px auto;" cellspacing="0" width="580"> 
-			 		<tr valign="top"> 
-			 			<td class="Primary" style="font-family: Arial, sans-serif; font-size: 12px; padding: 0px 15px 0px; line-height: 1.5em;"> 
-			 				<a name="voip-im-urlaub"></a><h2 style="color: #0097e5; margin: 0em 0em 0.75em;">News: 'VoIP im Urlaub'</h2> 
-							<img src="http://www.sipgate.de/img/newsletter/2007/gewinnspiel_2009.jpg" style="padding-bottom:10px;"><br> 
-							<p>Endspurt - Sommergewinnspiel 2009: Noch bis zum 15. September 2009 k�nnen Sie am Gewinnspiel 'VoIP im Urlaub' teilnehmen. Schicken Sie an <a href="mailto:sommergewinnspiel2009@sipgate.de" style="color: #0097e5; font-weight: bold;">sommergewinnspiel2009@sipgate.de</a> eine kurze Beschreibung Ihrer im Urlaub eingesetzten VoIP-L�sung, der VoIP-Situation am Urlaubsort sowie, falls verf�gbar, einen Fotobeweis. Als Gewinne winken Preise im Gesamtwert von �ber 1.500 EUR, darunter ein Zweierpack des Bildtelefons 'GXV 3140' von Grandstream und das AVM-Bundle 'FBF 7270' + 'FRITZ!Fon MT-D'.</p> 
-						</td>			
-				  </tr> 
-				</table> 
-				
-				<br> 
-				
-		 		<table class="Content" style="margin: 10px auto;" cellspacing="0" width="580"> 
-			 		<tr valign="top"> 
-			 			<td class="Primary" style="font-family: Arial, sans-serif; font-size: 12px; padding: 0px 15px 0px; line-height: 1.5em;"> 
-			 				<a name="hardware"></a><h2 style="color: #0097e5; margin: 0em 0em 0.75em;">Hardware-Highlights August 2009</h2> 
-							<p style="margin-bottom: 15px;">sipgate richtet Ihr Augenmerk im August auf die 'FritzBox'-Familie von AVM und damit auf die Modelle '7170', '7270' und '7270 international'. sipgate ist einer der g�nstigsten Anbieter im Markt und bietet im Gegensatz zu manch anderen Shops die direkte Verf�gbarkeit der bestellten Hardware. Sie erhalten bei uns allen Komfort eines Premiumlieferanten. Zugreifen lohnt sich - klicken Sie auf das jeweilige Modell!</p> 
-						</td>		
-				  </tr> 
-				  <tr> 
-					<td style="padding-left: 15px;"> 
-							<table width="550" cellpadding="0" cellspacing="0" style="font-family: Arial, sans-serif; font-size: 12px; line-height: 1.5em;"> 
-								<tr> 
-									<td width="184" style="padding:0px;"><a href="http://www.sipgate.de/voipshop/avm/fritzbox_fon_wlan_7170" target="_blank"><img src="http://www.sipgate.de/img/newsletter/2007/2009_08_fritzbox_1.jpg" border="0"></a></td> 
-									<td width="183" style="padding:0px;"><a href="http://www.sipgate.de/voipshop/avm/fritzbox_fon_wlan_7270" target="_blank"><img src="http://www.sipgate.de/img/newsletter/2007/2009_08_fritzbox_2.jpg" border="0"></a></td> 
-									<td width="183" style="padding:0px;"><a href="http://www.sipgate.de/voipshop/avm/fritzbox_7270_wlan_internationale_edition" target="_blank"><img src="http://www.sipgate.de/img/newsletter/2007/2009_08_fritzbox_3.jpg" border="0"></a></td> 
-								<tr> 
-							</table> 
-						</td> 
-					</tr> 
-				</table> 
-				
-				<br> 
-				</div> 
-		 
-			<table cellspacing="0" cellpadding="15" width="100%"> 
-				<tr> 
-					<td id="Legal" style="color: #666666; background: #f7f7e7; padding: 20px 0px;"> 
-						<table cellspacing="0" cellpadding="0" width="550" style="margin: 0px auto;"> 
-							<tr> 
-								<td style="color: #666666; background: #f7f7e7; font-family: Helvetica, Arial, sans-serif; font-size: 12px; line-height: 1.5em;"> 
-									<a name="jobs"></a><h2 style="font-size: 18px; color: #0097e5; background: #f7f7e7; margin: 0em 0em 0.75em;"><a name="jobs" style="color: #0097e5">Jobs bei sipgate</a></h2> 
-									<p style="margin-bottom: 0.75em;">sipgate geh�rt zu den gr��ten VoIP-Anbietern in Europa und expandiert weiter. Zur Verst�rkung unserer Teams suchen wir f�r unseren Standort D�sseldorf neue Mitarbeiter/innen mit folgenden Qualifikationen:</p> 
-									<ul> 
-										<li><a href="http://www.sipgate.de/user/jobs.php#0404" target="_blank" style="color: #666666;">VoIP-Ingenieur</a></li> 
-									 </ul> 
-									<p>Wir freuen uns auf Ihre Bewerbung!<br>			
-									Detaillierte Informationen auch zu weiteren Jobangeboten finden Sie unter <a href="http://www.sipgate.de/jobs" target="_blank">www.sipgate.de/jobs</a>.</p> 
-								</td> 
-							</tr> 
-						</table> 
-					</td> 
-				</tr> 
-			</table> 
-			
-			
-			<table cellspacing="0" cellpadding="15" width="100%"> 
-				<tr> 
-					<td id="Tertiary" style="color: #ffffff; background: #ff7700;"> 
-						<table cellspacing="0" cellpadding="0" width="550" style="margin: 0px auto;"> 
-							<tr> 
-								<td style="color: #ffffff; background: #ff7700; font-family: Arial, sans-serif; font-size: 12px; line-height: 1.5em;"> 
-									<p>Sie erhalten den Newsletter als angemeldeter Nutzer bei sipgate.de an XSL-EMAIL-XSL.<br> 
-									   M�chten Sie den Kunden-Newsletter nicht mehr erhalten, deaktivieren Sie bitte den Newsletter- Empfang in Ihrem sipgate Account unter 'Einstellungen'/'Pers�nliche Daten'/'Newsletter'.</p> 
-								</td> 
-							</tr> 
-						</table> 
-					</td> 
-				</tr> 
-			</table> 
-			<table cellspacing="0" cellpadding="15" width="100%"> 
-				<tr> 
-					<td id="Helpful"> 
-						<table cellspacing="0" cellpadding="0" width="550" style="margin: 0px auto;"> 
-							<tr> 
-								<td style="font-family: Arial, sans-serif; font-size: 12px; color: #c2c2c2; line-height: 1.5em;"> 
-									<p style="text-align: center; margin-bottom: 1em;">&#169; 2009 sipgate</p> 
-									<p>sipgate.de und der sipgate.de Newsletter sind Produkte der <a href="http://www.sipgate.de/user_interface/kontakt.php" target="_blank" style="color: #c2c2c2;">sipgate GmbH</a>.<br> 
-		                                                        Sitz: Gladbacher Str. 74, 40219 D�sseldorf<br> 
-									HRB D�sseldorf 39841 - Gesch�ftsf�hrer: Thilo Salmon, Tim Mois<br> 
-									Steuernummer: 106/5713/2881, Umsatzsteuer-ID: DE219349391<br> 
-									<br> 
-									* Alle Preise inkl. 19% MwSt. / Waren zzgl. &euro; 6,95 Versand<br> 
-									** Nur von Privatkunden buchbar</p> 
-								</td> 
-							</tr> 
-						</table> 
-					</td> 
-				</tr> 
-			</table>	
-		</div> 		
-	</body>
+            
+            body {
+                background-color: #f7f7f7
+            }
+            
+            p, div, span, ul, li {
+                font-family: arial, helvetica, verdana, sans-serif;
+                color: #000000;
+                font-size: 13px;
+                line-height: 21px;
+            }
+            
+            a:link, a:visited, a:hover, a:active {
+                color: #0063A7;
+                text-decoration: none;
+            }
+            
+            a:hover {
+                color: #ff7700;
+                text-decoration: none;
+            }
+            
+            h2 {
+                font-family: georgia, "times new roman", times, serif;
+                font-weight: normal;
+                font-size: 24px;
+                border-bottom: 1px solid #eeeeee;
+                color: #666666;
+                margin: 0px 0 7px 0;
+                padding: 30px 0 10px 0;
+            }
+            
+            h3 {
+                font-family: arial, helvetica, verdana, sans-serif;
+                font-weight: regular;
+                font-size: 16px;
+                color: #000000;
+                margin: 0 0 7px 0;
+                padding: 4px 0 0;
+            } #page_container {
+                width: 700px;
+                margin: 50px auto;
+                padding: 30px;
+                background-color: white;
+                border: 1px solid #dddddd;
+                border-radius: 10px;
+                -moz-border-radius: 10px;
+                -webkit-border-radius: 10px;
+            }
+            
+            p {
+                margin: 0 0 20px;
+                padding: 0;
+            }
+            
+            ul {
+                margin: 0 0 20px;
+                padding-top: 0;
+            }
+            
+            h1#logo {
+                background-image: url('sipgate_ffx_logo.jpg');
+                background-position: 50% 5px;
+                background-repeat: no-repeat;
+                margin: 0;
+                padding: 65px 0px 30px;
+                font-family: georgia, "times new roman", times, serif;
+                font-weight: normal;
+                font-size: 24px;
+                text-align: center;
+                color: #666666;
+            }
+            
+            p.hinweis {
+                background-image: url('warnung.gif');
+                background-repeat: no-repeat;
+                background-position: 10px 6px;
+                padding: 6px 12px 8px 38px;
+                background-color: #fff1b8;
+                border-radius: 5px;
+                -moz-border-radius: 5px;
+                -webkit-border-radius: 5px;
+            }
+            
+            
+        </style>
+    </head>
+    <body>
+        <div id="page_container">
+            <div id="header">
+                <h1 id="logo">Version 0.6</h1>
+                <p>
+                    Vielen Dank, dass Sie sich sipgateFFX heruntergeladen haben. Dieses komfortable Addon wird ständig erweitert und bietet jetzt schon zahlreiche nützliche Funktionen - sowohl für Privatanwender als auch für Businesskunden. Wir wünschen Ihnen viel Spaß bei der Nutzung von sipgateFFX 
+                </p>
+                <p>
+                    Ihr sipgateFFX Team
+                </p>
+	            <p class="hinweis">
+	                <strong>Hinweis:</strong>
+	                für den Benutzernamen und das Passwort verwenden Sie bitte dieselben Daten, die Sie auch für den Login auf der Webseite nutzen.
+	            </p>
+            </div>
+            <h2>Was ist neu in dieser Version?</h2>
+            <h3>Auswahl der Absenderrufnummer für den SMS-Versand</h3>
+            <p>
+                Wählen Sie, mit welcher Absenderrufnummer SMS gesendet werden sollen und bestimmen Sie so, mit welchem Endgerät Sie Antworten empfangen möchten. 
+            </p>
+            <h3>Webseiten für automatische Rufnummernerkennung sperren</h3>
+            <p>
+				In bestimmten Fällen kann es vorkommen, dass auch auf Webseiten enthaltene Kontonummern oder Bankleitzahlen fälschlich von sipgateFFX als Telefonnummern erkannt und mit dem Click2Dial Telefonsymbol versehen werden könnten. Um Missverständnisse zu vermeiden, können Sie nun bestimmte Webseiten von der Click2Dial-Funktion ausnehmen, z.B. während Sie mit Online-Banking beschäftigt sind. 
+            </p>
+            <h3>Nochmal verbesserte Rufnummernerkennung</h3>
+            <p>
+                Die Rufnummernerkennung bei Click2Dial wurde nochmals verbessert, besonders auch für US-Rufnummern. Falscherkennungen wurden auf ein Minimum reduziert.
+            </p>
+            <h3>Team-Kunden können den DND-Status setzen</h3>
+            <p>
+				Mit der neuen Version können sipgate team Kunden auf die DND-Funktion zurückgreifen und so alle Ihre Telefone komplett stumm zu schalten, um z.B. für einen gewissen Zeitraum keine Anrufe zu empfangen. Sobald die DND-Funktion aktiviert wurde, erhalten Anrufer ein Besetzt-Zeichen. 
+            </p>
+            <h3>Komplettes Menü auch für sipgate basic und plus-Kunden</h3>
+            <p>
+				Besitzer eines sipgate basic oder plus Accounts erhalten nun das komplette Menü und können so auf die volle Funktionalität zugreifen. 
+            </p>
+            <p>
+                Sie sind noch kein sipgate Kunde? Kein Problem! Ein Account ist innerhalb weniger Minuten angelegt und sofort nutzbar. <br>
+				Einen sipgate team Account erhalten Sie hier: <a href="http://www.live.sipgate.de" target="_blank">sipgate team</a>.<br>
+				Privatkunden können hier sofort einen Account erstellen: <a href="http://www.sipgate.de" target="_blank">sipgate basic und plus</a>.
+            </p>
+            <h2>sipgateFFX - Die Funktionen</h2>
+            <p>
+                Mit einem Klick auf das sipgate Symbol in der Statusleiste Ihres Browsers, öffnet sich das Kontextmenü mit allen verfügbaren Funktionen. Im oberen Bereich können Sie Ihr Konto aufladen, Voicemails abrufen und Ihre Kontakte, den Einzelverbindungsnachweis und die Anrufliste einsehen, sowie Faxnachrichten senden/abrufen (sipgate plus), SMS senden oder den sipgate Online-Shop besuchen. Nach dem Klick auf den jeweiligen Bereich, öffnet sich ein weiteres Browserfenster (optional Tab) mit der gewohnten sipgate Seite. Im darunterliegenden Bereich steht Ihnen neben den Einstellungen, die Click2Dial-Funktion zur Verfügung. Auf Internetseiten angezeigte Telefonnummern lassen sich so bequem anrufen. Neben der angezeigten Telefonnummer befindet sich ein Telefon-Symbol. Wenn Sie darauf klicken, öffnet sich ein Fenster, welches den Status der Verbindung anzeigt. Sobald Ihr Telefon klingelt, entscheiden Sie, ob die Verbindung aufgebaut werden soll. Heben Sie ab, werden Sie mit der angeklickten Nummer verbunden. Klicken Sie im Statusfenster auf Abbrechen, wird die Verbindung nicht hergestellt.
+            </p>
+            <h3>Hilfe und weitere Informationen</h3>
+            <p>
+                Unterstützung für diese Erweiterung gibt der Entwickler unter <a href="http://www.live.sipgate.de/ffx" target="_blank">http://www.live.sipgate.de/ffx</a>
+                oder unter der E-Mail-Adresse support@support.sipgate.de.
+            </p>
+            <h3>Geplante Features:</h3>
+            <ul>
+                <li>
+                    Einsehen von Ereignissen direkt im Add-On
+                </li>
+                <li>
+                    Abspielen von Voicemail direkt im Browser
+                </li>
+                <li>
+                    die Anzeige der letzten getätigten click2dial-Anrufe
+                </li>
+                <li>
+                    Aufnehmen laufender Click2Dial-Gespräche
+                </li>
+            </ul>
+            <h3>Hinweis: Dieses Add-On ist Open Source.</h3>
+            <p>
+                Der Code befindet sich unter <a href="http://www.github.com/sipgate/sipgateffx" target="_blank">http://www.github.com/sipgate/sipgateffx</a>. Fühlen Sie sich frei, sich uns anzuschließen!
+            </p>
+        </div>
+    </body>
 </html>
