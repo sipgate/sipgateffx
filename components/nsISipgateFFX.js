@@ -538,21 +538,21 @@ SipgateFFX.prototype = {
 				
 				_sgffx.sipgateCredentials = ourParsedResponse;
 				
+				if(ourParsedResponse.HttpServer.match(/com$/)) {
+					_sgffx.userCountryPrefix = '1';
+				} else
+				if(ourParsedResponse.HttpServer.match(/de$/)) {
+					_sgffx.userCountryPrefix = '49';
+				} else
+				if(ourParsedResponse.HttpServer.match(/at$/)) {
+					_sgffx.userCountryPrefix = '43';
+				} else
+				if(ourParsedResponse.HttpServer.match(/co\.uk$/)) {
+					_sgffx.userCountryPrefix = '44';
+				}				
+				
 				if (_sgffx.systemArea == 'team') {
 					_sgffx.getEventSummary();
-					if(ourParsedResponse.HttpServer.match(/com$/)) {
-						_sgffx.userCountryPrefix = '1';
-					} else
-					if(ourParsedResponse.HttpServer.match(/de$/)) {
-						_sgffx.userCountryPrefix = '49';
-					} else
-					if(ourParsedResponse.HttpServer.match(/at$/)) {
-						_sgffx.userCountryPrefix = '43';
-					} else
-					if(ourParsedResponse.HttpServer.match(/co\.uk$/)) {
-						_sgffx.userCountryPrefix = '44';
-					}
-					
 					_sgffx.getDoNotDisturb();				
 				}
 				
