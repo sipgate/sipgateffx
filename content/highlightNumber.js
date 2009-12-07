@@ -371,8 +371,15 @@ function sipgateffxCheckPhoneNumber(aNode)
 		    	return 1;
 		    }
 		    
-		    if(number.match(/^[\(\[]?\+|^[\(\[]?00|^011/) && !countryCodeRegex.test(number.replace(/^\+|^00|^011|\D/g, ""))) {
-		    	sgffx.log('sipgateffxCheckPhoneNumber: unknown country code on "' + number.replace(/^\+|^00|^011|\D/g, "") + '"');
+		    var nationalPrefix = new RegExp(sgffx.internationalPrefixes[sgffx.userCountryPrefix].join('|')+"|\\D", "g");
+
+		    var intBegin = /^[\(\[]?\+|^[\(\[]?00/;
+		    if(sgffx.userCountryPrefix == "1") {
+		    	intBegin = /^[\(\[]?\+|^[\(\[]?00|^011/;
+		    }
+		    
+		    if(number.match(intBegin) && !countryCodeRegex.test(number.replace(nationalPrefix, ""))) {
+		    	sgffx.log('sipgateffxCheckPhoneNumber: unknown country code on "' + number.replace(nationalPrefix, "") + '"');
 		    	return 1;
 		    }
 		    
@@ -393,7 +400,7 @@ function sipgateffxCheckPhoneNumber(aNode)
 	        
 	        var prettyNumber = number.replace(/[^\(\)\[\]0-9]/g,'').replace(/\(0\)|\[0\]/g,'');
 	        
-	    	var country = allCountries[countryCodeRegex.exec(number.replace(/^\+|^00|^011|\D/g, ""))];
+	    	var country = allCountries[countryCodeRegex.exec(number.replace(nationalPrefix, ""))];
 	        
             var newNodeClick2DialIcon = aNode.ownerDocument.createElement("IMG");
             newNodeClick2DialIcon.style.border = 0;

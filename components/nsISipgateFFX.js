@@ -107,6 +107,12 @@ function SipgateFFX() {
     };
 	this.clientLang = 'en';
 	this.userCountryPrefix = '49';
+	this.internationalPrefixes = {
+			"1": ["^011","^\\+"],
+			"43": ["^00","^\\+"],
+			"44": ["^00","^\\+"],
+			"49": ["^00","^\\+"]
+	};
 	this.mLogBuffer = Components.classes["@mozilla.org/supports-array;1"].createInstance(Components.interfaces.nsISupportsArray);
 	this.mLogBufferMaxSize = 1000;
 	this.getBalanceTimer = Components.classes["@mozilla.org/timer;1"].createInstance(Components.interfaces.nsITimer);
@@ -1431,7 +1437,8 @@ SipgateFFX.prototype = {
 			if(!_number.match(/^0|^\+/)) {
 				_number = natprefix + _number;
 			} else {
-				_number = _number.toString().replace(/^00|^011|\+/, "");
+				_number = _number.toString().replace(new RegExp(this.internationalPrefixes[natprefix].join('|')), "");
+//				_number = _number.toString().replace(/^00|^011|\+/, "");
 			}
 
 			// -----------------------------------------------------			
