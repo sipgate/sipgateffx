@@ -24,22 +24,30 @@
 var sgffx;
 var sgffxDB;
 
-function doOpenDebuggingInfo(){
-	try {
-		window.opener.getBrowser().selectedTab = window.opener.getBrowser().addTab('chrome://sipgateffx/content/sendReport.html');
-	} catch(e) {
-		document.documentElement.openWindow("For support",'chrome://sipgateffx/content/sendReport.html',"",null);
+function openURI(siteURL) {
+	if(sgffx.application == 'thunderbird') {
+		var mail3PaneWindow = Components.classes["@mozilla.org/appshell/window-mediator;1"]
+		                                         .getService(Components.interfaces.nsIWindowMediator)
+		                                         .getMostRecentWindow("mail:3pane");  
+		if (mail3PaneWindow) {  
+			var tabmail = mail3PaneWindow.document.getElementById("tabmail");  
+			mail3PaneWindow.focus();
+			tabmail.openTab("contentTab", {contentPage: siteURL});
+		}		
+	} else {
+		window.opener.getBrowser().selectedTab = window.opener.getBrowser().addTab(siteURL);
 	}
+}
+
+function doOpenDebuggingInfo(){
+	var siteURL = 'chrome://sipgateffx/content/sendReport.html';
+	openURI(siteURL);
     window.close();
 }
 
 function doOpenNewVersionInfo(){
 	var siteURL = 'chrome://sipgateffx/content/firststart/welcome_'+sgffx.language+'.html';
-	try {
-	    window.opener.getBrowser().selectedTab = window.opener.getBrowser().addTab(siteURL);
-	} catch(e) {
-		document.documentElement.openWindow("What's new?",siteURL,"",null);
-	}
+	openURI(siteURL);
     window.close();
 }
 

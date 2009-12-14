@@ -278,7 +278,7 @@ var sipgateffx = {
 			try {
 				gBrowser.selectedTab = gBrowser.addTab(siteURL);
 			} catch(e) {
-				window.open(siteURL,"What's new?","chrome,centerscreen"); 
+				window.open(siteURL,"What's new?","chrome,centerscreen,height=400px,width=820px"); 
 			}
 			sgffx.setPref("extensions.sipgateffx.lastInstalledVersion", sgffx.version, "char");
 		}
