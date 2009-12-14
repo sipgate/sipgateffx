@@ -2,6 +2,8 @@
 <!ENTITY sipgateffxContextC2dBlacklistDis.accesskey "c">
 <!ENTITY sipgateffxContextC2dBlacklistEn.label "Enable click2dial for this domain">
 <!ENTITY sipgateffxContextC2dBlacklistEn.accesskey "c">
+<!ENTITY sipgateffxContextC2dBlacklistMailDis.label "Disable click2dial for this sender">
+<!ENTITY sipgateffxContextC2dBlacklistMailEn.label "Enable click2dial for this sender">
 <!ENTITY sipgateffxContextSendAsSMS.label "Text this">
 <!ENTITY sipgateffxContextSendAsSMS.accesskey "t">
 <!ENTITY sipgateffxContextSendTo.label "Send text message">
@@ -16,6 +18,8 @@
 <!ENTITY sipgateffxStatusbar.DNDoff.tooltip "Do Not Disturb is disabled. Click here to enable it.">
 <!ENTITY sipgateffxStatusbar.C2DBlacklistOn.tooltip "Number detection is enabled for this domain. Click here to disable it.">
 <!ENTITY sipgateffxStatusbar.C2DBlacklistOff.tooltip "Number detection is disabled for this domain. Click here to enable it.">
+<!ENTITY sipgateffxStatusbar.C2DBlacklistMailOn.tooltip "Number detection is enabled for this sender. Click here to disable it.">
+<!ENTITY sipgateffxStatusbar.C2DBlacklistMailOff.tooltip "Number detection is disabled for this sender. Click here to enable it.">
 
 <!ENTITY showprefs.menuitem "Preferences">
 <!ENTITY getbalance.menuitem "Refresh balance">

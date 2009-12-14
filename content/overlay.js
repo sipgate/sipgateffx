@@ -206,21 +206,23 @@ var sipgateffx = {
 		gBrowser.addEventListener("DOMFrameContentLoaded", this.parseClick2DialFrame, false);
 		_prepareArray();
 		
-		gBrowser.tabContainer.addEventListener("select", function(e) {
-			try {
-				var host = content.document.location.host.toLowerCase();
-				if(sgffxDB.isBlacklisted(host)) {
-					document.getElementById("sipgateffxC2DBlacklistOn").hidden = true;
-					document.getElementById("sipgateffxC2DBlacklistOff").hidden = false;
-					return;
-				} else {
-					document.getElementById("sipgateffxC2DBlacklistOn").hidden = false;
-					document.getElementById("sipgateffxC2DBlacklistOff").hidden = true;
-				}
-			} catch(e) {
-				//
-			}		
-		}, false);
+		if(app!='thunderbird') {
+			gBrowser.tabContainer.addEventListener("select", function(e) {
+				try {
+					var host = content.document.location.host.toLowerCase();
+					if(sgffxDB.isBlacklisted(host)) {
+						document.getElementById("sipgateffxC2DBlacklistOn").hidden = true;
+						document.getElementById("sipgateffxC2DBlacklistOff").hidden = false;
+						return;
+					} else {
+						document.getElementById("sipgateffxC2DBlacklistOn").hidden = false;
+						document.getElementById("sipgateffxC2DBlacklistOff").hidden = true;
+					}
+				} catch(e) {
+					//
+				}		
+			}, false);
+		}
 		
 		setTimeout(this.showUpdateInfo, 1000);
 	},
@@ -273,7 +275,11 @@ var sipgateffx = {
 	showUpdateInfo: function() {
 		if (sgffx.version != null && sgffx.version != sgffx.getPref("extensions.sipgateffx.lastInstalledVersion", "char")) {
 			var siteURL = 'chrome://sipgateffx/content/firststart/welcome_'+sgffx.language+'.html';
-			gBrowser.selectedTab = gBrowser.addTab(siteURL);
+			try {
+				gBrowser.selectedTab = gBrowser.addTab(siteURL);
+			} catch(e) {
+				window.open(siteURL,"What's new?","chrome,centerscreen"); 
+			}
 			sgffx.setPref("extensions.sipgateffx.lastInstalledVersion", sgffx.version, "char");
 		}
 	},
@@ -389,16 +395,37 @@ var sipgateffx = {
 	},
 	
 	onMenuItemBlacklist: function(e, action) {
+		var blacklistEntry = '';
+
+		if(app != 'thunderbird') {
+			try {
+				var blacklistEntry = content.document.location.host.toLowerCase();
+			} catch(e) {
+				sgffx.log('onMenuItemBlacklist: could not get host (error: '  + e + ')');
+			}
+		} else {
+			try {
+				var msg = gFolderDisplay.selectedMessage;
+				if(msg) {
+					blacklistEntry = msg.getStringProperty('sender');
+					if(new RegExp('<.*>').test(blacklistEntry)) {
+						blacklistEntry = blacklistEntry.match(/<(.*)>/)[1]; 
+					}
+				}
+			} catch(e) {
+				sgffx.log('onMenuItemBlacklist: could not get sender (error: '  + e + ')');
+			}
+		}
+		
 		try {
-			var host = content.document.location.host.toLowerCase();
 			if(action == 'disable') {
-				sgffxDB.addBlacklisting(host);
+				sgffxDB.addBlacklisting(blacklistEntry);
 				document.getElementById("context-sipgateffx-c2dblacklistEn").hidden = false;
 				document.getElementById("context-sipgateffx-c2dblacklistDis").hidden = true;
 				document.getElementById("sipgateffxC2DBlacklistOn").hidden = true;
 				document.getElementById("sipgateffxC2DBlacklistOff").hidden = false;
 			} else if(action == 'enable') {
-				sgffxDB.removeBlacklisting(host);
+				sgffxDB.removeBlacklisting(blacklistEntry);
 				document.getElementById("context-sipgateffx-c2dblacklistEn").hidden = true;
 				document.getElementById("context-sipgateffx-c2dblacklistDis").hidden = false;
 				document.getElementById("sipgateffxC2DBlacklistOn").hidden = false;
@@ -440,9 +467,30 @@ var sipgateffx = {
 	},
 	
 	parseClick2Dial: function() {
+		var blacklistEntry = '';
+
+		if(app != 'thunderbird') {
+			try {
+				var blacklistEntry = content.document.location.host.toLowerCase();
+			} catch(e) {
+				sgffx.log('parseClick2Dial: could not get host (error: '  + e + ')');
+			}
+		} else {
+			try {
+				var msg = gFolderDisplay.selectedMessage;
+				if(msg) {
+					blacklistEntry = msg.getStringProperty('sender');
+					if(new RegExp('<.*>').test(blacklistEntry)) {
+						blacklistEntry = blacklistEntry.match(/<(.*)>/)[1]; 
+					}
+				}
+			} catch(e) {
+				sgffx.log('parseClick2Dial: could not get sender (error: '  + e + ')');
+			}
+		}
+
 		try {
-			var host = content.document.location.host.toLowerCase();
-			if(sgffxDB.isBlacklisted(host)) {
+			if(sgffxDB.isBlacklisted(blacklistEntry)) {
 				document.getElementById("sipgateffxC2DBlacklistOn").hidden = true;
 				document.getElementById("sipgateffxC2DBlacklistOff").hidden = false;
 				return;
@@ -450,21 +498,11 @@ var sipgateffx = {
 				document.getElementById("sipgateffxC2DBlacklistOn").hidden = false;
 				document.getElementById("sipgateffxC2DBlacklistOff").hidden = true;
 			}
-		} catch(e) {
-			//
-		}		
+		} catch (e) {
+			sgffx.log('parseClick2Dial: blacklist evaluation failed (error: '  + e + ')');
+		}
 		
 		if (sgffx.getPref("extensions.sipgateffx.parsenumbers", "bool") && sgffx.isLoggedIn) {
-			var host = '';
-			try {
-				host = content.document.location.host.toLowerCase();
-			} catch(e) {
-				//		
-			}
-			if(sgffxDB.isBlacklisted(host)) {
-				// sgffx.log('isBlacklisted: The site "'+host+'" is blacklisted. Do not match for click2dial.');
-				return;
-			}
 			sipgateffxPageLoaded();
 		}
 	},
@@ -554,7 +592,12 @@ var sipgateffx = {
 				
 				var referrer = null;  
 				var flags = Components.interfaces.nsIWebNavigation.LOAD_FLAGS_NONE;  
-
+				
+				if(app == 'thunderbird') {
+						openURI(siteURL);
+						break;
+				}				
+				
 				// open new tab or use already opened (by extension) tab:
 				if ((typeof(gBrowser.selectedTab.id) != "undefined") && (gBrowser.selectedTab.id == "TabBySipgateFirefoxExtensionStatusbarShortcut")) {
 					gBrowser.loadURIWithFlags(siteURL, flags, referrer, null, postData);  
@@ -627,3 +670,20 @@ if(typeof "getBrowserSelection" != "function") {
 		return gBrowser.contentWindow.getSelection().toString();
 	}
 }
+
+function openURI(uri)
+{
+	// first construct an nsIURI object using the ioservice
+	var ioservice = Components.classes["@mozilla.org/network/io-service;1"]
+	                          .getService(Components.interfaces.nsIIOService);
+
+	var uriToOpen = ioservice.newURI(uri, null, null);
+
+	var extps = Components.classes["@mozilla.org/uriloader/external-protocol-service;1"]
+	                      .getService(Components.interfaces.nsIExternalProtocolService);
+
+	// now, open it!
+	extps.loadURI(uriToOpen, null);
+}
+
+

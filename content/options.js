@@ -25,13 +25,21 @@ var sgffx;
 var sgffxDB;
 
 function doOpenDebuggingInfo(){
-    window.opener.getBrowser().selectedTab = window.opener.getBrowser().addTab('chrome://sipgateffx/content/sendReport.html');
+	try {
+		window.opener.getBrowser().selectedTab = window.opener.getBrowser().addTab('chrome://sipgateffx/content/sendReport.html');
+	} catch(e) {
+		document.documentElement.openWindow("For support",'chrome://sipgateffx/content/sendReport.html',"",null);
+	}
     window.close();
 }
 
 function doOpenNewVersionInfo(){
 	var siteURL = 'chrome://sipgateffx/content/firststart/welcome_'+sgffx.language+'.html';
-    window.opener.getBrowser().selectedTab = window.opener.getBrowser().addTab(siteURL);
+	try {
+	    window.opener.getBrowser().selectedTab = window.opener.getBrowser().addTab(siteURL);
+	} catch(e) {
+		document.documentElement.openWindow("What's new?",siteURL,"",null);
+	}
     window.close();
 }
 
@@ -46,13 +54,13 @@ function doDeleteBlacklistedHosts(){
 }
 
 function buildBlacklistLisbox() {
+		sgffxDB.getBlacklistedSites();
+	
 		var myListBox = document.getElementById("sipgateffxTree");
 
 		for (var i = 0; i < sgffxDB.blacklisted.length; i++) {
-			
 			var b = myListBox.appendItem(sgffxDB.blacklisted[i], sgffxDB.blacklisted[i]);
 			b.setAttribute('type', 'checkbox');
-
 		}
 }
 

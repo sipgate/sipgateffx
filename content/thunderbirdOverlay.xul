@@ -38,6 +38,16 @@
 	<menuseparator id="context-sipgate-sep" insertbefore="mailContext-selectall"/>
 	<menu id="context-sipgateffx" label="sipgate" insertbefore="mailContext-selectall"  image="chrome://sipgateffx/skin/icon_sipgate_active.gif" class="menu-iconic">
 		<menupopup>
+		    <menuitem id="context-sipgateffx-c2dblacklistDis"
+		              label="&sipgateffxContextC2dBlacklistMailDis.label;"
+		              accesskey="&sipgateffxContextC2dBlacklistDis.accesskey;"
+					  hidden="true"
+		              oncommand="sipgateffx.onMenuItemBlacklist(event, 'disable')"/>
+		    <menuitem id="context-sipgateffx-c2dblacklistEn"
+		              label="&sipgateffxContextC2dBlacklistMailEn.label;"
+		              accesskey="&sipgateffxContextC2dBlacklistEn.accesskey;"
+					  hidden="true"
+		              oncommand="sipgateffx.onMenuItemBlacklist(event, 'enable')"/>
 		    <menuitem id="context-sipgateffx-sendassms"
 		              disabled="true"		    
 		              label="&sipgateffxContextSendAsSMS.label;"
@@ -67,21 +77,55 @@
 	<!--	oncommand="sipgateffx.onToolbarButtonCommand()" -->
 			
 	<statusbar id="status-bar">
-		<statusbarpanel class="statusbarpanel-iconic" id="sipgateffx_statusbar_noauth" contextmenu="sipgatemenu" style="cursor: pointer;" >
+		<statusbarpanel id="sipgateffx_statusbar_noauth" contextmenu="sipgatemenu" >
 			<hbox align="center" hidden="false" id="sipgateffx_loggedout">
-				<image src="chrome://sipgateffx/skin/icon_sipgate_inactive.gif" />
+				<image id="sipgateLogoOff" src="chrome://sipgateffx/skin/icon_sipgate_inactive.gif" style="cursor: pointer;" />
 				<label value="&sipgateffxStatusbar.InfoNoAuth.label;" style="color: red;" />
 			</hbox>
 			
 			<hbox align="center" hidden="true" id="sipgateffx_loggedin">
-				<image src="chrome://sipgateffx/skin/icon_sipgate_active.gif" />
+				<image id="sipgateLogo" src="chrome://sipgateffx/skin/icon_sipgate_active.gif" style="cursor: pointer;" />
 				<label id="BalanceText" />
-				
-				<label id="sipgateffxEventsCall" value="0/0" hidden="true" />
-				<label id="sipgateffxEventsFax" value="0/0" hidden="true" />
-				<label id="sipgateffxEventsSMS" value="0/0" hidden="true" />
+
+				<label 	id="sipgateffxEventsCall"
+						value="0/0"
+						hidden="true"
+						tooltiptext="&sipgateffxStatusbar.Events.Call.tooltip;" />
+				<label 	id="sipgateffxEventsFax"
+						value="0/0"
+						hidden="true"
+						tooltiptext="&sipgateffxStatusbar.Events.Fax.tooltip;" />
+				<label 	id="sipgateffxEventsSMS"
+						value="0/0"
+						hidden="true"
+						tooltiptext="&sipgateffxStatusbar.Events.SMS.tooltip;" />
+
+				<hbox id="sipgateffxDND" hidden="true">
+					<image	id="sipgateffxDNDon"
+							src="chrome://sipgateffx/skin/dnd_on.gif"
+							hidden="true"
+							tooltiptext="&sipgateffxStatusbar.DNDon.tooltip;"
+							onclick="sipgateffx.onMenuItemDoNotDisturb(event, 'disable')" />
+					<image 	id="sipgateffxDNDoff"
+							src="chrome://sipgateffx/skin/dnd_off.gif"
+							hidden="true"
+							tooltiptext="&sipgateffxStatusbar.DNDoff.tooltip;"
+							onclick="sipgateffx.onMenuItemDoNotDisturb(event, 'enable')" />
+				</hbox>
+
+				<hbox id="sipgateffxC2DBlacklist">
+					<image	id="sipgateffxC2DBlacklistOn"
+							src="chrome://sipgateffx/skin/icon_click2dial_blacklist_enabled.gif"
+							hidden="true"
+							tooltiptext="&sipgateffxStatusbar.C2DBlacklistMailOn.tooltip;"
+							onclick="sipgateffx.onMenuItemBlacklist(event, 'disable')" />
+					<image 	id="sipgateffxC2DBlacklistOff"
+							src="chrome://sipgateffx/skin/icon_click2dial_blacklist_disabled.gif"
+							hidden="true"
+							tooltiptext="&sipgateffxStatusbar.C2DBlacklistMailOff.tooltip;"
+							onclick="sipgateffx.onMenuItemBlacklist(event, 'enable')" />
+				</hbox>						
 			</hbox>
-			
 		</statusbarpanel>
 		
 		<!--
@@ -90,10 +134,11 @@
 			gelb: #fff1b8
 			rot: #f9c7c6		
 		-->
-		<statusbarpanel class="statusbarpanel-iconic" id="sipgateffx_c2dStatus" contextmenu="sipgatec2dmenu" hidden="true">
+		<statusbarpanel id="sipgateffx_c2dStatus" contextmenu="sipgatec2dmenu" hidden="true">
 			<hbox align="center" style="background-color: #F3DA2B">
 				<image src="chrome://sipgateffx/skin/icon_click2dial.gif" />
 				<label id="sipgateffx_c2dStatusText" />
+				<image src="chrome://sipgateffx/skin/icon_click2dial_hangup.gif" onclick="sipgateffx.onMenuItemContextCallCancel()" style="cursor:pointer;" tooltiptext="Click here to hangup" />
 			</hbox>
 			
 			<command id="sipgatecmd_c2dCancellCall" oncommand="sipgateffx.onMenuItemContextCallCancel()" disabled="true"/>
@@ -135,6 +180,7 @@
 		<command id="sipgatecmd_showVoiceMail" oncommand="sipgateffx.onStatusbarCommand('showSitePage','voicemail');"/>
 		<command id="sipgatecmd_showPhoneBook" oncommand="sipgateffx.onStatusbarCommand('showSitePage','phonebook');"/>
 		<command id="sipgatecmd_showSmsForm" oncommand="sipgateffx.onStatusbarCommand('sendSMS');"/>
+		<command id="sipgatecmd_showPhonenumberForm" oncommand="sipgateffx.onStatusbarCommand('dialPhonenumber');"/>
 
 		<command id="sipgatecmd_logon" oncommand="sipgateffx.onStatusbarCommand('logon');"/>
 		<command id="sipgatecmd_logoff" oncommand="sipgateffx.onStatusbarCommand('logoff');"/>
@@ -142,6 +188,8 @@
 	
 	<popupset>
 		<menupopup id="sipgatemenu">
+			<menuitem label="&phonenumberform.menuitem;" accesskey="&phonenumberform.key;" hidden="true"
+				id="showphonenumberformmenuitem" command="sipgatecmd_showPhonenumberForm" />
 			<menuitem label="&showsmsform.menuitem;" accesskey="&showsmsform.key;" hidden="true"
 				id="showsmsformmenuitem" command="sipgatecmd_showSmsForm" />
 			<menuitem label="&showfax.menuitem;" accesskey="&showfax.key;" hidden="true"

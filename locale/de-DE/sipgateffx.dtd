@@ -2,6 +2,8 @@
 <!ENTITY sipgateffxContextC2dBlacklistDis.accesskey "c">
 <!ENTITY sipgateffxContextC2dBlacklistEn.label "click2dial auf dieser Domain einschalten">
 <!ENTITY sipgateffxContextC2dBlacklistEn.accesskey "c">
+<!ENTITY sipgateffxContextC2dBlacklistMailDis.label "click2dial für diesen Absender ausschalten">
+<!ENTITY sipgateffxContextC2dBlacklistMailEn.label "click2dial für diesen Absender einschalten">
 <!ENTITY sipgateffxContextSendAsSMS.label "Als SMS senden">
 <!ENTITY sipgateffxContextSendAsSMS.accesskey "M">
 <!ENTITY sipgateffxContextSendTo.label "SMS senden">
@@ -16,6 +18,8 @@
 <!ENTITY sipgateffxStatusbar.DNDoff.tooltip "Telefone nicht stumm geschaltet. Zum Stummschalten hier klicken.">
 <!ENTITY sipgateffxStatusbar.C2DBlacklistOn.tooltip "Rufnummernerkennung aktiv für diese Domain. Zum Ausschalten hier klicken.">
 <!ENTITY sipgateffxStatusbar.C2DBlacklistOff.tooltip "Rufnummernerkennung für diese Domain deaktiviert. Zum Einschalten hier klicken.">
+<!ENTITY sipgateffxStatusbar.C2DBlacklistMailOn.tooltip "Rufnummernerkennung aktiv für diesen Absender. Zum Ausschalten hier klicken.">
+<!ENTITY sipgateffxStatusbar.C2DBlacklistMailOff.tooltip "Rufnummernerkennung für diesen Absender deaktiviert. Zum Einschalten hier klicken.">
 
 <!ENTITY showprefs.menuitem "Einstellungen">
 <!ENTITY getbalance.menuitem "Kontostand aktualisieren">

@@ -33,6 +33,7 @@ function SipgateFFX() {
     this._strings = null;
 	
 	this.addOnVersion = null;
+	this.addOnTarget = null;
 	 
     this.samuraiAuth = {
         "hostname": "chrome://sipgateffx",
@@ -191,6 +192,29 @@ SipgateFFX.prototype = {
 			}
 		} 
 		return this.addOnVersion;
+	},
+	
+	get application() {
+		if(this.addOnTarget == null) {
+			try {
+				var extensionManager = Components.classes["@mozilla.org/extensions/manager;1"].getService(Components.interfaces.nsIExtensionManager);
+				var item = extensionManager.getItemForID('sipgateffx@michael.rotmanov');
+				if(item) {
+					switch(item.targetAppID) {
+						case '{3550f703-e582-4d05-9a08-453d09bdfdc6}':
+							this.addOnTarget = 'thunderbird';
+							break;
+						default:
+							this.addOnTarget = 'firefox';
+							break;							
+					}
+				}
+			} catch(except) {
+				this.log(except);
+				this.addOnTarget = 'firefox';
+			}
+		} 
+		return this.addOnTarget;
 	},
 	
 	oPrefService: Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch),
@@ -1510,18 +1534,22 @@ SipgateFFX.prototype = {
 	setXulObjectAttribute: function(id, attrib_name, new_value, forced) {
 		if (typeof(xulObjReference[id]) == 'object') {
 			var xulObj = xulObjReference[id];
-			for (var k = 0; k < xulObj.length; k++) {
-				if (attrib_name == "src") {
-					xulObj[k] = xulObj[k].QueryInterface(Components.interfaces.nsIDOMXULImageElement);
-				} else {
-					xulObj[k] = xulObj[k].QueryInterface(Components.interfaces.nsIDOMXULElement);
+			try {
+				for (var k = 0; k < xulObj.length; k++) {
+					if (attrib_name == "src") {
+						xulObj[k] = xulObj[k].QueryInterface(Components.interfaces.nsIDOMXULImageElement);
+					} else {
+						xulObj[k] = xulObj[k].QueryInterface(Components.interfaces.nsIDOMXULElement);
+					}
+					// this.log("set attribute '" + attrib_name + "' of '" + id + "' to '" + new_value + "'");
+					if (new_value == null) {
+						xulObj[k].removeAttribute(attrib_name);
+					} else {
+						xulObj[k].setAttribute(attrib_name, new_value);
+					}
 				}
-				// this.log("set attribute '" + attrib_name + "' of '" + id + "' to '" + new_value + "'");
-				if (new_value == null) {
-					xulObj[k].removeAttribute(attrib_name);
-				} else {
-					xulObj[k].setAttribute(attrib_name, new_value);
-				}
+			} catch(e) {
+				this.log('setXulObjectAttribute: Error occurred. ('+id+'/'+attrib_name+'/'+new_value+')');
 			}
 		} else {
 			this.log("No reference to XUL-Objects of " + id + "!");
