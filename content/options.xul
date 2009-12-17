@@ -109,7 +109,7 @@
 
   	<listbox id="sipgateffxTree" height="100px">
 	  <listhead>
-	    <listheader label="Domain"/>
+	    <listheader label="&c2dBlacklistTitle.label;"/>
 	  </listhead>
 	
 	  <listcols>

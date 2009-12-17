@@ -2,8 +2,9 @@
 <!ENTITY pane1.title "Account">
 <!ENTITY pane2.title "click2dial">
 <!ENTITY pane3.title "click2dial blacklist">
-<!ENTITY c2dBlacklist.description "Following domains are excluded from automatic phone number parsing:">
+<!ENTITY c2dBlacklist.description "Following items are excluded from automatic phone number parsing:">
 <!ENTITY c2dBlacklistEnable.label "Remove checked items from blacklist">
+<!ENTITY c2dBlacklistTitle.label "Domains / emails">
 <!ENTITY username.value "Username">
 <!ENTITY password.value "Password">
 <!ENTITY polling.label "Automatic update of display">

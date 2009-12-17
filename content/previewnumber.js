@@ -90,7 +90,13 @@ var sipgateffx_previewnumber = {
 	},
 
 	onContactSelect: function(element) {
-		document.getElementById("sipgate_number").value = '+' + element.selectedItem.value; 
+		if(element.selectedItem.value.match(/^\+/)) {
+			document.getElementById("sipgate_number").value = element.selectedItem.value; 
+		} else if(element.selectedItem.value.match(/^0/)) {
+			document.getElementById("sipgate_number").value = '+' + sgffx.niceNumber(element.selectedItem.value);
+		} else {
+			document.getElementById("sipgate_number").value = '+' + element.selectedItem.value;
+		} 
 	},
 	
   onUnload: function() {

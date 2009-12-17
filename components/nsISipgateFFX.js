@@ -464,6 +464,8 @@ SipgateFFX.prototype = {
 						_sgffx.setXulObjectAttribute('sipgateffx_c2dStatusText', "value", ourParsedResponse.faultString);
 					}
 					_sgffx.log(msg);
+					_sgffx.currentSessionID = null;
+					_sgffx.currentSessionTime = null;
 					_sgffx.c2dTimer.initWithCallback({
 						notify: function(timer){
 							_sgffx.setXulObjectVisibility('sipgateffx_c2dStatus', 0);
