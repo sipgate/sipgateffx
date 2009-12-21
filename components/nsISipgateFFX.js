@@ -1077,11 +1077,10 @@ SipgateFFX.prototype = {
 		}
 		
         var result = function(ourParsedResponse, aXML){
-			if (ourParsedResponse.StatusCode && ourParsedResponse.StatusCode == 200) {
+			
+        	if (ourParsedResponse.StatusCode && ourParsedResponse.StatusCode == 200) {
 				
 				if (ourParsedResponse.EntryList && ourParsedResponse.EntryList.length > 0) {
-					
-					// _sgffx.runXulObjectCommand("sipgateContacts", "removeAllItems");
 					
 					for (var i = 0; i < ourParsedResponse.EntryList.length; i++) {
 						
@@ -1097,9 +1096,8 @@ SipgateFFX.prototype = {
 							'name': contact['fn'],
 							'tel' : contact['tel']
 						}; 
-						
-						// _sgffx.runXulObjectCommand("sipgateContacts", 'appendItem', [contact['fn'], 'test']);
 					}
+					
 				}
 				
             } else {

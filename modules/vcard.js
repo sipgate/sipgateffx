@@ -58,6 +58,10 @@ vCard = {
         properties = Array.filter(properties, function(p) { return ! p.match(/[a-z]+=[a-z]+/) });
         properties = Array.map(properties, function(p) { return p.replace(/type=/g, '') });
         
+        if(properties.length > 1) {
+        	properties = Array.filter(properties, function(p) { return (['home', 'work'].indexOf(p) == -1); });
+        }
+
         type = properties.pop() || 'default';
         type = type.toLowerCase();
         type = type.replace(/type=/,'');
