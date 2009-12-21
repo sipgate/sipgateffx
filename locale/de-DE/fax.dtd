@@ -1,0 +1,9 @@
+<!ENTITY sipgateffxFaxWindow.title "SMS senden">
+<!ENTITY sipgateffxFaxButton.cancel.label "Abbrechen">
+<!ENTITY sipgateffxFaxButton.send.label "Senden">
+<!ENTITY sipgateffxFaxSending.label "Fax wird versendet...">
+<!ENTITY sipgateffxFaxScheduleHeader.label "Geplant">
+<!ENTITY sipgateffxFaxScheduleCheck.label "Später senden">
+<!ENTITY sipgateffxFaxNumberHeader.label "Nummer">
+<!ENTITY sipgateffxFaxFileHeader.label "PDF Datei">
+<!ENTITY sipgateffxFaxFile.button "Durchsuchen...">

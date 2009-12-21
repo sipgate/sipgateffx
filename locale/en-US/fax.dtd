@@ -1,0 +1,9 @@
+<!ENTITY sipgateffxFaxWindow.title "Send fax">
+<!ENTITY sipgateffxFaxButton.cancel.label "Cancel">
+<!ENTITY sipgateffxFaxButton.send.label "Send">
+<!ENTITY sipgateffxFaxSending.label "Sending...">
+<!ENTITY sipgateffxFaxScheduleHeader.label "Scheduled">
+<!ENTITY sipgateffxFaxScheduleCheck.label "Send later">
+<!ENTITY sipgateffxFaxNumberHeader.label "Number">
+<!ENTITY sipgateffxFaxFileHeader.label "PDF-File">
+<!ENTITY sipgateffxFaxFile.button "Choose file...">

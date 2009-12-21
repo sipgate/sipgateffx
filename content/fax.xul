@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	*****************************************************************************
+	
+	    sipgate FFX - Firefox Extension for Mozilla Firefox Webbrowser
+	    Copyright (C) 2009 sipgate GmbH, Germany
+
+	    The original code is hosted at 
+	    http://www.github.com/sipgate/sipgateffx
+	
+	    sipgateFFX is free software; you can redistribute it and/or modify
+	    it under the terms of version 2 of the GNU General Public License
+	    as published by the Free Software Foundation.
+	
+	    sipgateFFX is distributed in the hope that it will be useful,
+	    but WITHOUT ANY WARRANTY; without even the implied warranty of
+	    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	    GNU General Public License for more details.
+	
+	    You should have received a copy of the GNU General Public License
+	    along with this program; if not, write to the Free Software
+	    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+	    02110-1301, USA
+	
+	*****************************************************************************
+-->
+
+<?xml-stylesheet href="chrome://global/skin/global.css" type="text/css"?>
+<!DOCTYPE overlay SYSTEM "chrome://sipgateffx/locale/fax.dtd">
+
+<dialog id="sipgateffxFaxWindow" title="&sipgateffxFaxWindow.title;"
+	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	buttons="accept,cancel"
+	buttonlabelcancel="&sipgateffxFaxButton.cancel.label;"
+	buttonlabelaccept="&sipgateffxFaxButton.send.label;"
+	ondialogaccept="return doOK();"
+	ondialogcancel="return doCancel();">
+	
+	<stringbundleset id="stringbundleset"> 
+		<stringbundle id="sipgateffx_fax-strings" src="chrome://sipgateffx/locale/fax.properties" />
+	</stringbundleset>
+
+	<command id="sipgate_fax_contact" oncommand="sipgateffx_fax.onContactSelect(this)"/>
+
+	<vbox id="sipgate_fax">
+	    <groupbox>
+			<caption label="&sipgateffxFaxNumberHeader.label;"/>
+			<menulist id="sipgate_fax_number" editable="true" command="sipgate_fax_contact"/>
+		</groupbox>
+	    <groupbox>
+			<caption label="&sipgateffxFaxFileHeader.label;" id="sipgate_fax_fax_header"/>
+			<hbox>
+				<textbox id="sipgate_fax_file" readonly="true"/>
+				<button label="&sipgateffxFaxFile.button;" oncommand="doOpenFileBox(event)"/>
+			</hbox>
+		</groupbox>
+	    <groupbox>
+			<caption label="&sipgateffxFaxScheduleHeader.label;"/>
+			<hbox>
+				<checkbox label="&sipgateffxFaxScheduleCheck.label;" checked="false" id="sipgate_fax_schedule_check"/>
+				<datepicker type="popup" id="sipgate_fax_schedule_date" disabled="true" />
+				<timepicker id="sipgate_fax_schedule_time" disabled="true" hideseconds="true"/>			
+			</hbox>
+	    </groupbox>
+	</vbox>
+	<vbox id="sipgate_fax_sending" hidden="true">
+	    <groupbox>
+			<caption label="&sipgateffxFaxSending.label;"/>
+			<progressmeter mode="undetermined"/>
+	    </groupbox>
+	</vbox>
+
+	<script src="fax.js"/>
+	
+</dialog>
