@@ -22,37 +22,36 @@
 
 *****************************************************************************/
 
-var debug = true;
 var sgffx;
 var sgffxDB;
-
-var url = {
-	'team': {
-	    "history": "/#filter_inbox",
-	    "historycall": "/#type_call",
-	    "historyfax": "/#type_fax",
-	    "historysms": "/#type_sms",
-	    "credit": "/settings/account/creditaccount",
-	    "voicemail": "/#type_voicemail",
-	    "fax": "/fax",
-	    "phonebook": "/contacts",
-	    "itemized": "/settings/account/evn",
-	    "default": "/"
-	},
-	'classic': {
-	    "history": "/user/calls.php",
-	    "credit": "/user/kontoaufladen.php",
-	    "voicemail": "/user/voicemail.php",
-	    "fax": "/user/fax/index.php",
-	    "phonebook": "/user/phonebook.php",
-	    "itemized": "/user/konto_einzel.php?show=all",
-	    "default": "/user/index.php"
-	}
-}
 
 var sipgateffx_this;
 
 var sipgateffx = {
+	url: {
+			'team': {
+			    "history": "/#filter_inbox",
+			    "historycall": "/#type_call",
+			    "historyfax": "/#type_fax",
+			    "historysms": "/#type_sms",
+			    "credit": "/settings/account/creditaccount",
+			    "voicemail": "/#type_voicemail",
+			    "fax": "/fax",
+			    "phonebook": "/contacts",
+			    "itemized": "/settings/account/evn",
+			    "default": "/"
+			},
+			'classic': {
+			    "history": "/user/calls.php",
+			    "credit": "/user/kontoaufladen.php",
+			    "voicemail": "/user/voicemail.php",
+			    "fax": "/user/fax/index.php",
+			    "phonebook": "/user/phonebook.php",
+			    "itemized": "/user/konto_einzel.php?show=all",
+			    "default": "/user/index.php"
+			}
+	},
+		
 	onLoad: function(event) {
 		// initialization code
 		this.initialized = true;
@@ -156,7 +155,7 @@ var sipgateffx = {
 		// sgffx.setXulObjectVisibility('sipgate-c2d-status-bar', 1);
 		
 		var contextMenuHolder = "contentAreaContextMenu";
-		if(app=='thunderbird') {
+		if(sgffx.application == 'thunderbird') {
 			contextMenuHolder = "mailContext";
 		}
 
@@ -197,7 +196,7 @@ var sipgateffx = {
 			setTimeout(this.login);
 		}
 		
-		if(app=='thunderbird') {
+		if(sgffx.application == 'thunderbird') {
 			var threePane = Components.classes['@mozilla.org/appshell/window-mediator;1'].getService(Components.interfaces.nsIWindowMediator).getMostRecentWindow("mail:3pane");
 			gBrowser = threePane.document.getElementById("messagepane");
 		}
@@ -206,7 +205,7 @@ var sipgateffx = {
 		gBrowser.addEventListener("DOMFrameContentLoaded", this.parseClick2DialFrame, false);
 		_prepareArray();
 		
-		if(app!='thunderbird') {
+		if(sgffx.application != 'thunderbird') {
 			gBrowser.tabContainer.addEventListener("select", function(e) {
 				try {
 					var host = content.document.location.host.toLowerCase();
@@ -306,7 +305,7 @@ var sipgateffx = {
 		document.getElementById("context-sipgateffx-sendassms").disabled = !(gContextMenu.isTextSelected || gContextMenu.isContentSelected);
 		
 		// allow /,-,(,),.,whitespace and all numers in phonenumbers
-		var browserSelection = getBrowserSelection().match(/^[^a-zA-Z]+$/);
+		var browserSelection = this.getBrowserSelection().match(/^[^a-zA-Z]+$/);
 		var niceNumber = '';
 		
 		if (browserSelection !== null) {
@@ -368,7 +367,7 @@ var sipgateffx = {
 
 	onMenuItemContextSendTo: function(e) {
 		// allow /,-,(,),.,whitespace and all numers in phonenumbers
-		var browserSelection = getBrowserSelection().match(/^[\/\(\)\ \-\.\[\]\d]+$/);
+		var browserSelection = this.getBrowserSelection().match(/^[\/\(\)\ \-\.\[\]\d]+$/);
 		var niceNumber = '';
 
 		if(browserSelection !== null) {
@@ -380,7 +379,7 @@ var sipgateffx = {
 
 	onMenuItemContextCallTo: function(e) {
 		// allow /,-,(,),.,whitespace and all numers in phonenumbers
-		var browserSelection = getBrowserSelection().match(/^[\/\(\)\ \-\.\[\]\d]+$/);
+		var browserSelection = this.getBrowserSelection().match(/^[\/\(\)\ \-\.\[\]\d]+$/);
 		var niceNumber = '';
 
 		if(browserSelection !== null) {
@@ -397,7 +396,7 @@ var sipgateffx = {
 	onMenuItemBlacklist: function(e, action) {
 		var blacklistEntry = '';
 
-		if(app != 'thunderbird') {
+		if(sgffx.application != 'thunderbird') {
 			try {
 				var blacklistEntry = content.document.location.host.toLowerCase();
 			} catch(e) {
@@ -469,7 +468,7 @@ var sipgateffx = {
 	parseClick2Dial: function() {
 		var blacklistEntry = '';
 
-		if(app != 'thunderbird') {
+		if(sgffx.application != 'thunderbird') {
 			try {
 				var blacklistEntry = content.document.location.host.toLowerCase();
 			} catch(e) {
@@ -559,14 +558,14 @@ var sipgateffx = {
 					return;
 				}
 				
-				if(typeof(url[sgffx.systemArea][param]) == 'undefined') {
+				if(typeof(this.url[sgffx.systemArea][param]) == 'undefined') {
 					sgffx.log("*** sipgateffx->showSitePage: no url for action");
 					return;
 				}		
 
 				var protocol = 'https://';
 				var httpServer = sgffx.sipgateCredentials.HttpServer.replace(/^www/, 'secure');
-				var siteURL = protocol + httpServer + url[sgffx.systemArea][param];
+				var siteURL = protocol + httpServer + this.url[sgffx.systemArea][param];
 				sgffx.log("*** sipgateffx->showSitePage: link = " + siteURL);
 				
 				var postData = null;
@@ -593,8 +592,8 @@ var sipgateffx = {
 				var referrer = null;  
 				var flags = Components.interfaces.nsIWebNavigation.LOAD_FLAGS_NONE;  
 				
-				if(app == 'thunderbird') {
-						openURI(siteURL);
+				if(sgffx.application == 'thunderbird') {
+						this.openURI(siteURL);
 						break;
 				}				
 				
@@ -659,31 +658,31 @@ var sipgateffx = {
 		var nativeJSON = Components.classes["@mozilla.org/dom/json;1"]
 		                 .createInstance(Components.interfaces.nsIJSON);
 		sgffx.log(nativeJSON.encode(obj));
+	},
+	
+	openURI: function(uri)
+	{
+		// first construct an nsIURI object using the ioservice
+		var ioservice = Components.classes["@mozilla.org/network/io-service;1"]
+		                          .getService(Components.interfaces.nsIIOService);
+
+		var uriToOpen = ioservice.newURI(uri, null, null);
+
+		var extps = Components.classes["@mozilla.org/uriloader/external-protocol-service;1"]
+		                      .getService(Components.interfaces.nsIExternalProtocolService);
+
+		// now, open it!
+		extps.loadURI(uriToOpen, null);
+	},
+	
+	getBrowserSelection: function() {
+		if(typeof "getBrowserSelection" != "function") {
+			return gBrowser.contentWindow.getSelection().toString();
+		} else {
+			return getBrowserSelection();
+		}
 	}
 		
 };
 window.addEventListener("load", function(e) { sipgateffx.onLoad(e); }, false);
-window.addEventListener("unload", function(e) { sipgateffx.onUnload(e); }, false); 
-
-if(typeof "getBrowserSelection" != "function") {
-	function getBrowserSelection() {
-		return gBrowser.contentWindow.getSelection().toString();
-	}
-}
-
-function openURI(uri)
-{
-	// first construct an nsIURI object using the ioservice
-	var ioservice = Components.classes["@mozilla.org/network/io-service;1"]
-	                          .getService(Components.interfaces.nsIIOService);
-
-	var uriToOpen = ioservice.newURI(uri, null, null);
-
-	var extps = Components.classes["@mozilla.org/uriloader/external-protocol-service;1"]
-	                      .getService(Components.interfaces.nsIExternalProtocolService);
-
-	// now, open it!
-	extps.loadURI(uriToOpen, null);
-}
-
-
+window.addEventListener("unload", function(e) { sipgateffx.onUnload(e); }, false);

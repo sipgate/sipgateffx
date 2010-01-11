@@ -34,9 +34,9 @@
 	buttonlabelaccept="&sipgateffxPreviewnumberButton.send.label;"
 	buttonlabelcancel="&sipgateffxPreviewnumberButton.cancel.label;"
 	buttonlabelextra1="&sipgateffxPreviewnumberButton.addcontact.label;"
-	ondialogaccept="return doOK();"
-	ondialogcancel="return doCancel();"
-	ondialogextra1="return doExtra();">
+	ondialogaccept="return sipgateffx_previewnumber.doOK();"
+	ondialogcancel="return sipgateffx_previewnumber.doCancel();"
+	ondialogextra1="return sipgateffx_previewnumber.doExtra();">
 
 	<command id="sipgate_contact" oncommand="sipgateffx_previewnumber.onContactSelect(this)"/>
 

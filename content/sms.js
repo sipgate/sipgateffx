@@ -27,101 +27,6 @@ var sending = false;
 var sipgateffxsmsstrings;
 var promptService = Components.classes["@mozilla.org/embedcomp/prompt-service;1"].getService(Components.interfaces.nsIPromptService);
 
-function doOK() {
-	if(sending) {
-		return false;
-	}
-	
-	var number = document.getElementById("sipgate_sms_number").value;
-	var text = document.getElementById("sipgate_sms_text").value;
-	
-	if(sgffx.systemArea == 'classic') {
-		text = text.replace(/\n|\r/g, ' ');
-	}
-	
-	if(number == '' || text == '') {
-		promptService.alert(window, 'sipgateFFX', sipgateffxsmsstrings.getString('sipgateffxSmsNumberEmpty'));
-		return false;
-	}
-	
-	sending = true;	
-	
-	document.getElementById("sipgate_sms").setAttribute('hidden', 'true');
-	document.getElementById("sipgate_sms_sending").setAttribute('hidden', 'false');
-	
-	var remoteUri = '';
-	var apiFunction = '';
-	
-	var numbers = number.split(',');
-	
-	if(numbers.length == 1) {
-		
-		apiFunction = 'SessionInitiate';
-		remoteUri = "sip:"+ sgffx.niceNumber(numbers[0]) +"\@sipgate.net";
-		
-	} else {
-		
-		apiFunction = 'SessionInitiateMulti';
-		remoteUri = [];
-		
-		for (var i = 0; i < numbers.length; i++) {
-			remoteUri.push("sip:"+ sgffx.niceNumber(numbers[i]) +"\@sipgate.net");
-		}
-	}
-
-	var params = { 'RemoteUri': remoteUri, 'TOS': "text", 'Content': text };
-	
-	// set sender
-	if(document.getElementById("sipgate_sms_sendernumber").value) {
-		params.LocalUri = "sip:" + document.getElementById("sipgate_sms_sendernumber").value + "\@sipgate.net";
-	}
-	
-	// set if scheduled
-	if(document.getElementById("sipgate_sms_schedule_check").checked) {
-		var date = document.getElementById("sipgate_sms_schedule_date").dateValue;
-		var time = document.getElementById("sipgate_sms_schedule_time");	
-		date.setHours(time.hour);
-		date.setMinutes(time.minute);		
-		params.Schedule	= date;
-	}
-
-	var result = function(ourParsedResponse, aXML) {
-		if (ourParsedResponse.StatusCode && ourParsedResponse.StatusCode == 200) {
-			promptService.alert(window, 'sipgateFFX', sipgateffxsmsstrings.getString('sipgateffxSmsSentSuccess'));
-			window.close();
-		} else {
-			document.getElementById("sipgate_sms").setAttribute('hidden', 'false');
-			document.getElementById("sipgate_sms_sending").setAttribute('hidden', 'true');
-			sending = false;
-			sgffx.log((new XMLSerializer()).serializeToString(aXML));
-			promptService.alert(window, 'sipgateFFX', sipgateffxsmsstrings.getString('sipgateffxSmsSentFailed'));
-		}
-	};
-
-	sgffx._rpcCall("samurai." + apiFunction, params, result);
-	return false;
-}
-
-function doCancel() {
-	window.close();
-}
-
-function doExtra() {
-	var number = document.getElementById("sipgate_sms_number").value;
-	var niceNumber = '';
-	if (number != '')
-		niceNumber = '+' + sgffx.niceNumber(number);
-
-	window.openDialog('chrome://sipgateffx/content/contactOverlay.xul', 'sipgateContact', 'chrome,centerscreen,resizable=yes,titlebar=yes,alwaysRaised=yes', niceNumber);
-	return true;
-}
-
-function countTextChars() {
-	var val = document.getElementById("sipgate_sms_text").value.length;
-	document.getElementById("sipgate_sms_text_header").label = sipgateffxsmsstrings.getFormattedString("sipgateffxSmsText", [val]);
-	return val;
-}
-
 var sipgateffx_sms = {
 	onLoad: function() {
 		try {
@@ -192,7 +97,7 @@ var sipgateffx_sms = {
 		}
 		
 		document.getElementById("sipgate_sms_text").addEventListener("keyup", function(e) {
-			var val = countTextChars();
+			var val = sipgateffx_sms.countTextChars();
 		}, false);
 
 		document.getElementById("sipgate_sms_schedule_check").addEventListener("click", function(e) {
@@ -212,7 +117,7 @@ var sipgateffx_sms = {
 			}
 		}
 
-		countTextChars();
+		this.countTextChars();
 		
 	},
 
@@ -226,14 +131,108 @@ var sipgateffx_sms = {
 		}
 	},
 	
-  onUnload: function() {
-	if(document.getElementById("sipgate_sms_sendernumber").value) {
-		sgffx.setPref("extensions.sipgateffx.smsSenderNumber", document.getElementById("sipgate_sms_sendernumber").value, "char");
-	} else {
-		sgffx.setPref("extensions.sipgateffx.smsSenderNumber", "", "char");
-	}
-  }
+	onUnload: function() {
+		if(document.getElementById("sipgate_sms_sendernumber").value) {
+			sgffx.setPref("extensions.sipgateffx.smsSenderNumber", document.getElementById("sipgate_sms_sendernumber").value, "char");
+		} else {
+			sgffx.setPref("extensions.sipgateffx.smsSenderNumber", "", "char");
+		}
+	},
+  
+	countTextChars: function() {
+		var val = document.getElementById("sipgate_sms_text").value.length;
+		document.getElementById("sipgate_sms_text_header").label = sipgateffxsmsstrings.getFormattedString("sipgateffxSmsText", [val]);
+		return val;
+	},
 
+	doOK: function() {
+		if(sending) {
+			return false;
+		}
+		
+		var number = document.getElementById("sipgate_sms_number").value;
+		var text = document.getElementById("sipgate_sms_text").value;
+		
+		if(sgffx.systemArea == 'classic') {
+			text = text.replace(/\n|\r/g, ' ');
+		}
+		
+		if(number == '' || text == '') {
+			promptService.alert(window, 'sipgateFFX', sipgateffxsmsstrings.getString('sipgateffxSmsNumberEmpty'));
+			return false;
+		}
+		
+		sending = true;	
+		
+		document.getElementById("sipgate_sms").setAttribute('hidden', 'true');
+		document.getElementById("sipgate_sms_sending").setAttribute('hidden', 'false');
+		
+		var remoteUri = '';
+		var apiFunction = '';
+		
+		var numbers = number.split(',');
+		
+		if(numbers.length == 1) {
+			
+			apiFunction = 'SessionInitiate';
+			remoteUri = "sip:"+ sgffx.niceNumber(numbers[0]) +"\@sipgate.net";
+			
+		} else {
+			
+			apiFunction = 'SessionInitiateMulti';
+			remoteUri = [];
+			
+			for (var i = 0; i < numbers.length; i++) {
+				remoteUri.push("sip:"+ sgffx.niceNumber(numbers[i]) +"\@sipgate.net");
+			}
+		}
+
+		var params = { 'RemoteUri': remoteUri, 'TOS': "text", 'Content': text };
+		
+		// set sender
+		if(document.getElementById("sipgate_sms_sendernumber").value) {
+			params.LocalUri = "sip:" + document.getElementById("sipgate_sms_sendernumber").value + "\@sipgate.net";
+		}
+		
+		// set if scheduled
+		if(document.getElementById("sipgate_sms_schedule_check").checked) {
+			var date = document.getElementById("sipgate_sms_schedule_date").dateValue;
+			var time = document.getElementById("sipgate_sms_schedule_time");	
+			date.setHours(time.hour);
+			date.setMinutes(time.minute);		
+			params.Schedule	= date;
+		}
+
+		var result = function(ourParsedResponse, aXML) {
+			if (ourParsedResponse.StatusCode && ourParsedResponse.StatusCode == 200) {
+				promptService.alert(window, 'sipgateFFX', sipgateffxsmsstrings.getString('sipgateffxSmsSentSuccess'));
+				window.close();
+			} else {
+				document.getElementById("sipgate_sms").setAttribute('hidden', 'false');
+				document.getElementById("sipgate_sms_sending").setAttribute('hidden', 'true');
+				sending = false;
+				sgffx.log((new XMLSerializer()).serializeToString(aXML));
+				promptService.alert(window, 'sipgateFFX', sipgateffxsmsstrings.getString('sipgateffxSmsSentFailed'));
+			}
+		};
+
+		sgffx._rpcCall("samurai." + apiFunction, params, result);
+		return false;
+	},
+
+	doCancel: function() {
+		window.close();
+	},
+
+	doExtra: function() {
+		var number = document.getElementById("sipgate_sms_number").value;
+		var niceNumber = '';
+		if (number != '')
+			niceNumber = '+' + sgffx.niceNumber(number);
+
+		window.openDialog('chrome://sipgateffx/content/contactOverlay.xul', 'sipgateContact', 'chrome,centerscreen,resizable=yes,titlebar=yes,alwaysRaised=yes', niceNumber);
+		return true;
+	}
 };
 window.addEventListener("load", function(e) { sipgateffx_sms.onLoad(e); }, false);
 window.addEventListener("unload", function(e) { sipgateffx_sms.onUnload(e); }, false); 

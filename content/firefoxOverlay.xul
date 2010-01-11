@@ -224,9 +224,6 @@
 	</popupset>		
 
   <script src="highlightNumber.js"/>
-  <script type="application/x-javascript">
-  	app = 'firefox';
-  </script>  
   <script src="overlay.js"/>
 
 </overlay>

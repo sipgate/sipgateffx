@@ -65,8 +65,8 @@
 			<checkbox id="systemTeam" preference="systemTeam" label="&systemTeam.label;" accesskey="s" />
 			<checkbox id="polling" preference="polling" label="&polling.label;" accesskey="p"/>
 			<checkbox id="dontshowbalance" preference="dontshowbalance" label="&dontshowbalance.label;" accesskey="b"/>
-			<label class="text-link" onclick="doOpenDebuggingInfo(event)" value="&showDebug.label;"/>
-			<label class="text-link" onclick="doOpenNewVersionInfo(event)" value="&showChangelog.label;"/>
+			<label class="text-link" onclick="sipgateffx_options.doOpenDebuggingInfo(event)" value="&showDebug.label;"/>
+			<label class="text-link" onclick="sipgateffx_options.doOpenNewVersionInfo(event)" value="&showChangelog.label;"/>
 		</groupbox>
 		
 	</hbox>	
@@ -118,7 +118,7 @@
 	
 	</listbox>
 
-	<button label="&c2dBlacklistEnable.label;" oncommand="doDeleteBlacklistedHosts(event)"/>
+	<button label="&c2dBlacklistEnable.label;" oncommand="sipgateffx_options.doDeleteBlacklistedHosts(event)"/>
   </prefpane>  
 	
   <script src="options.js"/>

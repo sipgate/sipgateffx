@@ -24,54 +24,6 @@
 var sgffx;
 var sgffxDB;
 
-function openURI(siteURL) {
-	if(sgffx.application == 'thunderbird') {
-		var mail3PaneWindow = Components.classes["@mozilla.org/appshell/window-mediator;1"]
-		                                         .getService(Components.interfaces.nsIWindowMediator)
-		                                         .getMostRecentWindow("mail:3pane");  
-		if (mail3PaneWindow) {  
-			var tabmail = mail3PaneWindow.document.getElementById("tabmail");  
-			mail3PaneWindow.focus();
-			tabmail.openTab("contentTab", {contentPage: siteURL});
-		}		
-	} else {
-		window.opener.getBrowser().selectedTab = window.opener.getBrowser().addTab(siteURL);
-	}
-}
-
-function doOpenDebuggingInfo(){
-	var siteURL = 'chrome://sipgateffx/content/sendReport.html';
-	openURI(siteURL);
-    window.close();
-}
-
-function doOpenNewVersionInfo(){
-	var siteURL = 'chrome://sipgateffx/content/firststart/welcome_'+sgffx.language+'.html';
-	openURI(siteURL);
-    window.close();
-}
-
-function doDeleteBlacklistedHosts(){
-	var myListBox = document.getElementById("sipgateffxTree");
-	for(var i = 0; i < myListBox.itemCount; i++) {
-		if(myListBox.getItemAtIndex(i).checked) {
-			sgffxDB.removeBlacklisting(myListBox.getItemAtIndex(i).value);
-			myListBox.removeItemAt(i);
-		}
-	}
-}
-
-function buildBlacklistLisbox() {
-		sgffxDB.getBlacklistedSites();
-	
-		var myListBox = document.getElementById("sipgateffxTree");
-
-		for (var i = 0; i < sgffxDB.blacklisted.length; i++) {
-			var b = myListBox.appendItem(sgffxDB.blacklisted[i], sgffxDB.blacklisted[i]);
-			b.setAttribute('type', 'checkbox');
-		}
-}
-
 var sipgateffx_options = {
     onLoad: function(){
         try {
@@ -116,7 +68,7 @@ var sipgateffx_options = {
 			document.getElementById("click2DialList").value = defaultExtensionPref;
 		}
 		
-		buildBlacklistLisbox();
+		this.buildBlacklistLisbox();
     },
     
     onUnload: function(){
@@ -173,12 +125,57 @@ var sipgateffx_options = {
             }
         }
         
+    },
+    
+    doDeleteBlacklistedHosts: function(){
+    	var myListBox = document.getElementById("sipgateffxTree");
+    	for(var i = 0; i < myListBox.itemCount; i++) {
+    		if(myListBox.getItemAtIndex(i).checked) {
+    			sgffxDB.removeBlacklisting(myListBox.getItemAtIndex(i).value);
+    			myListBox.removeItemAt(i);
+    		}
+    	}
+    },
+    
+    doOpenDebuggingInfo: function(){
+    	var siteURL = 'chrome://sipgateffx/content/sendReport.html';
+    	this.openURI(siteURL);
+        window.close();
+    },
+
+    doOpenNewVersionInfo: function(){
+    	var siteURL = 'chrome://sipgateffx/content/firststart/welcome_'+sgffx.language+'.html';
+    	this.openURI(siteURL);
+        window.close();
+    },
+    
+    openURI: function(siteURL) {
+    	if(sgffx.application == 'thunderbird') {
+    		var mail3PaneWindow = Components.classes["@mozilla.org/appshell/window-mediator;1"]
+    		                                         .getService(Components.interfaces.nsIWindowMediator)
+    		                                         .getMostRecentWindow("mail:3pane");  
+    		if (mail3PaneWindow) {  
+    			var tabmail = mail3PaneWindow.document.getElementById("tabmail");  
+    			mail3PaneWindow.focus();
+    			tabmail.openTab("contentTab", {contentPage: siteURL});
+    		}		
+    	} else {
+    		window.opener.getBrowser().selectedTab = window.opener.getBrowser().addTab(siteURL);
+    	}
+    },
+
+    buildBlacklistLisbox: function() {
+		sgffxDB.getBlacklistedSites();
+	
+		var myListBox = document.getElementById("sipgateffxTree");
+
+		for (var i = 0; i < sgffxDB.blacklisted.length; i++) {
+			var b = myListBox.appendItem(sgffxDB.blacklisted[i], sgffxDB.blacklisted[i]);
+			b.setAttribute('type', 'checkbox');
+		}
     }
+ 
     
 };
-window.addEventListener("load", function(e){
-    sipgateffx_options.onLoad(e);
-}, false);
-window.addEventListener("unload", function(e){
-    sipgateffx_options.onUnload(e);
-}, false);
+window.addEventListener("load", function(e){ sipgateffx_options.onLoad(e);}, false);
+window.addEventListener("unload", function(e){  sipgateffx_options.onUnload(e);}, false);

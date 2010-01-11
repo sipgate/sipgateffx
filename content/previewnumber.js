@@ -23,35 +23,7 @@
 *****************************************************************************/
 
 var sgffx;
-var promptService = Components.classes["@mozilla.org/embedcomp/prompt-service;1"].getService(Components.interfaces.nsIPromptService);
-
-function doOK() {
-	var number = document.getElementById("sipgate_number").value;
-	
-	if(number == '') {
-		// promptService.alert(window, 'sipgateFFX', sipgateffxsmsstrings.getString('sipgateffxSmsNumberEmpty'));
-		return false;
-	}
-	
-    var niceNumber = sgffx.niceNumber(number);
-	sgffx.click2dial(niceNumber);
-	
-	return true;
-}
-
-function doCancel() {
-	window.close();
-}
-
-function doExtra() {
-	var number = document.getElementById("sipgate_number").value;
-	var niceNumber = '';
-	if (number != '')
-		niceNumber = '+' + sgffx.niceNumber(number);
-
-	window.openDialog('chrome://sipgateffx/content/contactOverlay.xul', 'sipgateContact', 'chrome,centerscreen,resizable=yes,titlebar=yes,alwaysRaised=yes', niceNumber);
-	return true;
-}
+// var promptService = Components.classes["@mozilla.org/embedcomp/prompt-service;1"].getService(Components.interfaces.nsIPromptService);
 
 var sipgateffx_previewnumber = {
 	onLoad: function() {
@@ -99,9 +71,36 @@ var sipgateffx_previewnumber = {
 		} 
 	},
 	
-  onUnload: function() {
+	onUnload: function() {
+	},
+  
+	doOK: function() {
+		var number = document.getElementById("sipgate_number").value;
+		
+		if(number == '') {
+			// promptService.alert(window, 'sipgateFFX', sipgateffxsmsstrings.getString('sipgateffxSmsNumberEmpty'));
+			return false;
+		}
+		
+	    var niceNumber = sgffx.niceNumber(number);
+		sgffx.click2dial(niceNumber);
+		
+		return true;
+	},
 
-  }
+	doCancel: function() {
+		window.close();
+	},
+
+	doExtra: function() {
+		var number = document.getElementById("sipgate_number").value;
+		var niceNumber = '';
+		if (number != '')
+			niceNumber = '+' + sgffx.niceNumber(number);
+
+		window.openDialog('chrome://sipgateffx/content/contactOverlay.xul', 'sipgateContact', 'chrome,centerscreen,resizable=yes,titlebar=yes,alwaysRaised=yes', niceNumber);
+		return true;
+	} 
 
 };
 window.addEventListener("load", function(e) { sipgateffx_previewnumber.onLoad(e); }, false);

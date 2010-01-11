@@ -34,9 +34,9 @@
 	buttonlabelcancel="&sipgateffxSmsButton.cancel.label;"
 	buttonlabelaccept="&sipgateffxSmsButton.send.label;"
 	buttonlabelextra1="&sipgateffxSmsButton.addcontact.label;"
-	ondialogaccept="return doOK();"
-	ondialogcancel="return doCancel();"
-	ondialogextra1="return doExtra();">
+	ondialogaccept="return sipgateffx_sms.doOK();"
+	ondialogcancel="return sipgateffx_sms.doCancel();"
+	ondialogextra1="return sipgateffx_sms.doExtra();">
 	
 	<stringbundleset id="stringbundleset"> 
 		<stringbundle id="sipgateffx_sms-strings" src="chrome://sipgateffx/locale/sms.properties" />

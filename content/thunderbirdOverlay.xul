@@ -223,9 +223,6 @@
 	</popupset>		
 
   <script src="highlightNumber.js"/>
-  <script type="application/x-javascript">
-  	app = 'thunderbird';
-  </script>
   <script src="overlay.js"/>
   
 
