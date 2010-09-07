@@ -23,6 +23,9 @@
 *****************************************************************************/
 
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
+try{
+	Components.utils.import("resource://gre/modules/AddonManager.jsm");
+} catch(e) {}
 
 var xulObjReference = new Array();
 var _sgffx;
@@ -32,6 +35,7 @@ function SipgateFFX() {
     _sgffx = this;
     this._strings = null;
 	
+    this.addOnInfo = null;
 	this.addOnVersion = null;
 	this.addOnTarget = null;
 	 
@@ -135,6 +139,7 @@ SipgateFFX.prototype = {
 	classDescription: "sipgateFFX javascript XPCOM Component",
 	classID: Components.ID("{BCC44C3C-B5E8-4566-8556-0D9230C7B4F9}"),
 	contractID: "@api.sipgate.net/sipgateffx;1",
+
 	QueryInterface: XPCOMUtils.generateQI(),
 	
 	 get password() {
@@ -179,15 +184,20 @@ SipgateFFX.prototype = {
 	},
 	
 	get version() {
-		if(this.addOnVersion == null) {
+		if(this.addOnVersion == null || this.addOnVersion == "NOTYETKNOWN") {
 			try {
-				var extensionManager = Components.classes["@mozilla.org/extensions/manager;1"].getService(Components.interfaces.nsIExtensionManager);
-				var item = extensionManager.getItemForID('sipgateffx@michael.rotmanov');
+				var item = {version: "NOTYETKNOWN"};
+				var extensionManager = Components.classes["@mozilla.org/extensions/manager;1"];
+				if(extensionManager) {
+					item = extensionManager.getService(Components.interfaces.nsIExtensionManager).getItemForID('sipgateffx@michael.rotmanov');
+				} else if(this.addOnInfo !== null) {
+					item = this.addOnInfo;
+				}
 				if(item) {
 					this.addOnVersion = item.version;
 				}
 			} catch(except) {
-				this.log(except);
+				this.log("get version ERROR: " + except);
 				this.addOnVersion = 'UNKNOWN';
 			}
 		} 
@@ -197,6 +207,9 @@ SipgateFFX.prototype = {
 	get application() {
 		if(this.addOnTarget == null) {
 			try {
+				var info = Components.classes["@mozilla.org/xre/app-info;1"].getService(Components.interfaces.nsIXULAppInfo);
+				this.addOnTarget = info.name.toLowerCase();
+				/*
 				var extensionManager = Components.classes["@mozilla.org/extensions/manager;1"].getService(Components.interfaces.nsIExtensionManager);
 				var item = extensionManager.getItemForID('sipgateffx@michael.rotmanov');
 				if(item) {
@@ -209,14 +222,26 @@ SipgateFFX.prototype = {
 							break;							
 					}
 				}
+				*/
 			} catch(except) {
-				this.log(except);
+				this.log("get application ERROR: " + except);
 				this.addOnTarget = 'firefox';
 			}
 		} 
 		return this.addOnTarget;
 	},
 	
+	
+	init: function(callback) {
+		if(typeof AddonManager != 'undefined') {
+			AddonManager.getAddonByID('sipgateffx@michael.rotmanov', function(addon) {
+				_sgffx.addOnInfo = addon;
+				_sgffx.addOnVersion = addon.version;
+				callback();
+			});
+		}
+	},
+		
 	oPrefService: Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch),
 	
 	setPref: function(aName, aValue, aType) {
@@ -256,7 +281,7 @@ SipgateFFX.prototype = {
 		}
 		return null;
 	},
-	
+
 	getSamuraiAuth: function() {
 		// Login Manager exists so this is Firefox 3
 		var passwordManager = Components.classes["@mozilla.org/login-manager;1"].getService(Components.interfaces.nsILoginManager);
@@ -1597,9 +1622,18 @@ SipgateFFX.prototype = {
 };
 var components = [SipgateFFX];
 
-function NSGetModule(compMgr, fileSpec) {
-	return XPCOMUtils.generateModule(components);
-}
+/**
+* XPCOMUtils.generateNSGetFactory was introduced in Mozilla 2 (Firefox 4).
+* XPCOMUtils.generateNSGetModule is for Mozilla 1.9.2 (Firefox 3.6).
+*/
+if (XPCOMUtils.generateNSGetFactory)
+    var NSGetFactory = XPCOMUtils.generateNSGetFactory(components);
+else
+    var NSGetModule = XPCOMUtils.generateNSGetModule(components);
+
+//function NSGetModule(compMgr, fileSpec) {
+//	return XPCOMUtils.generateModule(components);
+//}
 
 function dumpJson(obj) {
 	var nativeJSON = Components.classes["@mozilla.org/dom/json;1"]

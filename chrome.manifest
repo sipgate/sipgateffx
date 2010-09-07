@@ -7,3 +7,10 @@ overlay	chrome://messenger/content/messenger.xul	chrome://sipgateffx/content/thu
 #overlay	chrome://messenger/content/addressbook/addressbook.xul	chrome://sipgateffx/content/addressbookOverlay.xul
 style	chrome://global/content/customizeToolbar.xul	chrome://sipgateffx/skin/overlay.css
 resource	sipgateffx	modules/
+
+component {BCC44C3C-B5E8-4566-8556-0D9230C7B4F9} components/nsISipgateFFX.js
+contract @api.sipgate.net/sipgateffx;1 {BCC44C3C-B5E8-4566-8556-0D9230C7B4F9}
+
+component {6651ED18-23B6-4A19-83FC-F9718D468AA7} components/nsISipgateFFXStorage.js
+contract @api.sipgate.net/sipgateffx-storage;1 {6651ED18-23B6-4A19-83FC-F9718D468AA7}
+

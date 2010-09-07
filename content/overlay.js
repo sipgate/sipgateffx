@@ -57,7 +57,7 @@ var sipgateffx = {
 		this.initialized = true;
 		this.strings = document.getElementById("sipgateffx-strings");
 		sipgateffx_this = this;
-		
+
 		try {
 			// this is needed to generally allow usage of components in javascript
 			netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
@@ -76,8 +76,10 @@ var sipgateffx = {
 			dump("ERROR: " + anError);
 			return;
 		}
-		
-		sgffxDB.getBlacklistedSites();
+
+		sgffx.init(this.showUpdateInfo);
+		sgffxDB.openDatabase();
+//		sgffxDB.getBlacklistedSites();
 		
 		// set language:
 		try { 
@@ -153,7 +155,7 @@ var sipgateffx = {
 		sgffx.setXulObjectVisibility('dialactivate', 0);
 		
 		// sgffx.setXulObjectVisibility('sipgate-c2d-status-bar', 1);
-		
+				
 		var contextMenuHolder = "contentAreaContextMenu";
 		if(sgffx.application == 'thunderbird') {
 			contextMenuHolder = "mailContext";
@@ -222,7 +224,7 @@ var sipgateffx = {
 				}		
 			}, false);
 		}
-		
+
 		setTimeout(this.showUpdateInfo, 1000);
 	},
 
@@ -272,7 +274,7 @@ var sipgateffx = {
 	},
 	
 	showUpdateInfo: function() {
-		if (sgffx.version != null && sgffx.version != sgffx.getPref("extensions.sipgateffx.lastInstalledVersion", "char")) {
+		if (sgffx.version != null && sgffx.version != "UNKNOWN" && sgffx.version != "NOTYETKNOWN" && sgffx.version != sgffx.getPref("extensions.sipgateffx.lastInstalledVersion", "char")) {
 			var siteURL = 'chrome://sipgateffx/content/firststart/welcome_'+sgffx.language+'.html';
 			try {
 				gBrowser.selectedTab = gBrowser.addTab(siteURL);

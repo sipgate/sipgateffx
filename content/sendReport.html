@@ -79,6 +79,15 @@ try {
 	logAsString += "SystemArea -> " + sfobj.systemArea + "\n";
 	logAsString += "AddOn-Version -> " + sfobj.addOnVersion + "\n";
 
+	if(sfobj.addOnInfo !== null) {
+		logAsString += "\naddOnInfo:\n";
+		for(var key in sfobj.addOnInfo) {
+			if(typeof key != 'object' && typeof key != 'function') {
+				logAsString += "  '"+key+"' -> " + sfobj.addOnInfo[key] + "\n";
+			}
+		}
+	}
+
 	logAsString += "\nreport:\n";
 	for (var i=0; i < logArray.Count(); i++) {
 		logAsString += logArray.GetElementAt(i).QueryInterface(Components.interfaces.nsISupportsCString).toString()+"\n";

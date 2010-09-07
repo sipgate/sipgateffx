@@ -23,16 +23,17 @@
 *****************************************************************************/
 
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
+try{
+	Components.utils.import("resource://gre/modules/AddonManager.jsm");
+} catch(e) {}
 
-var Cc = Components.classes;
-var Ci = Components.interfaces;
 var _sgffxStorage;
 
 function SipgateFFXStorage() {
     this.wrappedJSObject = this;
     _sgffxStorage = this;
-    this._conn = {};
-
+    this._conn = null;
+    
     this.blacklisted = [];
     
     this.mLogBuffer = Components.classes["@mozilla.org/supports-array;1"].createInstance(Components.interfaces.nsISupportsArray);
@@ -46,28 +47,52 @@ SipgateFFXStorage.prototype = {
 	QueryInterface: XPCOMUtils.generateQI(),
 
 	openDatabase: function() {
+		if(this._conn !== null) {
+			return;
+		}
+		
 		try {
-			var file = Cc["@mozilla.org/file/directory_service;1"].getService(Ci.nsIProperties).get("ProfD", Components.interfaces.nsIFile);
-				file.append("sipgateffx.sqlite");
+			var file = Components.classes["@mozilla.org/file/directory_service;1"].getService(Components.interfaces.nsIProperties).get("ProfD", Components.interfaces.nsIFile);
+			file.append("sipgateffx.sqlite");
 			
 			if(!file.exists()) {
+
 				this.log("Database file does not exist.");
-				var manager = Cc["@mozilla.org/extensions/manager;1"].getService(Ci.nsIExtensionManager);
-		        var defaultFile = manager.getInstallLocation('sipgateffx@michael.rotmanov').getItemLocation('sipgateffx@michael.rotmanov');
-		        defaultFile.append("defaults");
-		        defaultFile.append("sipgateffx.sqlite");
-		        defaultFile.copyTo(file.parent, file.leafName);
-		        file.permissions = 420;
-		        this.log("Copy database file\n");
+				var manager = Components.classes["@mozilla.org/extensions/manager;1"];
+				// fix for Firefox >= 4.0 and its new Addon Manager
+				if(manager)
+				{
+					manager = manager.getService(Components.interfaces.nsIExtensionManager);
+				        var defaultFile = manager.getInstallLocation('sipgateffx@michael.rotmanov').getItemLocatio
+n('sipgateffx@michael.rotmanov');
+					this.copyDatabase(defaultFile, file);
+					this._conn = Components.classes["@mozilla.org/storage/service;1"].getService(Components.interfaces.mozIStorageService).openDatabase(file);
+					this.getBlacklistedSites();
+				} else {
+					AddonManager.getAddonByID('sipgateffx@michael.rotmanov', function(addon) {
+					    defaultFile = addon.getResourceURI("").QueryInterface(Components.interfaces.nsIFileURL).file;
+					    _sgffxStorage.copyDatabase(defaultFile, file);
+						_sgffxStorage._conn = Components.classes["@mozilla.org/storage/service;1"].getService(Components.interfaces.mozIStorageService).openDatabase(file);
+						_sgffxStorage.getBlacklistedSites();
+					});
+				}
+			} else {	
+				this._conn = Components.classes["@mozilla.org/storage/service;1"].getService(Components.interfaces.mozIStorageService).openDatabase(file);
+				this.getBlacklistedSites();
 			}
-	
-			var storageService = Cc["@mozilla.org/storage/service;1"].getService(Ci.mozIStorageService);
-			this._conn = storageService.openDatabase(file); // Will also create the file if it does not exist
 		} catch(e) {
 			this.log("Failed to initialize database: " + e.message + "\n");
 		}
 	},
 	
+	copyDatabase: function(defaultFile, file) {
+		defaultFile.append("defaults");
+		defaultFile.append("sipgateffx.sqlite");
+		defaultFile.copyTo(file.parent, file.leafName);
+		file.permissions = 420;
+		this.log("Copy database file\n");
+	},
+
 	close: function() {
 		this._conn.close();
 	},
@@ -198,10 +223,20 @@ SipgateFFXStorage.prototype = {
 };
 var components = [SipgateFFXStorage];
 
+/**
+* XPCOMUtils.generateNSGetFactory was introduced in Mozilla 2 (Firefox 4).
+* XPCOMUtils.generateNSGetModule is for Mozilla 1.9.2 (Firefox 3.6).
+*/
+if (XPCOMUtils.generateNSGetFactory)
+    var NSGetFactory = XPCOMUtils.generateNSGetFactory(components);
+else
+    var NSGetModule = XPCOMUtils.generateNSGetModule(components);
+
+/*
 function NSGetModule(compMgr, fileSpec) {
 	return XPCOMUtils.generateModule(components);
 }
-
+*/
 function dumpJson(obj) {
 	var nativeJSON = Components.classes["@mozilla.org/dom/json;1"]
 	                 .createInstance(Components.interfaces.nsIJSON);
