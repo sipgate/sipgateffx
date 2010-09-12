@@ -9,5 +9,4 @@ pref("extensions.sipgateffx.smsSenderNumber", '');
 pref("extensions.sipgateffx.defaultExtension", '');
 pref("extensions.sipgateffx.systemTeam", true);
 pref("extensions.sipgateffx.lastInstalledVersion", '0.0');
-// See http://kb.mozillazine.org/Localize_extension_descriptions
 pref("extensions.sipgateffx@michael.rotmanov.description", "chrome://sipgateffx/locale/sipgateffx.properties");
