@@ -27,12 +27,14 @@
 vbox#sipgatenotificationPanelHeader
 {
 	background: url("chrome://sipgateffx/skin/callprogress_head_green.gif") no-repeat;
+	color: #000000;
 }
 
 #sipgatenotificationPanel vbox#sipgatenotificationPanelMessages
 {
 	background: url('chrome://sipgateffx/skin/callprogress_body.gif') no-repeat;
 	width: 263px;
+	color: #000000;
 	padding: 5px 5px 0px 5px;
 }
 

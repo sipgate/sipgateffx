@@ -93,18 +93,27 @@ var sipgateffx_options = {
         if (username == '' || password == '') {
             return;
         }
-        
+  /*      
         var chosenSystemArea = (document.getElementById("systemTeam").value ? 'team' : 'classic');
         if (sgffx.systemArea != chosenSystemArea) {
 			sgffx.log('options: changed systemArea from "'+sgffx.systemArea+'" to "'+chosenSystemArea+'"');
             sgffx.systemArea = chosenSystemArea;
 			relogin = true;
         }
-        
+*/        
         var auth = sgffx.getSamuraiAuth();
         
         if (auth.username != username || auth.password != password) {
 			sgffx.log('options: changed user name from "'+auth.username+'" to "'+username+'"');
+			if(new RegExp(/^.+@.+\.[a-z]{2,6}$/).test(username)) {
+				sgffx.systemArea = 'team';
+				sgffx.setPref("extensions.sipgateffx.defaultExtension", true, "bool");
+				sgffx.log('options: changed systemArea to "team"');
+			} else {
+				sgffx.systemArea = 'classic';
+				sgffx.setPref("extensions.sipgateffx.defaultExtension", false, "bool");
+				sgffx.log('options: changed systemArea to "classic"');
+			}
             sgffx.setSamuraiAuth(username, password);
 			relogin = true;
         }
