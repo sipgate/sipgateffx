@@ -937,6 +937,10 @@ SipgateFFX.prototype = {
 			this.log("*** getEventSummary *** USER NOT LOGGED IN ***");
 			return;
 		}
+		if(this.systemArea != 'team') {
+			this.log("*** getEventSummary *** systemArea does not support event summary ***");
+			return;
+		}
 		
 		var params = {
 			// 'LabelName': []
@@ -1225,6 +1229,10 @@ SipgateFFX.prototype = {
 		this.log("*** getDoNotDisturb *** BEGIN ***");
 		if (!this.isLoggedIn) {
 			this.log("*** getDoNotDisturb *** USER NOT LOGGED IN ***");
+			return;
+		}
+		if(this.systemArea != 'team') {
+			this.log("*** getDoNotDisturb *** systemArea does not support DND ***");
 			return;
 		}
 		

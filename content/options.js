@@ -107,11 +107,11 @@ var sipgateffx_options = {
 			sgffx.log('options: changed user name from "'+auth.username+'" to "'+username+'"');
 			if(new RegExp(/^.+@.+\.[a-z]{2,6}$/).test(username)) {
 				sgffx.systemArea = 'team';
-				sgffx.setPref("extensions.sipgateffx.defaultExtension", true, "bool");
+				sgffx.setPref("extensions.sipgateffx.systemTeam", true, "bool");
 				sgffx.log('options: changed systemArea to "team"');
 			} else {
 				sgffx.systemArea = 'classic';
-				sgffx.setPref("extensions.sipgateffx.defaultExtension", false, "bool");
+				sgffx.setPref("extensions.sipgateffx.systemTeam", false, "bool");
 				sgffx.log('options: changed systemArea to "classic"');
 			}
             sgffx.setSamuraiAuth(username, password);
