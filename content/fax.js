@@ -136,13 +136,23 @@ var sipgateffx_fax = {
 		}
 
 		sipgateffxfaxstrings = document.getElementById("sipgateffx_fax-strings");
-		
+
 		if(typeof(sgffx.contacts) != 'undefined') {
 			for(var i in sgffx.contacts) {
-				if(!sgffx.contacts[i].tel || !sgffx.contacts[i].tel.cell) continue;
-				document.getElementById("sipgate_fax_number").appendItem(sgffx.contacts[i].name, sgffx.contacts[i].tel.cell);
+				if(!sgffx.contacts[i].tel) continue;
+				for(var teltype in sgffx.contacts[i].tel) {
+					var type = teltype.toUpperCase().split(',');
+					type.forEach(function(singletype, index) {
+						try {
+							type[index] = sipgateffxfaxstrings.getString('sipgateffxContact' + singletype);
+						} catch(e) {
+							type[index] = singletype;
+						}
+					});
+					document.getElementById("sipgate_fax_number").appendItem(sgffx.contacts[i].name + ' (' + type.join(' ') + ')', sgffx.contacts[i].tel[teltype]);
+				}
 			}
-		}		
+		}
 		
 	},
 

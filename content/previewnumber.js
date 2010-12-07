@@ -49,12 +49,22 @@ var sipgateffx_previewnumber = {
 			document.getElementById("sipgateffxPreviewnumberWindow").buttons = "accept,cancel";
 		}
 		
+		sipgateffxstrings = document.getElementById("sipgateffxPreviewnumber-strings");
+		
 		if(typeof(sgffx.contacts) != 'undefined') {
 			for(var i in sgffx.contacts) {
 				if(!sgffx.contacts[i].tel) continue;
 				for(var teltype in sgffx.contacts[i].tel) {
-					if(teltype == 'fax') continue;
-					document.getElementById("sipgate_number").appendItem(sgffx.contacts[i].name + ' (' + teltype.toUpperCase() + ')', sgffx.contacts[i].tel[teltype]);
+					var type = teltype.toUpperCase().split(',');
+					if(type.indexOf('FAX') !== -1) continue;
+					type.forEach(function(singletype, index) {
+						try {
+							type[index] = sipgateffxstrings.getString('sipgateffxContact' + singletype);
+						} catch(e) {
+							type[index] = singletype;
+						}
+					});
+					document.getElementById("sipgate_number").appendItem(sgffx.contacts[i].name + ' (' + type.join(' ') + ')', sgffx.contacts[i].tel[teltype]);
 				}
 			}
 		}

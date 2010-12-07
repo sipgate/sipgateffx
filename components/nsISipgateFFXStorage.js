@@ -57,25 +57,11 @@ SipgateFFXStorage.prototype = {
 			
 			if(!file.exists()) {
 
-				this.log("Database file does not exist.");
-				var manager = Components.classes["@mozilla.org/extensions/manager;1"];
-				// fix for Firefox >= 4.0 and its new Addon Manager
-				if(manager)
-				{
-					manager = manager.getService(Components.interfaces.nsIExtensionManager);
-				        var defaultFile = manager.getInstallLocation('sipgateffx@michael.rotmanov').getItemLocatio
-n('sipgateffx@michael.rotmanov');
-					this.copyDatabase(defaultFile, file);
-					this._conn = Components.classes["@mozilla.org/storage/service;1"].getService(Components.interfaces.mozIStorageService).openDatabase(file);
-					this.getBlacklistedSites();
-				} else {
-					AddonManager.getAddonByID('sipgateffx@michael.rotmanov', function(addon) {
-					    defaultFile = addon.getResourceURI("").QueryInterface(Components.interfaces.nsIFileURL).file;
-					    _sgffxStorage.copyDatabase(defaultFile, file);
-						_sgffxStorage._conn = Components.classes["@mozilla.org/storage/service;1"].getService(Components.interfaces.mozIStorageService).openDatabase(file);
-						_sgffxStorage.getBlacklistedSites();
-					});
-				}
+				this.createDatabase(file);
+				file.permissions = 420;
+
+				_sgffxStorage.getBlacklistedSites();
+				
 			} else {	
 				this._conn = Components.classes["@mozilla.org/storage/service;1"].getService(Components.interfaces.mozIStorageService).openDatabase(file);
 				this.getBlacklistedSites();
@@ -85,12 +71,17 @@ n('sipgateffx@michael.rotmanov');
 		}
 	},
 	
-	copyDatabase: function(defaultFile, file) {
-		defaultFile.append("defaults");
-		defaultFile.append("sipgateffx.sqlite");
-		defaultFile.copyTo(file.parent, file.leafName);
-		file.permissions = 420;
-		this.log("Copy database file\n");
+	createDatabase: function(file) {
+		if(this._conn == null) {
+			this._conn = Components.classes["@mozilla.org/storage/service;1"].getService(Components.interfaces.mozIStorageService).openDatabase(file);
+		}
+
+		// create recentNumbers
+		this.execute('CREATE TABLE "recentNumbers" ("number" CHAR NOT NULL , "date" DATETIME DEFAULT CURRENT_TIMESTAMP);');
+
+		// create c2dBlacklist
+		this.execute('CREATE TABLE "c2dBlacklist" ("domain" TEXT NOT NULL ,"date_added" DATETIME);');
+		
 	},
 
 	close: function() {
@@ -101,8 +92,10 @@ n('sipgateffx@michael.rotmanov');
 	execute: function(statement) {
 		try {
 			this._conn.executeSimpleSQL(statement);
+			return true;
 		} catch (e) {
 			this.log("Failed to execute query: (" + statement + ") " + this._conn.lastErrorString + "\n");
+			return false;
 		}
 	},
 	

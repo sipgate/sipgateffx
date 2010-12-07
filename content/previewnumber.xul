@@ -38,6 +38,10 @@
 	ondialogcancel="return sipgateffx_previewnumber.doCancel();"
 	ondialogextra1="return sipgateffx_previewnumber.doExtra();">
 
+	<stringbundleset id="stringbundleset"> 
+		<stringbundle id="sipgateffxPreviewnumber-strings" src="chrome://sipgateffx/locale/previewnumber.properties" />
+	</stringbundleset>
+
 	<command id="sipgate_contact" oncommand="sipgateffx_previewnumber.onContactSelect(this)"/>
 
 	<vbox id="sipgate_previewnumber">

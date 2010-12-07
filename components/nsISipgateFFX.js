@@ -548,10 +548,8 @@ SipgateFFX.prototype = {
 			_sgffx.setXulObjectVisibility('showvoicemailmenuitem', 1);
 			_sgffx.setXulObjectVisibility('showphonebookmenuitem', 1);
 			_sgffx.setXulObjectVisibility('showhistorymenuitem', 1);
-			_sgffx.setXulObjectVisibility('showfaxmenuitem', 1);
 			_sgffx.setXulObjectVisibility('showitemizedmenuitem', 1);
 			_sgffx.setXulObjectVisibility('pollbalance', 1);
-			_sgffx.setXulObjectVisibility('showsmsformmenuitem', 1);
 			_sgffx.setXulObjectVisibility('showphonenumberformmenuitem', 1);
 			_sgffx.setXulObjectVisibility('item_logoff', 1);
 			_sgffx.setXulObjectVisibility('separator1', 1);
@@ -866,7 +864,7 @@ SipgateFFX.prototype = {
                                 'DefaultUri': ourParsedResponse.OwnUriList[i].DefaultUri,
                                 'E164In': ourParsedResponse.OwnUriList[i].E164In,
                                 'E164Out': ourParsedResponse.OwnUriList[i].E164Out,
-                                'SipUri': ourParsedResponse.OwnUriList[i].SipUri,
+                                'SipUri': ourParsedResponse.OwnUriList[i].SipUri
                             };
                             _sgffx.ownUriList[ourParsedResponse.OwnUriList[i].TOS[k]].push(extensionInfo);
                             if (ourParsedResponse.OwnUriList[i].DefaultUri === true) {
@@ -1159,6 +1157,15 @@ SipgateFFX.prototype = {
 			if (ourParsedResponse.StatusCode && ourParsedResponse.StatusCode == 200) {
 				if(ourParsedResponse.TosList) {
 					_sgffx.tosList = ourParsedResponse.TosList; 
+				}
+				// check for fax capability
+				if(_sgffx.tosList.indexOf('fax') !== -1) {
+					_sgffx.setXulObjectVisibility('showfaxmenuitem', 1);
+					_sgffx.setXulObjectVisibility('sendfaxpdfmenuitem', 1);
+				}
+				// check for text (sms) capability
+				if(_sgffx.tosList.indexOf('text') !== -1) {
+					_sgffx.setXulObjectVisibility('showsmsformmenuitem', 1);
 				}
             } else {
 				_sgffx.log("getTosList failed toSTRING: "+ aXML.toString());
@@ -1611,11 +1618,10 @@ SipgateFFX.prototype = {
 			if (typeof(xulObjReference[id]) == "object") {
 				for (var i = 0; i < xulObjReference[id].length; i++) {
 					var tmpElementStorage = xulObjReference[id].pop();
-					if (tmpElementStorage == aXulObjRef) {
-						// this.log("removed a reference to element with id '" + id + "'");
-					}
-					else {
+					if (tmpElementStorage != aXulObjRef) {
 						xulObjReference[id].unshift(tmpElementStorage);
+//					} else {
+//						this.log("removed a reference to element with id '" + id + "'");
 					}
 				}
 			}

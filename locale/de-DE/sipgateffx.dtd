@@ -30,7 +30,8 @@
 <!ENTITY showsmsform.menuitem "SMS versenden...">
 <!ENTITY phonenumberform.menuitem "Telefonnummer wählen...">
 
-<!ENTITY showfax.menuitem "Fax senden">
+<!ENTITY showfax.menuitem "Fax gestalten">
+<!ENTITY sendfaxpdf.menuitem "PDF per Fax senden...">
 <!ENTITY showitemized.menuitem "Einzelverbindungsnachweis">
 <!ENTITY dialactivate.menuitem "'Click2Dial' aktivieren">
 <!ENTITY dialdeactivate.menuitem "'Click2Dial' deaktivieren">
@@ -47,6 +48,7 @@
 <!ENTITY showsmsform.key "v">
 <!ENTITY phonenumberform.key "n">
 <!ENTITY showfax.key "F">
+<!ENTITY sendfaxpdf.key "P">
 <!ENTITY showitemized.key "z">
 <!ENTITY dialactivate.key "a">
 <!ENTITY dialdeactivate.key "d">

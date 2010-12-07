@@ -1,4 +1,4 @@
-<!ENTITY sipgateffxFaxWindow.title "SMS senden">
+<!ENTITY sipgateffxFaxWindow.title "Fax senden">
 <!ENTITY sipgateffxFaxButton.cancel.label "Abbrechen">
 <!ENTITY sipgateffxFaxButton.send.label "Senden">
 <!ENTITY sipgateffxFaxSending.label "Fax wird versendet...">

@@ -29,7 +29,8 @@
 <!ENTITY showphonebook.menuitem "Show contacts">
 <!ENTITY showsmsform.menuitem "Send text message...">
 <!ENTITY phonenumberform.menuitem "Dial a phone number...">
-<!ENTITY showfax.menuitem "Send fax">
+<!ENTITY showfax.menuitem "Create fax">
+<!ENTITY sendfaxpdf.menuitem "Send PDF to fax...">
 <!ENTITY showitemized.menuitem "Itemized call list">
 <!ENTITY dialactivate.menuitem "Activate 'Click2Dial'">
 <!ENTITY dialdeactivate.menuitem "Deactivate 'Click2Dial'">
@@ -37,16 +38,17 @@
 <!ENTITY logoff.menuitem "Log Off">
 <!ENTITY cancelcall.menuitem "Hang Up">
 
-<!ENTITY showprefs.key "E">
+<!ENTITY showprefs.key "e">
 <!ENTITY getbalance.key "r">
-<!ENTITY showhistory.key "A">
-<!ENTITY showcredit.key "o">
-<!ENTITY showvoicemail.key "S">
+<!ENTITY showhistory.key "h">
+<!ENTITY showcredit.key "c">
+<!ENTITY showvoicemail.key "v">
 <!ENTITY showphonebook.key "t">
-<!ENTITY showsmsform.key "M">
+<!ENTITY showsmsform.key "m">
 <!ENTITY phonenumberform.key "n">
-<!ENTITY showfax.key "F">
-<!ENTITY showitemized.key "z">
+<!ENTITY showfax.key "f">
+<!ENTITY sendfaxpdf.key "P">
+<!ENTITY showitemized.key "l">
 <!ENTITY dialactivate.key "a">
 <!ENTITY dialdeactivate.key "d">
 <!ENTITY logoff.key "g">

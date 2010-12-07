@@ -79,7 +79,6 @@ var sipgateffx = {
 
 		sgffx.init(this.showUpdateInfo);
 		sgffxDB.openDatabase();
-//		sgffxDB.getBlacklistedSites();
 		
 		// set language:
 		try { 
@@ -105,6 +104,7 @@ var sipgateffx = {
 			'showphonenumberformmenuitem',
 			'showhistorymenuitem',
 			'showfaxmenuitem',
+			'sendfaxpdfmenuitem',
 			'showitemizedmenuitem',
 			'dialactivate',
 			'item_logoff',
@@ -146,6 +146,7 @@ var sipgateffx = {
 		sgffx.setXulObjectVisibility('showphonenumberformmenuitem', 0);
 		sgffx.setXulObjectVisibility('showhistorymenuitem', 0);
 		sgffx.setXulObjectVisibility('showfaxmenuitem', 0);
+		sgffx.setXulObjectVisibility('sendfaxpdfmenuitem', 0);
 		sgffx.setXulObjectVisibility('showitemizedmenuitem', 0);
 		sgffx.setXulObjectVisibility('item_logoff', 0);
 		sgffx.setXulObjectVisibility('separator1', 0);
@@ -241,6 +242,7 @@ var sipgateffx = {
 			'showphonenumberformmenuitem',
 			'showhistorymenuitem',
 			'showfaxmenuitem',
+			'sendfaxpdfmenuitem',
 			'showitemizedmenuitem',
 			'dialactivate',
 			'item_logoff',
@@ -613,8 +615,12 @@ var sipgateffx = {
 				window.openDialog('chrome://sipgateffx/content/options.xul', 'sipgatePrefs');
 				break;
 				
+			case 'sendFaxPDF':
+				window.open('chrome://sipgateffx/content/fax.xul', 'sipgate FAX', 'chrome,centerscreen,resizable=yes,titlebar=yes,alwaysRaised=yes');
+				break;
+				
 			case 'sendSMS':
-				window.open('chrome://sipgateffx/content/sms.xul', 'sipgateSMS', 'chrome,centerscreen,resizable=yes,titlebar=yes,alwaysRaised=yes');
+				window.open('chrome://sipgateffx/content/sms.xul', 'sipgate SMS', 'chrome,centerscreen,resizable=yes,titlebar=yes,alwaysRaised=yes');
 				break;
 				
 			case 'dialPhonenumber':

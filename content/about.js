@@ -42,7 +42,6 @@ var sipgateffx_about = {
 		sgffx.log(ver);
 		sgffx.log(document.getElementById("sipgateffxAboutVersion").value);
 		document.getElementById("sipgateffxAboutVersion").value = ver;
-	},
-
+	}
 };
 window.addEventListener("load", function(e) { sipgateffx_about.onLoad(e); }, false); 

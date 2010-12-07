@@ -26,6 +26,7 @@ var sgffxDB;
 
 var sipgateffx_options = {
     onLoad: function(){
+
         try {
             // this is needed to generally allow usage of components in javascript
             netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
@@ -42,7 +43,7 @@ var sipgateffx_options = {
         catch (anError) {
             dump("ERROR: " + anError);
         }
-        
+
         var auth = sgffx.getSamuraiAuth();
         
         document.getElementById('username').setAttribute("value", auth.username);
