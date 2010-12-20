@@ -46,7 +46,7 @@
    <RDF:Description RDF:about="urn:mozilla:install-manifest"
                    em:id="sipgateffx@michael.rotmanov"
                    em:name="sipgateFFX"
-                   em:version="0.7beta2"
+                   em:version="0.7beta3"
                    em:creator="sipgate"
                    em:description="Browser and communication successfully merged"
                    em:homepageURL="http://www.sipgate.de"
