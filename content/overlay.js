@@ -59,23 +59,19 @@ var sipgateffx = {
 		sipgateffx_this = this;
 
 		try {
-			// this is needed to generally allow usage of components in javascript
-			netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
-
-			sgffx = Components.classes['@api.sipgate.net/sipgateffx;1']
-											.getService().wrappedJSObject;
-											
-			try {
-				sgffxDB = Components.classes['@api.sipgate.net/sipgateffx-storage;1']
-												.getService().wrappedJSObject;
-			} catch(e) {
-				dump("ERROR while initializing DB: " + e);
-			}
-			
-		} catch (anError) {
+			sgffx = Components.classes['@api.sipgate.net/sipgateffx;1'].getService().wrappedJSObject;
+		} 
+		catch (anError) {
 			dump("ERROR: " + anError);
 			return;
 		}
+
+		try {
+			sgffxDB = Components.classes['@api.sipgate.net/sipgateffx-storage;1'].getService().wrappedJSObject;
+		} catch(e) {
+			dump("ERROR while initializing DB: " + e);
+			return;
+		}			
 
 		sgffx.init(this.showUpdateInfo);
 		sgffxDB.openDatabase();

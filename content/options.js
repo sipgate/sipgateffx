@@ -27,22 +27,20 @@ var sgffxDB;
 var sipgateffx_options = {
     onLoad: function(){
 
-        try {
-            // this is needed to generally allow usage of components in javascript
-            netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
-            
-            sgffx = Components.classes['@api.sipgate.net/sipgateffx;1'].getService().wrappedJSObject;
-
-			try {
-				sgffxDB = Components.classes['@api.sipgate.net/sipgateffx-storage;1']
-												.getService().wrappedJSObject;
-			} catch(e) {
-				dump("ERROR while initializing DB: " + e);
-			}			
+	try {
+		sgffx = Components.classes['@api.sipgate.net/sipgateffx;1'].getService().wrappedJSObject;
         } 
         catch (anError) {
-            dump("ERROR: " + anError);
+		dump("ERROR: " + anError);
+		return;
         }
+
+	try {
+		sgffxDB = Components.classes['@api.sipgate.net/sipgateffx-storage;1'].getService().wrappedJSObject;
+	} catch(e) {
+		dump("ERROR while initializing DB: " + e);
+		return;
+	}			
 
         var auth = sgffx.getSamuraiAuth();
         

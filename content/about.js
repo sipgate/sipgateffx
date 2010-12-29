@@ -26,14 +26,11 @@ var sgffx;
 
 var sipgateffx_about = {
 	onLoad: function() {
-		try {
-			// this is needed to generally allow usage of components in javascript
-			netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
 
-			sgffx = Components.classes['@api.sipgate.net/sipgateffx;1']
-											.getService().wrappedJSObject;
-			
-		} catch (anError) {
+		try {
+			sgffx = Components.classes['@api.sipgate.net/sipgateffx;1'].getService().wrappedJSObject;
+		} 
+		catch (anError) {
 			dump("ERROR: " + anError);
 			return;
 		}

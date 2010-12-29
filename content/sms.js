@@ -29,14 +29,11 @@ var promptService = Components.classes["@mozilla.org/embedcomp/prompt-service;1"
 
 var sipgateffx_sms = {
 	onLoad: function() {
-		try {
-			// this is needed to generally allow usage of components in javascript
-			netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
 
-			sgffx = Components.classes['@api.sipgate.net/sipgateffx;1']
-											.getService().wrappedJSObject;
-			
-		} catch (anError) {
+		try {
+			sgffx = Components.classes['@api.sipgate.net/sipgateffx;1'].getService().wrappedJSObject;
+		} 
+		catch (anError) {
 			dump("ERROR: " + anError);
 			return;
 		}
