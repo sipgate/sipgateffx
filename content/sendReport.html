@@ -45,88 +45,119 @@
 	
 	
 <script type="text/javascript">
-try {
-	var logAsString;
-	var sfobj = Components.classes['@api.sipgate.net/sipgateffx;1']
-											.getService().wrappedJSObject;
-						  
+var page = {
+	logAsString: "",
+	sfobj: null,
+	filepath: '',
 
-	var logArray = sfobj.logBufferDump().QueryInterface(Components.interfaces.nsISupportsArray);
-	logAsString = "username: " + sfobj.username + "\n";
+	init: function() {
+		this.sfobj = Components.classes['@api.sipgate.net/sipgateffx;1'].getService().wrappedJSObject;		
+		this.appendToLog("username: " + this.sfobj.username + "\n");
+		this.appendPreferencesToLog();
+		this.appendAddonInfoToLog();
+		this.appendReportToLog();
 
-	logAsString += "\npreferences:\n";
-	oPrefService = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
-	countOfPrefServiceChildList = {};
-	prefServiceChildList = mylist = oPrefService.getChildList("extensions.sipgateffx", countOfPrefServiceChildList);
+	},
 
-	for (var j=0; j < countOfPrefServiceChildList.value; j++) {
-		var _prefName = prefServiceChildList[j];
-		var _prefTypeCode = oPrefService.getPrefType(_prefName);
-		var _prefValue;
-		if (_prefTypeCode == 0) {
-			_prefValue = "'' (PREF_INVALID)";
-		} else if (_prefTypeCode == 32) {
-			_prefValue = "'"+sfobj.getPref(_prefName, "char")+"' (PREF_STRING)";
-		} else if (_prefTypeCode == 64) {
-			_prefValue = "'"+sfobj.getPref(_prefName, "int")+"' (PREF_INT)";
-		} else if (_prefTypeCode == 128) {
-			_prefValue = "'"+sfobj.getPref(_prefName, "bool")+"' (PREF_BOOL)";
+	appendPreferencesToLog: function() {
+		this.appendToLog("\npreferences:\n");
+		this.appendToLog("SystemArea -> " + this.sfobj.systemArea + "\n");
+		this.appendToLog("AddOn-Version -> " + this.sfobj.addOnVersion + "\n");
+
+		oPrefService = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
+		countOfPrefServiceChildList = {};
+		prefServiceChildList = oPrefService.getChildList("extensions.sipgateffx", countOfPrefServiceChildList);
+		for (var j=0; j < countOfPrefServiceChildList.value; j++) {
+			var _prefName = prefServiceChildList[j];
+			var _prefTypeCode = oPrefService.getPrefType(_prefName);
+			var _prefValue;
+			if (_prefTypeCode == 0) {
+				_prefValue = "'' (PREF_INVALID)";
+			} else if (_prefTypeCode == 32) {
+				_prefValue = "'"+this.sfobj.getPref(_prefName, "char")+"' (PREF_STRING)";
+			} else if (_prefTypeCode == 64) {
+				_prefValue = "'"+this.sfobj.getPref(_prefName, "int")+"' (PREF_INT)";
+			} else if (_prefTypeCode == 128) {
+				_prefValue = "'"+this.sfobj.getPref(_prefName, "bool")+"' (PREF_BOOL)";
+			}
+
+			this.appendToLog(_prefName+" -> "+_prefValue+"\n");
 		}
+	},
 
-		logAsString += _prefName+" -> "+_prefValue+"\n";
-	}
-	
-	logAsString += "SystemArea -> " + sfobj.systemArea + "\n";
-	logAsString += "AddOn-Version -> " + sfobj.addOnVersion + "\n";
-
-	if(sfobj.addOnInfo !== null) {
-		logAsString += "\naddOnInfo:\n";
-		for(var key in sfobj.addOnInfo) {
-			if(typeof key != 'object' && typeof key != 'function') {
-				logAsString += "  '"+key+"' -> " + sfobj.addOnInfo[key] + "\n";
+	appendAddonInfoToLog: function() {
+		if(this.sfobj.addOnInfo !== null) {
+			this.appendToLog("\naddOnInfo:\n");
+			for(var key in this.sfobj.addOnInfo) {
+				try {
+					if(typeof this.sfobj.addOnInfo[key] != 'object' && typeof this.sfobj.addOnInfo[key] != 'function') {
+						this.appendToLog("  '"+key+"' -> " + this.sfobj.addOnInfo[key] + "\n");
+					}
+				} catch (e) {}
 			}
 		}
-	}
+	},
 
-	logAsString += "\nreport:\n";
-	for (var i=0; i < logArray.Count(); i++) {
-		logAsString += logArray.GetElementAt(i).QueryInterface(Components.interfaces.nsISupportsCString).toString()+"\n";
-	}
+	appendReportToLog: function() {
+		var logArray = this.sfobj.logBufferDump().QueryInterface(Components.interfaces.nsISupportsArray);
+		this.appendToLog("\nreport:\n");
+		for (var i=0; i < logArray.Count(); i++) {
+			this.appendToLog(logArray.GetElementAt(i).QueryInterface(Components.interfaces.nsISupportsCString).toString()+"\n");
+		}
+	},
 
-	// create a temp-file:
-	var file = Components.classes["@mozilla.org/file/directory_service;1"].getService(Components.interfaces.nsIProperties).get("TmpD", Components.interfaces.nsIFile);
-	file.append("sipgateFFXstatusReport.txt");
-	file.createUnique(Components.interfaces.nsIFile.NORMAL_FILE_TYPE, 0664);
-	var foStream = Components.classes["@mozilla.org/network/file-output-stream;1"]
-    	                     .createInstance(Components.interfaces.nsIFileOutputStream);
-	foStream.init(file, 0x02 | 0x08 | 0x20, 0664, 0); // write, create, truncate
-	foStream.write(logAsString, logAsString.length);
-	foStream.close();
-	
-	logAsString = logAsString.replace(/</g, '&lt;');
-	logAsString = logAsString.replace(/>/g, '&gt;');	
+	appendToLog: function(txt) {
+		this.logAsString += txt;
+	},
 
-	if (sfobj.language == "de") {
-		document.getElementById('redBox').innerHTML = 'Bitte senden Sie diesen Bericht <b>nicht</b>, wenn Sie sipgateFFX erwartungsgemäß funktioniert. Dieser Report dient ausschließlich der Fehlerbehebung!';
+	displayLog: function() {
+		this.logAsString = this.logAsString.replace(/</g, '&lt;');
+		this.logAsString = this.logAsString.replace(/>/g, '&gt;');	
+		document.getElementById('fileContent').innerHTML = this.logAsString;
+	},
 
-		var msg = "Der Status von sipgateFFX wurde in die lokale Datei <PRE>" + file.path + "</PRE> protokolliert (klicken Sie <A HREF='file://" + file.path + "'>hier</A> um die Datei zu &ouml;ffnen).<BR><BR>\n";
-		msg += "Bitte schicken Sie diese Datei per E-Mail an: <a href=\"mailto:support@support.sipgate.de?subject=" + escape("Statusbericht sipgateFFX") + "\">support@support.sipgate.de</a><BR>\n";
-		document.getElementById('userMessage').innerHTML = msg;
+	writeFile: function() {
+		// create a temp-file:
+		var file = Components.classes["@mozilla.org/file/directory_service;1"].getService(Components.interfaces.nsIProperties).get("TmpD", Components.interfaces.nsIFile);
+		file.append("sipgateFFXstatusReport.txt");
+		file.createUnique(Components.interfaces.nsIFile.NORMAL_FILE_TYPE, 0664);
+		var foStream = Components.classes["@mozilla.org/network/file-output-stream;1"]
+	    	                     .createInstance(Components.interfaces.nsIFileOutputStream);
+		foStream.init(file, 0x02 | 0x08 | 0x20, 0664, 0); // write, create, truncate
+		foStream.write(this.logAsString, this.logAsString.length);
+		foStream.close();
+		this.filepath = file.path;
+	},
 
-	} else {
-		document.getElementById('redBox').innerHTML = 'Please do <b>not</b> send this report, if you don\'t encounter any problems with sipgateFFX. This report is for troubleshooting purposes only!';
+	showLocalizedFileInfo: function() {
+		if (this.sfobj.language == "de") {
+			document.getElementById('redBox').innerHTML = 'Bitte senden Sie diesen Bericht <b>nicht</b>, wenn Sie sipgateFFX erwartungsgemäß funktioniert. Dieser Report dient ausschließlich der Fehlerbehebung!';
 
-		var msg = "The state of sipgateFFX was written to the file <PRE>" + file.path + "</PRE> on your computer (click <A HREF='file://" + file.path + "'>here</A> to open the file).<BR><BR>\n";
-		msg += "Please send this file via email to <a href=\"mailto:support@support.sipgate.de?subject=" + escape("Status report sipgateFFX") + "\">support@support.sipgate.de</a><BR>\n";
-		document.getElementById('userMessage').innerHTML = msg;
+			var msg = "Der Status von sipgateFFX wurde in die lokale Datei <PRE>" + this.filepath + "</PRE> protokolliert (klicken Sie <A HREF='file://" + this.filepath + "'>hier</A> um die Datei zu &ouml;ffnen).<BR><BR>\n";
+			msg += "Bitte schicken Sie diese Datei per E-Mail an: <a href=\"mailto:support@support.sipgate.de?subject=" + escape("Statusbericht sipgateFFX") + "\">support@support.sipgate.de</a><BR>\n";
+			document.getElementById('userMessage').innerHTML = msg;
 
-	}
+		} else {
+			document.getElementById('redBox').innerHTML = 'Please do <b>not</b> send this report, if you don\'t encounter any problems with sipgateFFX. This report is for troubleshooting purposes only!';
 
-	document.getElementById('fileContent').innerHTML = logAsString;
+			var msg = "The state of sipgateFFX was written to the file <PRE>" + this.filepath + "</PRE> on your computer (click <A HREF='file://" + this.filepath + "'>here</A> to open the file).<BR><BR>\n";
+			msg += "Please send this file via email to <a href=\"mailto:support@support.sipgate.de?subject=" + escape("Status report sipgateFFX") + "\">support@support.sipgate.de</a><BR>\n";
+			document.getElementById('userMessage').innerHTML = msg;
 
+		}
+	},
+
+	foo: function() {}
+};
+try {
+	page.init();
+	page.writeFile();
+	page.showLocalizedFileInfo();
+	page.displayLog();
 } catch (e) {
 	alert(e);
 }
+
 </script>
 
 </body></html>
