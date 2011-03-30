@@ -61,8 +61,19 @@ var sipgateffx_options = {
         }
 		
 		if(uriList.indexOf(defaultExtensionPref) == -1) {
-			document.getElementById("click2DialList").value = sgffx.defaultExtension.voice.extensionSipUri;
-			sgffx.setPref("extensions.sipgateffx.defaultExtension", sgffx.defaultExtension.voice.extensionSipUri, "char");
+			sgffx.log('options: defaultExtensionPref is not in uriList. Setting defaultExtensionPref to defaultExtension');
+			var defaultExtension;
+			if(sgffx.defaultExtension && sgffx.defaultExtension.voice && sgffx.defaultExtension.voice.extensionSipUri)
+			{
+				defaultExtension = sgffx.defaultExtension.voice.extensionSipUri;
+			} else if(sgffx.ownUriList && sgffx.ownUriList.voice && sgffx.ownUriList.voice.length > 0) {
+				defaultExtension = sgffx.ownUriList.voice[0].SipUri;
+			}
+			if(defaultExtension)
+			{
+				document.getElementById("click2DialList").value = defaultExtension;
+				sgffx.setPref("extensions.sipgateffx.defaultExtension", defaultExtension, "char");
+			}
 		} else {
 			document.getElementById("click2DialList").value = defaultExtensionPref;
 		}
