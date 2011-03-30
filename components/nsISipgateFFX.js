@@ -66,8 +66,8 @@ function SipgateFFX() {
     };
 	
     this.samuraiServer = {'team': "https://api.sipgate.net/RPC2", 'classic': "https://samurai.sipgate.net/RPC2"};
-	this.systemArea = (this.getPref("extensions.sipgateffx.systemTeam", "bool") ? 'team' : 'classic');
-    
+    this.systemAreaRegEx = new RegExp(/^.+@.+\.[a-z]{2,6}$/);
+
     this.defaultExtension = {
         "voice": null,
         "text": null,
@@ -141,6 +141,10 @@ SipgateFFX.prototype = {
 	contractID: "@api.sipgate.net/sipgateffx;1",
 
 	QueryInterface: XPCOMUtils.generateQI(),
+
+	 get systemArea() {
+		return this.systemAreaRegEx.test(this.username) ? 'team' : 'classic';
+	},
 	
 	 get password() {
 		if (this.samuraiAuth.password) {
@@ -674,7 +678,8 @@ SipgateFFX.prototype = {
 		this.setXulObjectVisibility('showphonenumberformmenuitem', 0);
 		this.setXulObjectVisibility('showhistorymenuitem', 0);
 		this.setXulObjectVisibility('showfaxmenuitem', 0);
-		this.setXulObjectVisibility('showitemizedmenuitem', 0);
+		this.setXulObjectVisibility('showfaxpdfmenuitem', 0);
+		this.setXulObjectVisibility('sendfaxpdfmenuitem', 0);
 		this.setXulObjectVisibility('dialactivate', 0);
 		this.setXulObjectVisibility('dialdeactivate', 0);
 		this.setXulObjectVisibility('item_logoff', 0);
@@ -875,7 +880,6 @@ SipgateFFX.prototype = {
                             }
                         }
                     }
-					
 					var defaultExtensionPref = _sgffx.getPref("extensions.sipgateffx.defaultExtension", "char");
 					if (uriList.indexOf(defaultExtensionPref) == -1) {
 						_sgffx.setPref("extensions.sipgateffx.defaultExtension", _sgffx.defaultExtension.voice.extensionSipUri, "char");

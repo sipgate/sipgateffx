@@ -134,6 +134,12 @@ var sipgateffx_fax = {
 
 		sipgateffxfaxstrings = document.getElementById("sipgateffx_fax-strings");
 
+		if(sgffx.tosList.indexOf('fax') == -1) {
+			promptService.alert(window, 'sipgateFFX', sipgateffxfaxstrings.getString('sipgateffxFaxNotAvailable'));
+			window.close();
+			return false;
+		}
+
 		if(typeof(sgffx.contacts) != 'undefined') {
 			for(var i in sgffx.contacts) {
 				if(!sgffx.contacts[i].tel) continue;

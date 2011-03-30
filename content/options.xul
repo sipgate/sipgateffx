@@ -38,7 +38,6 @@
       <preference id="autologin" name="extensions.sipgateffx.autologin" type="bool"/>
       <preference id="polling" name="extensions.sipgateffx.polling" type="bool"/>
       <preference id="dontshowbalance" name="extensions.sipgateffx.dontshowbalance" type="bool"/>
-	  <preference id="systemTeam" name="extensions.sipgateffx.systemTeam" type="bool"/>
     </preferences>
 
 	<hbox>
