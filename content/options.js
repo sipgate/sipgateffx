@@ -83,14 +83,16 @@ var sipgateffx_options = {
     
     onUnload: function(){
 		var relogin = false;
-		
-        if (document.getElementById("parsenumbers").value) {
-            sgffx.setXulObjectVisibility('dialactivate', 0);
-        }
-        else {
-            sgffx.setXulObjectVisibility('dialactivate', 1);
-        }
-		
+
+	if(sgffx.isLoggedIn)
+	{
+		if (document.getElementById("parsenumbers").value) {
+		    sgffx.setXulObjectVisibility('dialactivate', 0);
+		}
+		else {
+		    sgffx.setXulObjectVisibility('dialactivate', 1);
+		}
+	}	
 		if(document.getElementById("dontshowbalance").value) {
 			sgffx.setXulObjectAttribute('BalanceText', "value", "");			
 		} else {

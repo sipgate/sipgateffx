@@ -678,7 +678,7 @@ SipgateFFX.prototype = {
 		this.setXulObjectVisibility('showphonenumberformmenuitem', 0);
 		this.setXulObjectVisibility('showhistorymenuitem', 0);
 		this.setXulObjectVisibility('showfaxmenuitem', 0);
-		this.setXulObjectVisibility('showfaxpdfmenuitem', 0);
+		this.setXulObjectVisibility('showitemizedmenuitem', 0);
 		this.setXulObjectVisibility('sendfaxpdfmenuitem', 0);
 		this.setXulObjectVisibility('dialactivate', 0);
 		this.setXulObjectVisibility('dialdeactivate', 0);
@@ -773,7 +773,8 @@ SipgateFFX.prototype = {
 		
 		var setBalance = function() {
 			_sgffx.setXulObjectAttribute('BalanceText', "value", _sgffx.curBalance[0]);
-			
+			_sgffx.setXulObjectAttribute('sipgateffx-toolbar-button', "tooltiptext", _sgffx.curBalance[0]);
+	
 			// display the balance value:
 			if (_sgffx.curBalance[1] < 5.0) {
 				_sgffx.setXulObjectAttribute('BalanceText', "style", "color: red;");

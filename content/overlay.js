@@ -91,6 +91,7 @@ var sipgateffx = {
 		sgffx.strings = this.strings;
 		
 		var allElements = [
+			'sipgateffx-toolbar-button',
 			'sipgateContacts',
 			'showcreditmenuitem',
 			'pollbalance',
@@ -222,6 +223,8 @@ var sipgateffx = {
 			}, false);
 		}
 
+		this.addToolbarIconByDefault();
+
 		setTimeout(this.showUpdateInfo, 1000);
 	},
 
@@ -338,8 +341,7 @@ var sipgateffx = {
 	},
 
 	onToolbarButtonCommand: function(e) {
-		// just reuse the function above.  you can change this, obviously!
-		sipgateffx.onMenuItemCommand(e);
+		document.getElementById('sipgatemenu').openPopup( document.getElementById('sipgateffx-toolbar-button'), "before_end", 0, 0, true);
 	}, 
 	
 	onMenuItemCommand: function(e) {
@@ -685,6 +687,30 @@ var sipgateffx = {
 		} else {
 			return getBrowserSelection();
 		}
+	},
+
+	addToolbarIconByDefault: function() {
+		// we do not support default toolbar icons in thunderbird
+		if(sgffx.application == 'thunderbird') {
+			return;
+		}
+
+		var myId    = "sipgateffx-toolbar-button"; // ID of button to add
+		var navBar  = document.getElementById("nav-bar");
+		var curSet  = navBar.currentSet.split(",");
+		if (curSet.indexOf(myId) == -1) {
+			var set = curSet;
+			set.push(myId);
+
+			navBar.setAttribute("currentset", set.join(","));
+			navBar.currentSet = set.join(",");
+			document.persist(navBar.id, "currentset");
+			try {
+				BrowserToolboxCustomizeDone(true);
+			}
+			catch (e) {}
+		}
+
 	}
 		
 };
