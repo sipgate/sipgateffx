@@ -288,27 +288,92 @@ function sipgateffxPageLoaded(contentDocument)
 	setTimeout(sipgateffxParseDOM, 0, body, doc);
 }
 
-function sipgateffxParseDOM(aNode, document)
-{
-	var t0 = new Date().getTime();
-	const tagsOfInterest = [ "a", "abbr", "acronym", "address", "applet", "b", "bdo", "big", "blockquote", "body", "caption",
-	                         "center", "cite", "code", "dd", "del", "div", "dfn", "dt", "em", "fieldset", "font", "form", "h1", "h2", "h3",
-	                         "h4", "h5", "h6", "i", "iframe", "ins", "kdb", "li", "object", "pre", "p", "q", "samp", "small", "span",
-	                         "strike", "s", "strong", "sub", "sup", "td", "th", "tt", "u", "var" ];
-
- 	var xpath = "//text()[(parent::" + tagsOfInterest.join(" or parent::") + ")]";
- 	var candidates = document.evaluate(xpath, aNode, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
-
-    for ( var cand = null, i = 0; (cand = candidates.snapshotItem(i)); i++)
+var parser = {
+	tagsOfInterest: [ "a[not(@sipgateffx_number)]", "abbr", "acronym", "address", "applet", "b", "bdo", "big", "blockquote", "body", "caption",
+		"center", "cite", "code", "dd", "del", "div", "dfn", "dt", "em", "fieldset", "font", "form", "h1", "h2", "h3",
+		"h4", "h5", "h6", "i", "iframe", "ins", "kdb", "li", "object", "pre", "p", "q", "samp", "small", "span",
+		"strike", "s", "strong", "sub", "sup", "td", "th", "tt", "u", "var" ],		
+	calltoAndTelXPath: '//a[starts-with(@href,"callto://")]|//a[starts-with(@href,"tel:")]',
+	document: null,
+	
+	setDocument: function(doc)
+	{
+		this.document = doc;
+	},
+	
+	parseAnchors: function (aNode)
+	{
+	 	var candidates = this.document.evaluate(this.calltoAndTelXPath, aNode, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
+	    for ( var cand = null, i = 0; (cand = candidates.snapshotItem(i)); i++)
+		{
+	    	this.modifyAnchor(cand, cand.href);
+	    }
+	},
+	
+	modifyAnchor: function(element, value)
 	{
 	    try {
-	    	if (cand.nodeType == Node.TEXT_NODE) {
-	    		sipgateffxCheckPhoneNumber(cand);
+            var newNodeClick2DialIcon = this.document.createElement("IMG");
+            newNodeClick2DialIcon.style.border = 0;
+            newNodeClick2DialIcon.style.cursor = "pointer";
+            newNodeClick2DialIcon.style.verticalAlign = "top";
+            newNodeClick2DialIcon.align = "bottom";
+            newNodeClick2DialIcon.src = "chrome://sipgateffx/skin/icon_click2dial.gif";
+            newNodeClick2DialIcon.width = "16";
+            newNodeClick2DialIcon.height = "16";
+            element.appendChild(newNodeClick2DialIcon);
+            
+	    	element.setAttribute("sipgateffx_number", '+'+ value.replace(/\D/g,''));
+	    	element.addEventListener("click", sipgateffxCallClick, true);
+	    	element.addEventListener("contextmenu", sipgateffxCallRightClick, true);
+	    	element.style.backgroundColor = click2dialBackground;
+	    	element.style.color = 'blue';
+	    	element.style.cursor = 'pointer';
+	    	element.style.textDecoration = 'none';
+	    	element.style.MozBorderRadius = '3px';
+	    	element.style.borderRadius = '3px';
+	    	element.style.border = '1px solid #AAAAAA';
+	    	element.title = "sipgate Click2Dial";	    	
+        } catch (e) {
+        	sgffx.log('*** sipgateffx: sipgateffxFindCalltoAndTel ERROR ' + e);
+        }		
+	},
+	
+	parseText: function (aNode)
+	{
+	 	var xpath = "//text()[(parent::" + this.tagsOfInterest.join(" or parent::") + ")]";
+	 	var candidates = this.document.evaluate(xpath, aNode, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
+	    for ( var cand = null, i = 0; (cand = candidates.snapshotItem(i)); i++)
+		{
+	    	this.modifyText(cand);
+	    }		
+	},
+	
+	modifyText: function(element)
+	{
+	    try {
+	    	if (element.nodeType == Node.TEXT_NODE) {
+	    		sipgateffxCheckPhoneNumber(element);
 	    	}
         } catch (e) {
         	sgffx.log('*** sipgateffx: sipgateffxCheckPhoneNumber ERROR ' + e);
-        }		
-    }
+        }			
+	}
+	
+};
+
+function sipgateffxParseDOM(aNode, document)
+{
+	var t0 = new Date().getTime();
+
+	try {
+		parser.setDocument(document);
+		parser.parseAnchors(aNode);
+		parser.parseText(aNode);
+	} catch(e) {
+		sgffx.log('*** sipgateffxParseDOM ERROR ' + e);
+	}
+	
 	var t1 = new Date().getTime();
 	sgffx.log('*** sipgateffx: Time for parsing the page with XPath: ' + (t1-t0));
 	return 0;
@@ -395,6 +460,7 @@ function sipgateffxCheckPhoneNumber(aNode)
 	        spanNode.style.backgroundColor = click2dialBackground;
 	        spanNode.style.color = 'blue';
 	        spanNode.style.cursor = 'pointer';
+	        spanNode.style.borderRadius = '3px';
 	        spanNode.style.MozBorderRadius = '3px';
 	        spanNode.style.border = '1px solid #AAAAAA';
 	        spanNode.title = "sipgate Click2Dial for " +  prettyNumber + (country ? ' ('+country+')' : '');
