@@ -27,14 +27,15 @@ try{
 	Components.utils.import("resource://gre/modules/AddonManager.jsm");
 } catch(e) {}
 
-var xulObjReference = new Array();
 var _sgffx;
 
 function SipgateFFX() {
     this.wrappedJSObject = this;
     _sgffx = this;
     this._strings = null;
-	
+    
+    this.xulObjReference = new Array();
+    
     this.addOnInfo = null;
 	this.addOnVersion = null;
 	this.addOnTarget = null;
@@ -180,7 +181,7 @@ SipgateFFX.prototype = {
 	},
 	
 	set strings(strings) {
-		//dumpJson(strings);
+		//_sgffx.dumpJson(strings);
 		//this.log(strings.getString("helloMessageTitle"));
 		if(this._strings == null) {
 			this._strings = strings;
@@ -419,8 +420,8 @@ SipgateFFX.prototype = {
 				}
 				else {
 					_sgffx.log('click2dial failed. Internal system error has occurred.');
-					dumpJson(params);
-					dumpJson(ourParsedResponse);
+					_sgffx.dumpJson(params);
+					_sgffx.dumpJson(ourParsedResponse);
 					_sgffx.currentSessionID = null;
 				}
 			} catch(ex) {
@@ -957,7 +958,7 @@ SipgateFFX.prototype = {
 		};
 		
         var result = function(ourParsedResponse, aXML){
-			// dumpJson(ourParsedResponse);
+			// _sgffx.dumpJson(ourParsedResponse);
             if (ourParsedResponse.StatusCode && ourParsedResponse.StatusCode == 200) {
 				try {
 					var timestamp = parseInt(new Date().getTime() / 1000);
@@ -1033,7 +1034,7 @@ SipgateFFX.prototype = {
 		};
 		
         var result = function(ourParsedResponse, aXML){
-			dumpJson(ourParsedResponse);
+			_sgffx.dumpJson(ourParsedResponse);
 			if (ourParsedResponse.StatusCode && ourParsedResponse.StatusCode == 200) {
             } else {
 				_sgffx.log("getEventList failed toSTRING: "+ aXML.toString());
@@ -1207,7 +1208,7 @@ SipgateFFX.prototype = {
 			'ClientVendor': 'sipgate (michael.rotmanov)'
 		};
 		
-		dumpJson(params);
+		_sgffx.dumpJson(params);
 		
         var result = function(ourParsedResponse, aXML){
 		};
@@ -1255,7 +1256,7 @@ SipgateFFX.prototype = {
 		}
 		
         var result = function(ourParsedResponse, aXML){
-			dumpJson(ourParsedResponse);
+			_sgffx.dumpJson(ourParsedResponse);
 			if (ourParsedResponse.StatusCode && ourParsedResponse.StatusCode == 200) {
 				_sgffx.DND = ourParsedResponse.DND;
 				_sgffx.showDoNotDisturb();
@@ -1298,7 +1299,7 @@ SipgateFFX.prototype = {
 		};
 		
         var result = function(ourParsedResponse, aXML){
-			dumpJson(ourParsedResponse);
+			_sgffx.dumpJson(ourParsedResponse);
 			if (ourParsedResponse.StatusCode && ourParsedResponse.StatusCode == 200) {
 				if(dndEnabled) {
 					_sgffx.setXulObjectVisibility('sipgateffxDNDon', 1);
@@ -1566,12 +1567,18 @@ SipgateFFX.prototype = {
 		}
 	},
 	
+	dumpJson: function (obj) {
+		var nativeJSON = Components.classes["@mozilla.org/dom/json;1"]
+		                 .createInstance(Components.interfaces.nsIJSON);
+		_sgffx.log(nativeJSON.encode(obj));
+	},
+	
 	setXulObjectReference: function(id, obj) {
-		if (typeof(xulObjReference[id]) != 'object') {
+		if (typeof(this.xulObjReference[id]) != 'object') {
 			// this.log("xulObjReference to " + id + " not defined as Array");
-			xulObjReference[id] = new Array();
+			this.xulObjReference[id] = new Array();
 		}
-		xulObjReference[id].push(obj);
+		this.xulObjReference[id].push(obj);
 	},
 	
 	setXulObjectVisibility: function(id, visible, forced) {
@@ -1583,8 +1590,8 @@ SipgateFFX.prototype = {
 	},
 	
 	setXulObjectAttribute: function(id, attrib_name, new_value, forced) {
-		if (typeof(xulObjReference[id]) == 'object') {
-			var xulObj = xulObjReference[id];
+		if (typeof(this.xulObjReference[id]) == 'object') {
+			var xulObj = this.xulObjReference[id];
 			try {
 				for (var k = 0; k < xulObj.length; k++) {
 					if (attrib_name == "src") {
@@ -1609,8 +1616,8 @@ SipgateFFX.prototype = {
 	
 	runXulObjectCommand: function(id, command, params) {
 		try {
-			if (typeof(xulObjReference[id]) == 'object') {
-				var xulObj = xulObjReference[id];
+			if (typeof(this.xulObjReference[id]) == 'object') {
+				var xulObj = this.xulObjReference[id];
 				for (var k = 0; k < xulObj.length; k++) {
 					xulObj[k] = xulObj[k].QueryInterface(Components.interfaces.nsIDOMXULElement);
 					xulObj[k][command].apply(xulObj[k], params);
@@ -1626,11 +1633,11 @@ SipgateFFX.prototype = {
 	
 	removeXulObjRef: function(id, aXulObjRef) {
 		try {
-			if (typeof(xulObjReference[id]) == "object") {
-				for (var i = 0; i < xulObjReference[id].length; i++) {
-					var tmpElementStorage = xulObjReference[id].pop();
+			if (typeof(this.xulObjReference[id]) == "object") {
+				for (var i = 0; i < this.xulObjReference[id].length; i++) {
+					var tmpElementStorage = this.xulObjReference[id].pop();
 					if (tmpElementStorage != aXulObjRef) {
-						xulObjReference[id].unshift(tmpElementStorage);
+						this.xulObjReference[id].unshift(tmpElementStorage);
 //					} else {
 //						this.log("removed a reference to element with id '" + id + "'");
 					}
@@ -1655,13 +1662,3 @@ if (XPCOMUtils.generateNSGetFactory)
     var NSGetFactory = XPCOMUtils.generateNSGetFactory(components);
 else
     var NSGetModule = XPCOMUtils.generateNSGetModule(components);
-
-//function NSGetModule(compMgr, fileSpec) {
-//	return XPCOMUtils.generateModule(components);
-//}
-
-function dumpJson(obj) {
-	var nativeJSON = Components.classes["@mozilla.org/dom/json;1"]
-	                 .createInstance(Components.interfaces.nsIJSON);
-	_sgffx.log(nativeJSON.encode(obj));
-};

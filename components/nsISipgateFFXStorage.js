@@ -230,8 +230,3 @@ function NSGetModule(compMgr, fileSpec) {
 	return XPCOMUtils.generateModule(components);
 }
 */
-function dumpJson(obj) {
-	var nativeJSON = Components.classes["@mozilla.org/dom/json;1"]
-	                 .createInstance(Components.interfaces.nsIJSON);
-	dump(nativeJSON.encode(obj)+"\n");
-};
