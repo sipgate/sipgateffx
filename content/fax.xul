@@ -33,8 +33,8 @@
 	buttons="accept,cancel"
 	buttonlabelcancel="&sipgateffxFaxButton.cancel.label;"
 	buttonlabelaccept="&sipgateffxFaxButton.send.label;"
-	ondialogaccept="return doOK();"
-	ondialogcancel="return doCancel();">
+	ondialogaccept="return sipgateffx_fax.doOK();"
+	ondialogcancel="return sipgateffx_fax.doCancel();">
 	
 	<stringbundleset id="stringbundleset"> 
 		<stringbundle id="sipgateffx_fax-strings" src="chrome://sipgateffx/locale/fax.properties" />
@@ -51,7 +51,7 @@
 			<caption label="&sipgateffxFaxFileHeader.label;" id="sipgate_fax_fax_header"/>
 			<hbox>
 				<textbox id="sipgate_fax_file" readonly="true"/>
-				<button label="&sipgateffxFaxFile.button;" oncommand="doOpenFileBox(event)"/>
+				<button label="&sipgateffxFaxFile.button;" oncommand="sipgateffx_fax.doOpenFileBox(event)"/>
 			</hbox>
 		</groupbox>
 	    <groupbox>

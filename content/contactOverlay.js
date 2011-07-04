@@ -22,25 +22,26 @@
 
 *****************************************************************************/
 
-var sgffx;
-var sipgateffxcontactstrings;
-var promptService = Components.classes["@mozilla.org/embedcomp/prompt-service;1"].getService(Components.interfaces.nsIPromptService);
-
 var sipgateffx_contact = {
+	component: null,
+	strings: null,
+	promptService: null,
+		
 	saving: false,
 	generateDisplayName: true,
 		
 	onLoad: function() {
+		sipgateffx_contact.promptService = Components.classes["@mozilla.org/embedcomp/prompt-service;1"].getService(Components.interfaces.Components.interfaces.nsIPromptService);
 
 		try {
-			sgffx = Components.classes['@api.sipgate.net/sipgateffx;1'].getService().wrappedJSObject;
+			sipgateffx_contact.component = Components.classes['@api.sipgate.net/sipgateffx;1'].getService().wrappedJSObject;
 		} 
 		catch (anError) {
 			dump("ERROR: " + anError);
 			return;
 		}
 
-		sipgateffxcontactstrings = document.getElementById("sipgateffx_contact-strings");
+		sipgateffx_contact.strings = document.getElementById("sipgateffx_contact-strings");
 
 		if(typeof window.arguments != "undefined") {
 			if(typeof window.arguments[0] != "undefined") {
@@ -48,7 +49,7 @@ var sipgateffx_contact = {
 				try {
 					this.getContact(window.arguments[0]);
 				} catch(e) {
-					sgffx.log('contactOverlay getContact FAILED with ' + e);
+					sipgateffx_contact.component.log('contactOverlay getContact FAILED with ' + e);
 				}
 			}
 		}
@@ -58,7 +59,7 @@ var sipgateffx_contact = {
 	dumpJson: function(obj) {
 		var nativeJSON = Components.classes["@mozilla.org/dom/json;1"]
 		                 .createInstance(Components.interfaces.nsIJSON);
-		sgffx.log(nativeJSON.encode(obj));
+		sipgateffx_contact.component.log(nativeJSON.encode(obj));
 	},
 	
 	onUnload: function() {},
@@ -97,16 +98,16 @@ var sipgateffx_contact = {
 			vCard.push('EMAIL;INTERNET:'+ document.getElementById("SecondEmail").value);
 		
 		if(document.getElementById("WorkPhone").value != '')
-			vCard.push('TEL;WORK;ISDN:'+ sgffx.niceNumber(document.getElementById("WorkPhone").value));
+			vCard.push('TEL;WORK;ISDN:'+ sipgateffx_contact.component.niceNumber(document.getElementById("WorkPhone").value));
 		
 		if(document.getElementById("HomePhone").value != '')
-			vCard.push('TEL;HOME;ISDN:'+ sgffx.niceNumber(document.getElementById("HomePhone").value));
+			vCard.push('TEL;HOME;ISDN:'+ sipgateffx_contact.component.niceNumber(document.getElementById("HomePhone").value));
 		
 		if(document.getElementById("FaxNumber").value != '')
-			vCard.push('TEL;FAX:'+ sgffx.niceNumber(document.getElementById("FaxNumber").value));
+			vCard.push('TEL;FAX:'+ sipgateffx_contact.component.niceNumber(document.getElementById("FaxNumber").value));
 		
 		if(document.getElementById("CellularNumber").value != '')
-			vCard.push('TEL;CELL:'+ sgffx.niceNumber(document.getElementById("CellularNumber").value));
+			vCard.push('TEL;CELL:'+ sipgateffx_contact.component.niceNumber(document.getElementById("CellularNumber").value));
 		
 		if(document.getElementById("Address").value != '')
 			vCard.push('ADR;HOME:'+ document.getElementById("Address").value + ';;;;;;');
@@ -120,21 +121,21 @@ var sipgateffx_contact = {
 		
 		var params = { 'EntryList': [{'EntryID': '', 'Entry': vCard.join("\n")}]};
 
-		sgffx.log(params.EntryList.Entry);
+		sipgateffx_contact.component.log(params.EntryList.Entry);
 		
 		var result = function(ourParsedResponse, aXML) {
 			sipgateffx_contact.saving = false;
 			if (ourParsedResponse.StatusCode && ourParsedResponse.StatusCode == 200) {
-				sgffx.getPhonebookList();
-				promptService.alert(window, 'sipgateFFX', sipgateffxcontactstrings.getString('sipgateffxContactSaveSuccess'));
+				sipgateffx_contact.component.getPhonebookList();
+				sipgateffx_contact.promptService.alert(window, 'sipgateFFX', sipgateffx_contact.strings.getString('sipgateffxContactSaveSuccess'));
 				window.close();
 			} else {
-				sgffx.log((new XMLSerializer()).serializeToString(aXML));
-				promptService.alert(window, 'sipgateFFX', sipgateffxcontactstrings.getString('sipgateffxContactSaveFailed'));
+				sipgateffx_contact.component.log((new XMLSerializer()).serializeToString(aXML));
+				sipgateffx_contact.promptService.alert(window, 'sipgateFFX', sipgateffx_contact.strings.getString('sipgateffxContactSaveFailed'));
 			}
 		};
 
-		sgffx._rpcCall("samurai.PhonebookEntrySet", params, result);
+		sipgateffx_contact.component._rpcCall("samurai.PhonebookEntrySet", params, result);
 		
 		return false;
 	},
@@ -167,7 +168,7 @@ var sipgateffx_contact = {
 	},
 
 	getContact: function(number) {
-		var niceNumber = sgffx.niceNumber(number);
+		var niceNumber = sipgateffx_contact.component.niceNumber(number);
 		if(niceNumber.match(/^49[2-9]/) == null)
 			return;
 		else
@@ -177,7 +178,7 @@ var sipgateffx_contact = {
 		
 		var now = 0;
 		
-		sgffx.log("entering getContact");
+		sipgateffx_contact.component.log("entering getContact");
 		document.getElementById("ReverseLookup").hidden = false; 	
 		
 		var req = new Request();
@@ -187,31 +188,31 @@ var sipgateffx_contact = {
 
 		req.onFailure = function() {
 			document.getElementById("ReverseLookup").hidden = true;
-			sgffx.log("Something went wrong while requesting 11880.com.");
-			sgffx.log("Request took " + ((new Date().getTime() / 1000)-now) + ' seconds');
+			sipgateffx_contact.component.log("Something went wrong while requesting 11880.com.");
+			sipgateffx_contact.component.log("Request took " + ((new Date().getTime() / 1000)-now) + ' seconds');
 			
 		}
 
 		req.onSuccess = function(aText, aXML) {
-			sgffx.log("Request succeeded.");
-			sgffx.log("Request took " + ((new Date().getTime() / 1000)-now) + ' seconds');
+			sipgateffx_contact.component.log("Request succeeded.");
+			sipgateffx_contact.component.log("Request took " + ((new Date().getTime() / 1000)-now) + ' seconds');
 			var results = aText.match(/a href=\"[^\']*\'([^\']*vcard[^\']*)\'(.*)\".*>/);
 			
 			if(results != null && typeof results[1] != 'undefined') {
-				sgffx.log('URL for vCard: ' + results[1]);
-				sgffx.log("Start downloading vCard");
+				sipgateffx_contact.component.log('URL for vCard: ' + results[1]);
+				sipgateffx_contact.component.log("Start downloading vCard");
 
 				var vcardReq = new Request();
 				vcardReq.method = 'get';
 				vcardReq.url = "http://www.11880.com" + results[1];
 				vcardReq.onFailure = function() {
 					document.getElementById("ReverseLookup").hidden = true;
-					sgffx.log("Something went wrong while downloading vCard.");
+					sipgateffx_contact.component.log("Something went wrong while downloading vCard.");
 				}
 				vcardReq.onSuccess = function(aText, aXML) {
 					document.getElementById("ReverseLookup").hidden = true; 	
 
-					sgffx.log("Downloaded vCard: " + aText);
+					sipgateffx_contact.component.log("Downloaded vCard: " + aText);
 					if(aText.match(/^BEGIN:VCARD/)) {
 						
 						var vcardModule = {};
@@ -261,11 +262,11 @@ var sipgateffx_contact = {
 				vcardReq.send();
 			} else {
 				document.getElementById("ReverseLookup").hidden = true;
-				sgffx.log("Could not find any matches or 11880.com page has changed.");
+				sipgateffx_contact.component.log("Could not find any matches or 11880.com page has changed.");
 			}
 		};
 		
-		sgffx.log("Starting reverse phone number lookup");
+		sipgateffx_contact.component.log("Starting reverse phone number lookup");
 		now = new Date().getTime() / 1000;
 		req.send();
 	}

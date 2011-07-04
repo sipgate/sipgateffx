@@ -21,14 +21,14 @@
     02110-1301, USA
 
 *****************************************************************************/
-var sgffx;
-var sgffxDB;
-
 var sipgateffx_options = {
+	component: null,
+	componentDB: null,
+		
     onLoad: function(){
 
 	try {
-		sgffx = Components.classes['@api.sipgate.net/sipgateffx;1'].getService().wrappedJSObject;
+		sipgateffx_options.component = Components.classes['@api.sipgate.net/sipgateffx;1'].getService().wrappedJSObject;
         } 
         catch (anError) {
 		dump("ERROR: " + anError);
@@ -36,20 +36,20 @@ var sipgateffx_options = {
         }
 
 	try {
-		sgffxDB = Components.classes['@api.sipgate.net/sipgateffx-storage;1'].getService().wrappedJSObject;
+		sipgateffx_options.componentDB = Components.classes['@api.sipgate.net/sipgateffx-storage;1'].getService().wrappedJSObject;
 	} catch(e) {
 		dump("ERROR while initializing DB: " + e);
 		return;
 	}			
 
-        var auth = sgffx.getSamuraiAuth();
+        var auth = sipgateffx_options.component.getSamuraiAuth();
         
         document.getElementById('username').setAttribute("value", auth.username);
         document.getElementById('password').setAttribute("value", auth.password);
 		
-        var voiceList = sgffx.ownUriList.voice;
+        var voiceList = sipgateffx_options.component.ownUriList.voice;
 		var uriList = [];
-		var defaultExtensionPref = sgffx.getPref("extensions.sipgateffx.defaultExtension", "char");
+		var defaultExtensionPref = sipgateffx_options.component.getPref("extensions.sipgateffx.defaultExtension", "char");
 		
         for (var i = 0; i < voiceList.length; i++) {
             document.getElementById("click2DialList").appendItem(
@@ -61,18 +61,18 @@ var sipgateffx_options = {
         }
 		
 		if(uriList.indexOf(defaultExtensionPref) == -1) {
-			sgffx.log('options: defaultExtensionPref is not in uriList. Setting defaultExtensionPref to defaultExtension');
+			sipgateffx_options.component.log('options: defaultExtensionPref is not in uriList. Setting defaultExtensionPref to defaultExtension');
 			var defaultExtension;
-			if(sgffx.defaultExtension && sgffx.defaultExtension.voice && sgffx.defaultExtension.voice.extensionSipUri)
+			if(sipgateffx_options.component.defaultExtension && sipgateffx_options.component.defaultExtension.voice && sipgateffx_options.component.defaultExtension.voice.extensionSipUri)
 			{
-				defaultExtension = sgffx.defaultExtension.voice.extensionSipUri;
-			} else if(sgffx.ownUriList && sgffx.ownUriList.voice && sgffx.ownUriList.voice.length > 0) {
-				defaultExtension = sgffx.ownUriList.voice[0].SipUri;
+				defaultExtension = sipgateffx_options.component.defaultExtension.voice.extensionSipUri;
+			} else if(sipgateffx_options.component.ownUriList && sipgateffx_options.component.ownUriList.voice && sipgateffx_options.component.ownUriList.voice.length > 0) {
+				defaultExtension = sipgateffx_options.component.ownUriList.voice[0].SipUri;
 			}
 			if(defaultExtension)
 			{
 				document.getElementById("click2DialList").value = defaultExtension;
-				sgffx.setPref("extensions.sipgateffx.defaultExtension", defaultExtension, "char");
+				sipgateffx_options.component.setPref("extensions.sipgateffx.defaultExtension", defaultExtension, "char");
 			}
 		} else {
 			document.getElementById("click2DialList").value = defaultExtensionPref;
@@ -84,19 +84,19 @@ var sipgateffx_options = {
     onUnload: function(){
 		var relogin = false;
 
-	if(sgffx.isLoggedIn)
+	if(sipgateffx_options.component.isLoggedIn)
 	{
 		if (document.getElementById("parsenumbers").value) {
-		    sgffx.setXulObjectVisibility('dialactivate', 0);
+		    sipgateffx_options.component.setXulObjectVisibility('dialactivate', 0);
 		}
 		else {
-		    sgffx.setXulObjectVisibility('dialactivate', 1);
+		    sipgateffx_options.component.setXulObjectVisibility('dialactivate', 1);
 		}
 	}	
 		if(document.getElementById("dontshowbalance").value) {
-			sgffx.setXulObjectAttribute('BalanceText', "value", "");			
+			sipgateffx_options.component.setXulObjectAttribute('BalanceText', "value", "");			
 		} else {
-			sgffx.getBalance();
+			sipgateffx_options.component.getBalance();
 		}
         
         var username = document.getElementById('username').value;
@@ -106,27 +106,27 @@ var sipgateffx_options = {
             return;
         }
  
-        var auth = sgffx.getSamuraiAuth();
+        var auth = sipgateffx_options.component.getSamuraiAuth();
         
         if (auth.username != username || auth.password != password) {
-			sgffx.log('options: changed user name from "'+auth.username+'" to "'+username+'"');
-            sgffx.setSamuraiAuth(username, password);
+			sipgateffx_options.component.log('options: changed user name from "'+auth.username+'" to "'+username+'"');
+            sipgateffx_options.component.setSamuraiAuth(username, password);
 			relogin = true;
         }
 		
 		if(relogin) {
-			sgffx.log('options: logoff triggered');
-            sgffx.logoff();
+			sipgateffx_options.component.log('options: logoff triggered');
+            sipgateffx_options.component.logoff();
 		}
 
-        if (document.getElementById('autologin').value === true && sgffx.loggedOutByUser === false) {
-            if (!sgffx.isLoggedIn) {
-				sgffx.log('options: login triggered');
-				sgffx.login();
+        if (document.getElementById('autologin').value === true && sipgateffx_options.component.loggedOutByUser === false) {
+            if (!sipgateffx_options.component.isLoggedIn) {
+				sipgateffx_options.component.log('options: login triggered');
+				sipgateffx_options.component.login();
             }
             else {
-				sgffx.log('options: getBalance triggered');
-                sgffx.getBalance();
+				sipgateffx_options.component.log('options: getBalance triggered');
+                sipgateffx_options.component.getBalance();
             }
         }
         
@@ -136,7 +136,7 @@ var sipgateffx_options = {
     	var myListBox = document.getElementById("sipgateffxTree");
     	for(var i = 0; i < myListBox.itemCount; i++) {
     		if(myListBox.getItemAtIndex(i).checked) {
-    			sgffxDB.removeBlacklisting(myListBox.getItemAtIndex(i).value);
+    			sipgateffx_options.componentDB.removeBlacklisting(myListBox.getItemAtIndex(i).value);
     			myListBox.removeItemAt(i);
     		}
     	}
@@ -149,13 +149,13 @@ var sipgateffx_options = {
     },
 
     doOpenNewVersionInfo: function(){
-    	var siteURL = 'chrome://sipgateffx/content/firststart/welcome_'+sgffx.language+'.html';
+    	var siteURL = 'chrome://sipgateffx/content/firststart/welcome_'+sipgateffx_options.component.language+'.html';
     	this.openURI(siteURL);
         window.close();
     },
     
     openURI: function(siteURL) {
-    	if(sgffx.application == 'thunderbird') {
+    	if(sipgateffx_options.component.application == 'thunderbird') {
     		var mail3PaneWindow = Components.classes["@mozilla.org/appshell/window-mediator;1"]
     		                                         .getService(Components.interfaces.nsIWindowMediator)
     		                                         .getMostRecentWindow("mail:3pane");  
@@ -170,12 +170,12 @@ var sipgateffx_options = {
     },
 
     buildBlacklistLisbox: function() {
-		sgffxDB.getBlacklistedSites();
+		sipgateffx_options.componentDB.getBlacklistedSites();
 	
 		var myListBox = document.getElementById("sipgateffxTree");
 
-		for (var i = 0; i < sgffxDB.blacklisted.length; i++) {
-			var b = myListBox.appendItem(sgffxDB.blacklisted[i], sgffxDB.blacklisted[i]);
+		for (var i = 0; i < sipgateffx_options.componentDB.blacklisted.length; i++) {
+			var b = myListBox.appendItem(sipgateffx_options.componentDB.blacklisted[i], sipgateffx_options.componentDB.blacklisted[i]);
 			b.setAttribute('type', 'checkbox');
 		}
     }

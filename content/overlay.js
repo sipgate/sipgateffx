@@ -21,13 +21,10 @@
     02110-1301, USA
 
 *****************************************************************************/
-
-var sgffx;
-var sgffxDB;
-
-var sipgateffx_this;
-
 var sipgateffx = {
+	component: null,
+	componentDB: null,
+		
 	url: {
 			'team': {
 			    "history": "/#filter_inbox",
@@ -56,10 +53,10 @@ var sipgateffx = {
 		// initialization code
 		this.initialized = true;
 		this.strings = document.getElementById("sipgateffx-strings");
-		sipgateffx_this = this;
+		sipgateffx = this;
 
 		try {
-			sgffx = Components.classes['@api.sipgate.net/sipgateffx;1'].getService().wrappedJSObject;
+			sipgateffx.component = Components.classes['@api.sipgate.net/sipgateffx;1'].getService().wrappedJSObject;
 		} 
 		catch (anError) {
 			dump("ERROR: " + anError);
@@ -67,28 +64,29 @@ var sipgateffx = {
 		}
 
 		try {
-			sgffxDB = Components.classes['@api.sipgate.net/sipgateffx-storage;1'].getService().wrappedJSObject;
+			sipgateffx.componentDB = Components.classes['@api.sipgate.net/sipgateffx-storage;1'].getService().wrappedJSObject;
 		} catch(e) {
 			dump("ERROR while initializing DB: " + e);
 			return;
 		}			
 
-		sgffx.init(this.showUpdateInfo);
-		sgffxDB.openDatabase();
+		sipgateffx.component.init(this.showUpdateInfo);
+		sipgateffx.componentDB.openDatabase();
 		
 		// set language:
 		try { 
-			if (navigator.language.match(/de/) == "de") {
-				sgffx.language = "de";
+			var client_language = sipgateffx.component.getPref("general.useragent.locale", "char");
+			if (client_language.match(/de/) == "de") {
+				sipgateffx.component.language = "de";
 			} else {
-				sgffx.language = "en"; 
+				sipgateffx.component.language = "en"; 
 			}
 		} catch (lang_ex) {
-			sgffx.log("Error in detecting language! Found: "+navigator.language.match(/de/)+". Falling back to 'en' ...\n");
-			sgffx.language = "en"; 
+			sipgateffx.component.log("Error in detecting language! Found: "+navigator.language.match(/de/)+". Falling back to 'en' ...\n");
+			sipgateffx.component.language = "en"; 
 		}
 		
-		sgffx.strings = this.strings;
+		sipgateffx.component.strings = this.strings;
 		
 		var allElements = [
 			'sipgateffx-toolbar-button',
@@ -132,35 +130,35 @@ var sipgateffx = {
 
 		for(var i = 0; i < allElements.length; i++)
 		{
-			sgffx.setXulObjectReference(allElements[i], document.getElementById(allElements[i]));
+			sipgateffx.component.setXulObjectReference(allElements[i], document.getElementById(allElements[i]));
 		}
 
-		sgffx.setXulObjectVisibility('showcreditmenuitem', 0);
-		sgffx.setXulObjectVisibility('pollbalance', 0);
-		sgffx.setXulObjectVisibility('showvoicemailmenuitem', 0);
-		sgffx.setXulObjectVisibility('showphonebookmenuitem', 0);
-		sgffx.setXulObjectVisibility('showsmsformmenuitem', 0);
-		sgffx.setXulObjectVisibility('showphonenumberformmenuitem', 0);
-		sgffx.setXulObjectVisibility('showhistorymenuitem', 0);
-		sgffx.setXulObjectVisibility('showfaxmenuitem', 0);
-		sgffx.setXulObjectVisibility('sendfaxpdfmenuitem', 0);
-		sgffx.setXulObjectVisibility('showitemizedmenuitem', 0);
-		sgffx.setXulObjectVisibility('item_logoff', 0);
-		sgffx.setXulObjectVisibility('separator1', 0);
-		sgffx.setXulObjectVisibility('separator2', 1);
+		sipgateffx.component.setXulObjectVisibility('showcreditmenuitem', 0);
+		sipgateffx.component.setXulObjectVisibility('pollbalance', 0);
+		sipgateffx.component.setXulObjectVisibility('showvoicemailmenuitem', 0);
+		sipgateffx.component.setXulObjectVisibility('showphonebookmenuitem', 0);
+		sipgateffx.component.setXulObjectVisibility('showsmsformmenuitem', 0);
+		sipgateffx.component.setXulObjectVisibility('showphonenumberformmenuitem', 0);
+		sipgateffx.component.setXulObjectVisibility('showhistorymenuitem', 0);
+		sipgateffx.component.setXulObjectVisibility('showfaxmenuitem', 0);
+		sipgateffx.component.setXulObjectVisibility('sendfaxpdfmenuitem', 0);
+		sipgateffx.component.setXulObjectVisibility('showitemizedmenuitem', 0);
+		sipgateffx.component.setXulObjectVisibility('item_logoff', 0);
+		sipgateffx.component.setXulObjectVisibility('separator1', 0);
+		sipgateffx.component.setXulObjectVisibility('separator2', 1);
 		
-		sgffx.setXulObjectVisibility('dialdeactivate', 0);
-		sgffx.setXulObjectVisibility('dialactivate', 0);
+		sipgateffx.component.setXulObjectVisibility('dialdeactivate', 0);
+		sipgateffx.component.setXulObjectVisibility('dialactivate', 0);
 		
-		// sgffx.setXulObjectVisibility('sipgate-c2d-status-bar', 1);
+		// sipgateffx.component.setXulObjectVisibility('sipgate-c2d-status-bar', 1);
 				
 		var contextMenuHolder = "contentAreaContextMenu";
-		if(sgffx.application == 'thunderbird') {
+		if(sipgateffx.component.application == 'thunderbird') {
 			contextMenuHolder = "mailContext";
 		}
 
 		document.getElementById(contextMenuHolder)
-			.addEventListener("popupshowing", function(e) { sipgateffx_this.showContextMenu(e); }, false);
+			.addEventListener("popupshowing", function(e) { sipgateffx.showContextMenu(e); }, false);
 		
 		document.getElementById('sipgateLogo').addEventListener("click", function(e) {
 			// more Info: https://developer.mozilla.org/en/XUL%3aMethod%3aopenPopup
@@ -172,44 +170,44 @@ var sipgateffx = {
 			document.getElementById('sipgatemenu').openPopup( document.getElementById('sipgateffx_loggedout'), "before_end", 0, 0, true);
 		}, false);
 
-		if (sgffx.systemArea == 'team') {
+		if (sipgateffx.component.systemArea == 'team') {
 			document.getElementById('sipgateffxEventsCall').addEventListener("click", function(e){
 				if (e.button != 0) 
 					return;
-				sipgateffx_this.onStatusbarCommand('showSitePage', 'historycall');
+				sipgateffx.onStatusbarCommand('showSitePage', 'historycall');
 			}, false);
 			
 			document.getElementById('sipgateffxEventsFax').addEventListener("click", function(e){
 				if (e.button != 0) 
 					return;
-				sipgateffx_this.onStatusbarCommand('showSitePage', 'historyfax');
+				sipgateffx.onStatusbarCommand('showSitePage', 'historyfax');
 			}, false);
 			
 			document.getElementById('sipgateffxEventsSMS').addEventListener("click", function(e){
 				if (e.button != 0) 
 					return;
-				sipgateffx_this.onStatusbarCommand('showSitePage', 'historysms');
+				sipgateffx.onStatusbarCommand('showSitePage', 'historysms');
 			}, false);
 		}
 		
-		if(sgffx.getPref("extensions.sipgateffx.autologin","bool")) {
+		if(sipgateffx.component.getPref("extensions.sipgateffx.autologin","bool")) {
 			setTimeout(this.login);
 		}
 		
-		if(sgffx.application == 'thunderbird') {
+		if(sipgateffx.component.application == 'thunderbird') {
 			var threePane = Components.classes['@mozilla.org/appshell/window-mediator;1'].getService(Components.interfaces.nsIWindowMediator).getMostRecentWindow("mail:3pane");
 			gBrowser = threePane.document.getElementById("messagepane");
 		}
 		
 		gBrowser.addEventListener("DOMContentLoaded", this.parseClick2Dial, false);
 		gBrowser.addEventListener("DOMFrameContentLoaded", this.parseClick2DialFrame, false);
-		_prepareArray();
+		sipgateffx_highlightNumber._prepareArray();
 		
-		if(sgffx.application != 'thunderbird') {
+		if(sipgateffx.component.application != 'thunderbird') {
 			gBrowser.tabContainer.addEventListener("select", function(e) {
 				try {
 					var host = content.document.location.host.toLowerCase();
-					if(sgffxDB.isBlacklisted(host)) {
+					if(sipgateffx.componentDB.isBlacklisted(host)) {
 						document.getElementById("sipgateffxC2DBlacklistOn").hidden = true;
 						document.getElementById("sipgateffxC2DBlacklistOff").hidden = false;
 						return;
@@ -230,7 +228,7 @@ var sipgateffx = {
 
 	onUnload: function() {
 
-		sgffx.log('unload overlay');
+		sipgateffx.component.log('unload overlay');
 
 		var allElements = [
 			'showcreditmenuitem',
@@ -266,40 +264,40 @@ var sipgateffx = {
 			'sipgateffxEventsSMS'
 		];
 
-		sgffx.log('closing window, removing references to elements');
+		sipgateffx.component.log('closing window, removing references to elements');
 		for(var i = 0; i < allElements.length; i++)
 		{
-			sgffx.removeXulObjRef(allElements[i], document.getElementById(allElements[i]));
+			sipgateffx.component.removeXulObjRef(allElements[i], document.getElementById(allElements[i]));
 		}
 		
 	},
 	
 	showUpdateInfo: function() {
-		if (sgffx.version != null && sgffx.version != "UNKNOWN" && sgffx.version != "NOTYETKNOWN" && sgffx.version != sgffx.getPref("extensions.sipgateffx.lastInstalledVersion", "char")) {
-			var siteURL = 'chrome://sipgateffx/content/firststart/welcome_'+sgffx.language+'.html';
+		if (sipgateffx.component.version != null && sipgateffx.component.version != "UNKNOWN" && sipgateffx.component.version != "NOTYETKNOWN" && sipgateffx.component.version != sipgateffx.component.getPref("extensions.sipgateffx.lastInstalledVersion", "char")) {
+			var siteURL = 'chrome://sipgateffx/content/firststart/welcome_'+sipgateffx.component.language+'.html';
 			try {
 				gBrowser.selectedTab = gBrowser.addTab(siteURL);
 			} catch(e) {
 				window.open(siteURL,"What's new?","chrome,centerscreen,height=400px,width=820px"); 
 			}
-			sgffx.setPref("extensions.sipgateffx.lastInstalledVersion", sgffx.version, "char");
+			sipgateffx.component.setPref("extensions.sipgateffx.lastInstalledVersion", sipgateffx.component.version, "char");
 		}
 	},
 	
 	login: function() {
-		var retVal = sgffx.getSamuraiAuth();
+		var retVal = sipgateffx.component.getSamuraiAuth();
 		if (retVal.username == null || retVal.password == null) {
 			window.openDialog('chrome://sipgateffx/content/options.xul', 'sipgatePrefs');
 			return;
 		}
 		
-		if (!sgffx.loggedOutByUser) {
-			sgffx.login();
+		if (!sipgateffx.component.loggedOutByUser) {
+			sipgateffx.component.login();
 		}
 	},
 
 	logoff: function() {
-		sgffx.logoff();
+		sipgateffx.component.logoff();
 	},
 
 	showContextMenu: function(event) {
@@ -312,7 +310,7 @@ var sipgateffx = {
 		var niceNumber = '';
 		
 		if (browserSelection !== null) {
-			niceNumber = sgffx.niceNumber(browserSelection);
+			niceNumber = sipgateffx.component.niceNumber(browserSelection);
 		}
 		
 		if (browserSelection == null || niceNumber.length < 7) {
@@ -328,7 +326,7 @@ var sipgateffx = {
 		
 		try {
 			var host = content.document.location.host.toLowerCase();;
-			if(sgffxDB.isBlacklisted(host)) {
+			if(sipgateffx.componentDB.isBlacklisted(host)) {
 				document.getElementById("context-sipgateffx-c2dblacklistEn").hidden = false;
 				document.getElementById("context-sipgateffx-c2dblacklistDis").hidden = true;
 			} else {
@@ -373,7 +371,7 @@ var sipgateffx = {
 		var niceNumber = '';
 
 		if(browserSelection !== null) {
-			niceNumber = sgffx.niceNumber(browserSelection);
+			niceNumber = sipgateffx.component.niceNumber(browserSelection);
 		}
 		
 		window.openDialog('chrome://sipgateffx/content/sms.xul', 'sipgateSMS', 'chrome,centerscreen,resizable=yes,titlebar=yes,alwaysRaised=yes', '', '+'+niceNumber);
@@ -385,24 +383,24 @@ var sipgateffx = {
 		var niceNumber = '';
 
 		if(browserSelection !== null) {
-			niceNumber = sgffx.niceNumber(browserSelection);
+			niceNumber = sipgateffx.component.niceNumber(browserSelection);
 		}
 		
-		sgffx.click2dial(niceNumber);
+		sipgateffx.component.click2dial(niceNumber);
 	},
 
 	onMenuItemContextCallCancel: function(e) {
-		sgffx.cancelClick2Dial();
+		sipgateffx.component.cancelClick2Dial();
 	},
 	
 	onMenuItemBlacklist: function(e, action) {
 		var blacklistEntry = '';
 
-		if(sgffx.application != 'thunderbird') {
+		if(sipgateffx.component.application != 'thunderbird') {
 			try {
 				var blacklistEntry = content.document.location.host.toLowerCase();
 			} catch(e) {
-				sgffx.log('onMenuItemBlacklist: could not get host (error: '  + e + ')');
+				sipgateffx.component.log('onMenuItemBlacklist: could not get host (error: '  + e + ')');
 			}
 		} else {
 			try {
@@ -414,47 +412,47 @@ var sipgateffx = {
 					}
 				}
 			} catch(e) {
-				sgffx.log('onMenuItemBlacklist: could not get sender (error: '  + e + ')');
+				sipgateffx.component.log('onMenuItemBlacklist: could not get sender (error: '  + e + ')');
 			}
 		}
 		
 		try {
 			if(action == 'disable') {
-				sgffxDB.addBlacklisting(blacklistEntry);
+				sipgateffx.componentDB.addBlacklisting(blacklistEntry);
 				document.getElementById("context-sipgateffx-c2dblacklistEn").hidden = false;
 				document.getElementById("context-sipgateffx-c2dblacklistDis").hidden = true;
 				document.getElementById("sipgateffxC2DBlacklistOn").hidden = true;
 				document.getElementById("sipgateffxC2DBlacklistOff").hidden = false;
 			} else if(action == 'enable') {
-				sgffxDB.removeBlacklisting(blacklistEntry);
+				sipgateffx.componentDB.removeBlacklisting(blacklistEntry);
 				document.getElementById("context-sipgateffx-c2dblacklistEn").hidden = true;
 				document.getElementById("context-sipgateffx-c2dblacklistDis").hidden = false;
 				document.getElementById("sipgateffxC2DBlacklistOn").hidden = false;
 				document.getElementById("sipgateffxC2DBlacklistOff").hidden = true;
 			}
 		} catch(e) {
-			sgffx.log("sipgateFFX->overlay->onMenuItemBlacklist ERROR " + e);
+			sipgateffx.component.log("sipgateFFX->overlay->onMenuItemBlacklist ERROR " + e);
 		}
 	},
 	
 	onMenuItemDoNotDisturb: function(e, action) {
 		try {
 			if(action == 'disable') {
-				sgffx.setDoNotDisturb(false);
+				sipgateffx.component.setDoNotDisturb(false);
 			} else if(action == 'enable') {
-				sgffx.setDoNotDisturb(true);
+				sipgateffx.component.setDoNotDisturb(true);
 			}
 		} catch(e) {
-			sgffx.log("sipgateFFX->overlay->onMenuItemDoNotDisturb ERROR " + e);
+			sipgateffx.component.log("sipgateFFX->overlay->onMenuItemDoNotDisturb ERROR " + e);
 		}
 	},
 	
 	onNotificationPopupClose: function(e) {
 		try {
-			sgffx.log('sipgateFFX->overlay->onNotificationPopupClose: requested');
-			sgffx.runXulObjectCommand('sipgatenotificationPanel', 'hidePopup');
+			sipgateffx.component.log('sipgateFFX->overlay->onNotificationPopupClose: requested');
+			sipgateffx.component.runXulObjectCommand('sipgatenotificationPanel', 'hidePopup');
 		} catch(e) {
-			sgffx.log("sipgateFFX->overlay->onNotificationPopupClose ERROR " + e);
+			sipgateffx.component.log("sipgateFFX->overlay->onNotificationPopupClose ERROR " + e);
 		}
 	},
 	
@@ -463,18 +461,21 @@ var sipgateffx = {
 			this.onStatusbarCommand('showSitePage', 'history');
 			this.onNotificationPopupClose();
 		} catch(e) {
-			sgffx.log("sipgateFFX->overlay->onNotificationGotoEventlist ERROR " + e);
+			sipgateffx.component.log("sipgateFFX->overlay->onNotificationGotoEventlist ERROR " + e);
 		}
 	},
 	
 	parseClick2Dial: function() {
 		var blacklistEntry = '';
 
-		if(sgffx.application != 'thunderbird') {
+		if(sipgateffx.component.application != 'thunderbird') {
 			try {
-				var blacklistEntry = content.document.location.host.toLowerCase();
+				blacklistEntry = content.document.location.host.toLowerCase();
+				if(content.document.location.protocol.match(/^chrome/)) {
+					blacklistEntry = '';
+				}
 			} catch(e) {
-				sgffx.log('parseClick2Dial: could not get host (error: '  + e + ')');
+				sipgateffx.component.log('parseClick2Dial: could not get host (error: '  + e + ')');
 			}
 		} else {
 			try {
@@ -486,12 +487,12 @@ var sipgateffx = {
 					}
 				}
 			} catch(e) {
-				sgffx.log('parseClick2Dial: could not get sender (error: '  + e + ')');
+				sipgateffx.component.log('parseClick2Dial: could not get sender (error: '  + e + ')');
 			}
 		}
 
 		try {
-			if(sgffxDB.isBlacklisted(blacklistEntry)) {
+			if(sipgateffx.componentDB.isBlacklisted(blacklistEntry)) {
 				document.getElementById("sipgateffxC2DBlacklistOn").hidden = true;
 				document.getElementById("sipgateffxC2DBlacklistOff").hidden = false;
 				return;
@@ -500,36 +501,40 @@ var sipgateffx = {
 				document.getElementById("sipgateffxC2DBlacklistOff").hidden = true;
 			}
 		} catch (e) {
-			sgffx.log('parseClick2Dial: blacklist evaluation failed (error: '  + e + ')');
+			sipgateffx.component.log('parseClick2Dial: blacklist evaluation failed (error: '  + e + ')');
 		}
 		
-		if (sgffx.getPref("extensions.sipgateffx.parsenumbers", "bool") && sgffx.isLoggedIn) {
-			sipgateffxPageLoaded();
+		if (
+				sipgateffx.component.getPref("extensions.sipgateffx.parsenumbers", "bool") &&
+				sipgateffx.component.isLoggedIn &&
+				blacklistEntry != ''
+			) {
+			sipgateffx_highlightNumber.pageLoaded();
 		}
 	},
 	
 	parseClick2DialFrame: function(evnt) {
-		if (sgffx.getPref("extensions.sipgateffx.parsenumbers", "bool") && sgffx.isLoggedIn) {
+		if (sipgateffx.component.getPref("extensions.sipgateffx.parsenumbers", "bool") && sipgateffx.component.isLoggedIn) {
 			var host = '';
 			try {
 				host = evnt.target.contentDocument.location.host.toLowerCase();
 			} catch(e) {
 				//		
 			}
-			if(sgffxDB.isBlacklisted(host)) {
-				// sgffx.log('isBlacklisted: The site "'+host+'" is blacklisted. Do not match for click2dial.');
+			if(sipgateffx.componentDB.isBlacklisted(host)) {
+				// sipgateffx.component.log('isBlacklisted: The site "'+host+'" is blacklisted. Do not match for click2dial.');
 				return;
 			}
-			sipgateffxPageLoaded(evnt.target.contentDocument);
+			sipgateffx_highlightNumber.pageLoaded(evnt.target.contentDocument);
 		}
 	},
 	
 	toggleClick2Dial: function() {
 		if (content.frames.length <= 0) {
-			sipgateffxPageLoaded();
+			sipgateffx_highlightNumber.pageLoaded();
 		} else {
 		    for (var i=0; i<content.frames.length; i++) {
-		    	sipgateffxPageLoaded(content.frames[i].document);
+		    	sipgateffx_highlightNumber.pageLoaded(content.frames[i].document);
 		    }
 		}
 	},
@@ -541,7 +546,7 @@ var sipgateffx = {
 		}
 		
 		var protocol = 'https://';
-		var httpServer = sgffx.sipgateCredentials.HttpServer.replace(/^www/, 'secure');
+		var httpServer = sipgateffx.component.sipgateCredentials.HttpServer.replace(/^www/, 'secure');
 		var urlSessionLogin = protocol + httpServer + "/user/slogin.php";
 
 		var oHttpRequest = Components.classes["@mozilla.org/xmlextras/xmlhttprequest;1"]
@@ -555,26 +560,26 @@ var sipgateffx = {
 	onStatusbarCommand: function(action, param) {
 		switch (action) {
 			case 'showSitePage':
-				if (!sgffx.isLoggedIn) {
-					sgffx.log("*** sipgateffx: showSitePage *** USER NOT LOGGED IN ***");
+				if (!sipgateffx.component.isLoggedIn) {
+					sipgateffx.component.log("*** sipgateffx: showSitePage *** USER NOT LOGGED IN ***");
 					return;
 				}
 				
-				if(typeof(this.url[sgffx.systemArea][param]) == 'undefined') {
-					sgffx.log("*** sipgateffx->showSitePage: no url for action");
+				if(typeof(this.url[sipgateffx.component.systemArea][param]) == 'undefined') {
+					sipgateffx.component.log("*** sipgateffx->showSitePage: no url for action");
 					return;
 				}		
 
 				var protocol = 'https://';
-				var httpServer = sgffx.sipgateCredentials.HttpServer.replace(/^www/, 'secure');
-				var siteURL = protocol + httpServer + this.url[sgffx.systemArea][param];
-				sgffx.log("*** sipgateffx->showSitePage: link = " + siteURL);
+				var httpServer = sipgateffx.component.sipgateCredentials.HttpServer.replace(/^www/, 'secure');
+				var siteURL = protocol + httpServer + this.url[sipgateffx.component.systemArea][param];
+				sipgateffx.component.log("*** sipgateffx->showSitePage: link = " + siteURL);
 				
 				var postData = null;
 				
-				if (sgffx.systemArea == 'team') {
+				if (sipgateffx.component.systemArea == 'team') {
 
-					var dataString = 'username=' + encodeURIComponent(sgffx.username) + '&password=' + encodeURIComponent(sgffx.password);
+					var dataString = 'username=' + encodeURIComponent(sipgateffx.component.username) + '&password=' + encodeURIComponent(sipgateffx.component.password);
 					
 					// POST method requests must wrap the encoded text in a MIME stream
 					var stringStream = Components.classes["@mozilla.org/io/string-input-stream;1"].createInstance(Components.interfaces.nsIStringInputStream);
@@ -587,14 +592,14 @@ var sipgateffx = {
 
 				} else {
 
-					this.websiteSessionLoginClassic(encodeURIComponent(sgffx.username), encodeURIComponent(sgffx.password));
+					this.websiteSessionLoginClassic(encodeURIComponent(sipgateffx.component.username), encodeURIComponent(sipgateffx.component.password));
 					
 				}
 				
 				var referrer = null;  
 				var flags = Components.interfaces.nsIWebNavigation.LOAD_FLAGS_NONE;  
 				
-				if(sgffx.application == 'thunderbird') {
+				if(sipgateffx.component.application == 'thunderbird') {
 						this.openURI(siteURL);
 						break;
 				}				
@@ -626,16 +631,16 @@ var sipgateffx = {
 				break;
 				
 			case 'pollBalance':
-				sgffx.getBalance(true);
+				sipgateffx.component.getBalance(true);
 				break;
 				
 			case 'logon':
-				sgffx.loggedOutByUser = false;
+				sipgateffx.component.loggedOutByUser = false;
 				this.login();
 				break;
 				
 			case 'logoff':
-				sgffx.loggedOutByUser = true;
+				sipgateffx.component.loggedOutByUser = true;
 				this.logoff();
 				break;
 				
@@ -663,7 +668,7 @@ var sipgateffx = {
 	dumpJson: function(obj) {
 		var nativeJSON = Components.classes["@mozilla.org/dom/json;1"]
 		                 .createInstance(Components.interfaces.nsIJSON);
-		sgffx.log(nativeJSON.encode(obj));
+		sipgateffx.component.log(nativeJSON.encode(obj));
 	},
 	
 	openURI: function(uri)
@@ -691,7 +696,7 @@ var sipgateffx = {
 
 	addToolbarIconByDefault: function() {
 		// we do not support default toolbar icons in thunderbird
-		if(sgffx.application == 'thunderbird') {
+		if(sipgateffx.component.application == 'thunderbird') {
 			return;
 		}
 

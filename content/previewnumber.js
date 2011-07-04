@@ -21,15 +21,13 @@
     02110-1301, USA
 
 *****************************************************************************/
-
-var sgffx;
-// var promptService = Components.classes["@mozilla.org/embedcomp/prompt-service;1"].getService(Components.interfaces.nsIPromptService);
-
 var sipgateffx_previewnumber = {
+	component: null,
+		
 	onLoad: function() {
 
 		try {
-			sgffx = Components.classes['@api.sipgate.net/sipgateffx;1'].getService().wrappedJSObject;
+			sipgateffx_previewnumber.component = Components.classes['@api.sipgate.net/sipgateffx;1'].getService().wrappedJSObject;
 		} 
 		catch (anError) {
 			dump("ERROR: " + anError);
@@ -42,16 +40,16 @@ var sipgateffx_previewnumber = {
 			}
 		}
 
-		if(sgffx.systemArea == 'classic') {
+		if(sipgateffx_previewnumber.component.systemArea == 'classic') {
 			document.getElementById("sipgateffxPreviewnumberWindow").buttons = "accept,cancel";
 		}
 		
 		sipgateffxstrings = document.getElementById("sipgateffxPreviewnumber-strings");
 		
-		if(typeof(sgffx.contacts) != 'undefined') {
-			for(var i in sgffx.contacts) {
-				if(!sgffx.contacts[i].tel) continue;
-				for(var teltype in sgffx.contacts[i].tel) {
+		if(typeof(sipgateffx_previewnumber.component.contacts) != 'undefined') {
+			for(var i in sipgateffx_previewnumber.component.contacts) {
+				if(!sipgateffx_previewnumber.component.contacts[i].tel) continue;
+				for(var teltype in sipgateffx_previewnumber.component.contacts[i].tel) {
 					var type = teltype.toUpperCase().split(',');
 					if(type.indexOf('FAX') !== -1) continue;
 					type.forEach(function(singletype, index) {
@@ -61,7 +59,7 @@ var sipgateffx_previewnumber = {
 							type[index] = singletype;
 						}
 					});
-					document.getElementById("sipgate_number").appendItem(sgffx.contacts[i].name + ' (' + type.join(' ') + ')', sgffx.contacts[i].tel[teltype]);
+					document.getElementById("sipgate_number").appendItem(sipgateffx_previewnumber.component.contacts[i].name + ' (' + type.join(' ') + ')', sipgateffx_previewnumber.component.contacts[i].tel[teltype]);
 				}
 			}
 		}
@@ -72,7 +70,7 @@ var sipgateffx_previewnumber = {
 		if(element.selectedItem.value.match(/^\+/)) {
 			document.getElementById("sipgate_number").value = element.selectedItem.value; 
 		} else if(element.selectedItem.value.match(/^0/)) {
-			document.getElementById("sipgate_number").value = '+' + sgffx.niceNumber(element.selectedItem.value);
+			document.getElementById("sipgate_number").value = '+' + sipgateffx_previewnumber.component.niceNumber(element.selectedItem.value);
 		} else {
 			document.getElementById("sipgate_number").value = '+' + element.selectedItem.value;
 		} 
@@ -85,12 +83,11 @@ var sipgateffx_previewnumber = {
 		var number = document.getElementById("sipgate_number").value;
 		
 		if(number == '') {
-			// promptService.alert(window, 'sipgateFFX', sipgateffxsmsstrings.getString('sipgateffxSmsNumberEmpty'));
 			return false;
 		}
 		
-	    var niceNumber = sgffx.niceNumber(number);
-		sgffx.click2dial(niceNumber);
+	    var niceNumber = sipgateffx_previewnumber.component.niceNumber(number);
+		sipgateffx_previewnumber.component.click2dial(niceNumber);
 		
 		return true;
 	},
@@ -103,7 +100,7 @@ var sipgateffx_previewnumber = {
 		var number = document.getElementById("sipgate_number").value;
 		var niceNumber = '';
 		if (number != '')
-			niceNumber = '+' + sgffx.niceNumber(number);
+			niceNumber = '+' + sipgateffx_previewnumber.component.niceNumber(number);
 
 		window.openDialog('chrome://sipgateffx/content/contactOverlay.xul', 'sipgateContact', 'chrome,centerscreen,resizable=yes,titlebar=yes,alwaysRaised=yes', niceNumber);
 		return true;

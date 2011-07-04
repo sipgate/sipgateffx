@@ -21,24 +21,23 @@
     02110-1301, USA
 
 *****************************************************************************/
-
-var sgffx;
-
 var sipgateffx_about = {
+	component: null,
 	onLoad: function() {
 
 		try {
-			sgffx = Components.classes['@api.sipgate.net/sipgateffx;1'].getService().wrappedJSObject;
+			sipgateffx_about.component = Components.classes['@api.sipgate.net/sipgateffx;1'].getService().wrappedJSObject;
 		} 
 		catch (anError) {
 			dump("ERROR: " + anError);
 			return;
 		}
 		
-		var ver = sgffx.version;
-		sgffx.log(ver);
-		sgffx.log(document.getElementById("sipgateffxAboutVersion").value);
+		var ver = sipgateffx_about.component.version;
+		sipgateffx_about.component.log(ver);
+		sipgateffx_about.component.log(document.getElementById("sipgateffxAboutVersion").value);
 		document.getElementById("sipgateffxAboutVersion").value = ver;
 	}
 };
-window.addEventListener("load", function(e) { sipgateffx_about.onLoad(e); }, false); 
+
+window.addEventListener("load", function(e) { sipgateffx_about.onLoad(e); }, false);
