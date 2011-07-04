@@ -87,14 +87,14 @@ var sipgateffx_options = {
 	if(sipgateffx_options.component.isLoggedIn)
 	{
 		if (document.getElementById("parsenumbers").value) {
-		    sipgateffx_options.component.setXulObjectVisibility('dialactivate', 0);
+		    sipgateffx_options.component.setXulObjectVisibility('sipgateffx_dialactivate', 0);
 		}
 		else {
-		    sipgateffx_options.component.setXulObjectVisibility('dialactivate', 1);
+		    sipgateffx_options.component.setXulObjectVisibility('sipgateffx_dialactivate', 1);
 		}
 	}	
 		if(document.getElementById("dontshowbalance").value) {
-			sipgateffx_options.component.setXulObjectAttribute('BalanceText', "value", "");			
+			sipgateffx_options.component.setXulObjectAttribute('sipgateffx_BalanceText', "value", "");			
 		} else {
 			sipgateffx_options.component.getBalance();
 		}

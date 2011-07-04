@@ -235,7 +235,10 @@ SipgateFFX.prototype = {
 		return this.addOnTarget;
 	},
 	
-	
+
+	/**
+	 * do some initialization work and after getting all infos start callback
+	 */
 	init: function(callback) {
 		if(typeof AddonManager != 'undefined') {
 			AddonManager.getAddonByID('sipgateffx@michael.rotmanov', function(addon) {
@@ -243,6 +246,9 @@ SipgateFFX.prototype = {
 				_sgffx.addOnVersion = addon.version;
 				callback();
 			});
+		} else {
+			var timer = Components.classes["@mozilla.org/timer;1"].createInstance(Components.interfaces.nsITimer);
+			timer.initWithCallback({notify: callback}, 1000, Components.interfaces.nsITimer.TYPE_ONE_SHOT);
 		}
 	},
 		
@@ -548,23 +554,23 @@ SipgateFFX.prototype = {
 				_sgffx.setXulObjectVisibility('sipgateffxDND', 0);
 			}
 			
-			_sgffx.setXulObjectVisibility('showcreditmenuitem', 1);
-			_sgffx.setXulObjectVisibility('showvoicemailmenuitem', 1);
-			_sgffx.setXulObjectVisibility('showphonebookmenuitem', 1);
-			_sgffx.setXulObjectVisibility('showhistorymenuitem', 1);
-			_sgffx.setXulObjectVisibility('showitemizedmenuitem', 1);
-			_sgffx.setXulObjectVisibility('pollbalance', 1);
-			_sgffx.setXulObjectVisibility('showphonenumberformmenuitem', 1);
-			_sgffx.setXulObjectVisibility('item_logoff', 1);
-			_sgffx.setXulObjectVisibility('separator1', 1);
-			_sgffx.setXulObjectVisibility('separator2', 1);
+			_sgffx.setXulObjectVisibility('sipgateffx_showcreditmenuitem', 1);
+			_sgffx.setXulObjectVisibility('sipgateffx_showvoicemailmenuitem', 1);
+			_sgffx.setXulObjectVisibility('sipgateffx_showphonebookmenuitem', 1);
+			_sgffx.setXulObjectVisibility('sipgateffx_showhistorymenuitem', 1);
+			_sgffx.setXulObjectVisibility('sipgateffx_showitemizedmenuitem', 1);
+			_sgffx.setXulObjectVisibility('sipgateffx_pollbalance', 1);
+			_sgffx.setXulObjectVisibility('sipgateffx_showphonenumberformmenuitem', 1);
+			_sgffx.setXulObjectVisibility('sipgateffx_item_logoff', 1);
+			_sgffx.setXulObjectVisibility('sipgateffx_separator1', 1);
+			_sgffx.setXulObjectVisibility('sipgateffx_separator2', 1);
 			
 			if (!_sgffx.getPref("extensions.sipgateffx.parsenumbers", "bool")) {
-				_sgffx.setXulObjectVisibility('dialactivate', 1);
+				_sgffx.setXulObjectVisibility('sipgateffx_dialactivate', 1);
 			}
 			
 			
-			_sgffx.setXulObjectVisibility('item_logon', 0);
+			_sgffx.setXulObjectVisibility('sipgateffx_item_logon', 0);
 			
 			_sgffx.setXulObjectVisibility('sipgateffx_loggedout', 0);
 			_sgffx.setXulObjectVisibility('sipgateffx_loggedin', 1);			
@@ -662,7 +668,7 @@ SipgateFFX.prototype = {
 		this.runXulObjectCommand('sipgatenotificationPanel', 'hidePopup');
 		
 		// set balance to nothing
-		this.setXulObjectAttribute('BalanceText', "value", "");
+		this.setXulObjectAttribute('sipgateffx_BalanceText', "value", "");
 		
 		// hide notification icons
 		this.setXulObjectVisibility('sipgateffxEventsCall', 0);
@@ -670,23 +676,23 @@ SipgateFFX.prototype = {
 		this.setXulObjectVisibility('sipgateffxEventsFax', 0);
 		
 		// hide context menu items
-		this.setXulObjectVisibility('showcreditmenuitem', 0);
-		this.setXulObjectVisibility('pollbalance', 0);
-		this.setXulObjectVisibility('showvoicemailmenuitem', 0);
-		this.setXulObjectVisibility('showphonebookmenuitem', 0);
-		this.setXulObjectVisibility('showsmsformmenuitem', 0);
-		this.setXulObjectVisibility('showphonenumberformmenuitem', 0);
-		this.setXulObjectVisibility('showhistorymenuitem', 0);
-		this.setXulObjectVisibility('showfaxmenuitem', 0);
-		this.setXulObjectVisibility('showitemizedmenuitem', 0);
-		this.setXulObjectVisibility('sendfaxpdfmenuitem', 0);
-		this.setXulObjectVisibility('dialactivate', 0);
-		this.setXulObjectVisibility('dialdeactivate', 0);
-		this.setXulObjectVisibility('item_logoff', 0);
-		this.setXulObjectVisibility('separator1', 0);
-		this.setXulObjectVisibility('separator2', 0);
+		this.setXulObjectVisibility('sipgateffx_showcreditmenuitem', 0);
+		this.setXulObjectVisibility('sipgateffx_pollbalance', 0);
+		this.setXulObjectVisibility('sipgateffx_showvoicemailmenuitem', 0);
+		this.setXulObjectVisibility('sipgateffx_showphonebookmenuitem', 0);
+		this.setXulObjectVisibility('sipgateffx_showsmsformmenuitem', 0);
+		this.setXulObjectVisibility('sipgateffx_showphonenumberformmenuitem', 0);
+		this.setXulObjectVisibility('sipgateffx_showhistorymenuitem', 0);
+		this.setXulObjectVisibility('sipgateffx_showfaxmenuitem', 0);
+		this.setXulObjectVisibility('sipgateffx_showitemizedmenuitem', 0);
+		this.setXulObjectVisibility('sipgateffx_sendfaxpdfmenuitem', 0);
+		this.setXulObjectVisibility('sipgateffx_dialactivate', 0);
+		this.setXulObjectVisibility('sipgateffx_dialdeactivate', 0);
+		this.setXulObjectVisibility('sipgateffx_item_logoff', 0);
+		this.setXulObjectVisibility('sipgateffx_separator1', 0);
+		this.setXulObjectVisibility('sipgateffx_separator2', 0);
 		
-		this.setXulObjectVisibility('item_logon', 1);
+		this.setXulObjectVisibility('sipgateffx_item_logon', 1);
 
 		// switch loggedin panel to logged off panel
 		this.setXulObjectVisibility('sipgateffx_loggedout', 1);
@@ -772,14 +778,14 @@ SipgateFFX.prototype = {
 		}		
 		
 		var setBalance = function() {
-			_sgffx.setXulObjectAttribute('BalanceText', "value", _sgffx.curBalance[0]);
+			_sgffx.setXulObjectAttribute('sipgateffx_BalanceText', "value", _sgffx.curBalance[0]);
 			_sgffx.setXulObjectAttribute('sipgateffx-toolbar-button', "tooltiptext", _sgffx.curBalance[0]);
 	
 			// display the balance value:
 			if (_sgffx.curBalance[1] < 5.0) {
-				_sgffx.setXulObjectAttribute('BalanceText', "style", "color: red;");
+				_sgffx.setXulObjectAttribute('sipgateffx_BalanceText', "style", "color: red;");
 			} else {
-				_sgffx.setXulObjectAttribute('BalanceText', "style", "color: inherit;");
+				_sgffx.setXulObjectAttribute('sipgateffx_BalanceText', "style", "color: inherit;");
 			}
 		};
 		
@@ -1165,12 +1171,12 @@ SipgateFFX.prototype = {
 				}
 				// check for fax capability
 				if(_sgffx.tosList.indexOf('fax') !== -1) {
-					_sgffx.setXulObjectVisibility('showfaxmenuitem', 1);
-					_sgffx.setXulObjectVisibility('sendfaxpdfmenuitem', 1);
+					_sgffx.setXulObjectVisibility('sipgateffx_showfaxmenuitem', 1);
+					_sgffx.setXulObjectVisibility('sipgateffx_sendfaxpdfmenuitem', 1);
 				}
 				// check for text (sms) capability
 				if(_sgffx.tosList.indexOf('text') !== -1) {
-					_sgffx.setXulObjectVisibility('showsmsformmenuitem', 1);
+					_sgffx.setXulObjectVisibility('sipgateffx_showsmsformmenuitem', 1);
 				}
             } else {
 				_sgffx.log("getTosList failed toSTRING: "+ aXML.toString());
@@ -1594,7 +1600,7 @@ SipgateFFX.prototype = {
 					}
 				}
 			} catch(e) {
-				this.log('setXulObjectAttribute: Error occurred. ('+id+'/'+attrib_name+'/'+new_value+')');
+				this.log('setXulObjectAttribute: Error occurred. ('+id+'/'+attrib_name+'/'+new_value+') with '+ e);
 			}
 		} else {
 			this.log("No reference to XUL-Objects of " + id + "!");

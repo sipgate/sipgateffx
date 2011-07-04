@@ -70,7 +70,7 @@ var sipgateffx = {
 			return;
 		}			
 
-		sipgateffx.component.init(this.showUpdateInfo);
+		sipgateffx.component.init(this.detectVersionChange);
 		sipgateffx.componentDB.openDatabase();
 		
 		// set language:
@@ -91,27 +91,27 @@ var sipgateffx = {
 		var allElements = [
 			'sipgateffx-toolbar-button',
 			'sipgateContacts',
-			'showcreditmenuitem',
-			'pollbalance',
-			'showvoicemailmenuitem',
-			'showphonebookmenuitem',
-			'showsmsformmenuitem',
-			'showphonenumberformmenuitem',
-			'showhistorymenuitem',
-			'showfaxmenuitem',
-			'sendfaxpdfmenuitem',
-			'showitemizedmenuitem',
-			'dialactivate',
-			'item_logoff',
-			'separator1',
-			'separator2',
-			'dialdeactivate',
-			'item_logon',
+			'sipgateffx_showcreditmenuitem',
+			'sipgateffx_pollbalance',
+			'sipgateffx_showvoicemailmenuitem',
+			'sipgateffx_showphonebookmenuitem',
+			'sipgateffx_showsmsformmenuitem',
+			'sipgateffx_showphonenumberformmenuitem',
+			'sipgateffx_showhistorymenuitem',
+			'sipgateffx_showfaxmenuitem',
+			'sipgateffx_sendfaxpdfmenuitem',
+			'sipgateffx_showitemizedmenuitem',
+			'sipgateffx_dialactivate',
+			'sipgateffx_item_logoff',
+			'sipgateffx_separator1',
+			'sipgateffx_separator2',
+			'sipgateffx_dialdeactivate',
+			'sipgateffx_item_logon',
 
 			'sipgateffx_loggedout',
 			'sipgateffx_loggedin',
 
-			'BalanceText',
+			'sipgateffx_BalanceText',
 
 			'sipgateffx_c2dStatus',
 			'sipgateffx_c2dStatusText',			
@@ -133,22 +133,22 @@ var sipgateffx = {
 			sipgateffx.component.setXulObjectReference(allElements[i], document.getElementById(allElements[i]));
 		}
 
-		sipgateffx.component.setXulObjectVisibility('showcreditmenuitem', 0);
-		sipgateffx.component.setXulObjectVisibility('pollbalance', 0);
-		sipgateffx.component.setXulObjectVisibility('showvoicemailmenuitem', 0);
-		sipgateffx.component.setXulObjectVisibility('showphonebookmenuitem', 0);
-		sipgateffx.component.setXulObjectVisibility('showsmsformmenuitem', 0);
-		sipgateffx.component.setXulObjectVisibility('showphonenumberformmenuitem', 0);
-		sipgateffx.component.setXulObjectVisibility('showhistorymenuitem', 0);
-		sipgateffx.component.setXulObjectVisibility('showfaxmenuitem', 0);
-		sipgateffx.component.setXulObjectVisibility('sendfaxpdfmenuitem', 0);
-		sipgateffx.component.setXulObjectVisibility('showitemizedmenuitem', 0);
-		sipgateffx.component.setXulObjectVisibility('item_logoff', 0);
-		sipgateffx.component.setXulObjectVisibility('separator1', 0);
-		sipgateffx.component.setXulObjectVisibility('separator2', 1);
+		sipgateffx.component.setXulObjectVisibility('sipgateffx_showcreditmenuitem', 0);
+		sipgateffx.component.setXulObjectVisibility('sipgateffx_pollbalance', 0);
+		sipgateffx.component.setXulObjectVisibility('sipgateffx_showvoicemailmenuitem', 0);
+		sipgateffx.component.setXulObjectVisibility('sipgateffx_showphonebookmenuitem', 0);
+		sipgateffx.component.setXulObjectVisibility('sipgateffx_showsmsformmenuitem', 0);
+		sipgateffx.component.setXulObjectVisibility('sipgateffx_showphonenumberformmenuitem', 0);
+		sipgateffx.component.setXulObjectVisibility('sipgateffx_showhistorymenuitem', 0);
+		sipgateffx.component.setXulObjectVisibility('sipgateffx_showfaxmenuitem', 0);
+		sipgateffx.component.setXulObjectVisibility('sipgateffx_sendfaxpdfmenuitem', 0);
+		sipgateffx.component.setXulObjectVisibility('sipgateffx_showitemizedmenuitem', 0);
+		sipgateffx.component.setXulObjectVisibility('sipgateffx_item_logoff', 0);
+		sipgateffx.component.setXulObjectVisibility('sipgateffx_separator1', 0);
+		sipgateffx.component.setXulObjectVisibility('sipgateffx_separator2', 1);
 		
-		sipgateffx.component.setXulObjectVisibility('dialdeactivate', 0);
-		sipgateffx.component.setXulObjectVisibility('dialactivate', 0);
+		sipgateffx.component.setXulObjectVisibility('sipgateffx_dialdeactivate', 0);
+		sipgateffx.component.setXulObjectVisibility('sipgateffx_dialactivate', 0);
 		
 		// sipgateffx.component.setXulObjectVisibility('sipgate-c2d-status-bar', 1);
 				
@@ -220,10 +220,6 @@ var sipgateffx = {
 				}		
 			}, false);
 		}
-
-		this.addToolbarIconByDefault();
-
-		setTimeout(this.showUpdateInfo, 1000);
 	},
 
 	onUnload: function() {
@@ -231,27 +227,27 @@ var sipgateffx = {
 		sipgateffx.component.log('unload overlay');
 
 		var allElements = [
-			'showcreditmenuitem',
-			'pollbalance',
-			'showvoicemailmenuitem',
-			'showphonebookmenuitem',
-			'showsmsformmenuitem',
-			'showphonenumberformmenuitem',
-			'showhistorymenuitem',
-			'showfaxmenuitem',
-			'sendfaxpdfmenuitem',
-			'showitemizedmenuitem',
-			'dialactivate',
-			'item_logoff',
-			'separator1',
-			'separator2',
-			'dialdeactivate',
-			'item_logon',
+			'sipgateffx_showcreditmenuitem',
+			'sipgateffx_pollbalance',
+			'sipgateffx_showvoicemailmenuitem',
+			'sipgateffx_showphonebookmenuitem',
+			'sipgateffx_showsmsformmenuitem',
+			'sipgateffx_showphonenumberformmenuitem',
+			'sipgateffx_showhistorymenuitem',
+			'sipgateffx_showfaxmenuitem',
+			'sipgateffx_sendfaxpdfmenuitem',
+			'sipgateffx_showitemizedmenuitem',
+			'sipgateffx_dialactivate',
+			'sipgateffx_item_logoff',
+			'sipgateffx_separator1',
+			'sipgateffx_separator2',
+			'sipgateffx_dialdeactivate',
+			'sipgateffx_item_logon',
 
 			'sipgateffx_loggedout',
 			'sipgateffx_loggedin',
 
-			'BalanceText',
+			'sipgateffx_BalanceText',
 
 			'sipgateffx_c2dStatus',
 			'sipgateffx_c2dStatusText',			
@@ -272,15 +268,24 @@ var sipgateffx = {
 		
 	},
 	
-	showUpdateInfo: function() {
-		if (sipgateffx.component.version != null && sipgateffx.component.version != "UNKNOWN" && sipgateffx.component.version != "NOTYETKNOWN" && sipgateffx.component.version != sipgateffx.component.getPref("extensions.sipgateffx.lastInstalledVersion", "char")) {
-			var siteURL = 'chrome://sipgateffx/content/firststart/welcome_'+sipgateffx.component.language+'.html';
-			try {
-				gBrowser.selectedTab = gBrowser.addTab(siteURL);
-			} catch(e) {
-				window.open(siteURL,"What's new?","chrome,centerscreen,height=400px,width=820px"); 
+	detectVersionChange: function() {
+		try {
+			if (sipgateffx.component.version != null && sipgateffx.component.version != "UNKNOWN" && sipgateffx.component.version != "NOTYETKNOWN" && sipgateffx.component.version != sipgateffx.component.getPref("extensions.sipgateffx.lastInstalledVersion", "char")) {
+				sipgateffx.showUpdateInfo();
+				sipgateffx.addToolbarIcon();
+				sipgateffx.component.setPref("extensions.sipgateffx.lastInstalledVersion", sipgateffx.component.version, "char");
 			}
-			sipgateffx.component.setPref("extensions.sipgateffx.lastInstalledVersion", sipgateffx.component.version, "char");
+		} catch(e) {
+			sipgateffx.component.log('detectVersionChange ERROR: ' + e);
+		}
+	},
+	
+	showUpdateInfo: function() {
+		var siteURL = 'chrome://sipgateffx/content/firststart/welcome_'+sipgateffx.component.language+'.html';
+		try {
+			gBrowser.selectedTab = gBrowser.addTab(siteURL);
+		} catch(e) {
+			window.open(siteURL,"What's new?","chrome,centerscreen,height=400px,width=820px"); 
 		}
 	},
 	
@@ -694,7 +699,7 @@ var sipgateffx = {
 		}
 	},
 
-	addToolbarIconByDefault: function() {
+	addToolbarIcon: function() {
 		// we do not support default toolbar icons in thunderbird
 		if(sipgateffx.component.application == 'thunderbird') {
 			return;
