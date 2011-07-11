@@ -780,7 +780,9 @@ SipgateFFX.prototype = {
 		
 		var setBalance = function() {
 			_sgffx.setXulObjectAttribute('sipgateffx_BalanceText', "value", _sgffx.curBalance[0]);
-			_sgffx.setXulObjectAttribute('sipgateffx-toolbar-button', "tooltiptext", _sgffx.curBalance[0]);
+			if(_sgffx.application == 'firefox') {
+				_sgffx.setXulObjectAttribute('sipgateffx-toolbar-button', "tooltiptext", _sgffx.curBalance[0]);
+			}
 	
 			// display the balance value:
 			if (_sgffx.curBalance[1] < 5.0) {

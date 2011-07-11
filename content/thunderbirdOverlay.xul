@@ -174,6 +174,7 @@
 		<command id="sipgatecmd_toggledial" oncommand="sipgateffx.onStatusbarCommand('toggleClick2Dial');"/>
 		<command id="sipgatecmd_showHistory" oncommand="sipgateffx.onStatusbarCommand('showSitePage','history');"/>
 		<command id="sipgatecmd_showFax" oncommand="sipgateffx.onStatusbarCommand('showSitePage','fax');"/>
+		<command id="sipgatecmd_sendFaxPDF" oncommand="sipgateffx.onStatusbarCommand('sendFaxPDF');"/>
 		<command id="sipgatecmd_showItemized" oncommand="sipgateffx.onStatusbarCommand('showSitePage','itemized');"/>
 
 		<command id="sipgatecmd_showCredit" oncommand="sipgateffx.onStatusbarCommand('showSitePage','credit');"/>
@@ -194,6 +195,8 @@
 				id="sipgateffx_showsmsformmenuitem" command="sipgatecmd_showSmsForm" />
 			<menuitem label="&showfax.menuitem;" accesskey="&showfax.key;" hidden="true"
 				id="sipgateffx_showfaxmenuitem" command="sipgatecmd_showFax" />
+			<menuitem label="&sendfaxpdf.menuitem;" accesskey="&sendfaxpdf.key;" hidden="true"
+				id="sipgateffx_sendfaxpdfmenuitem" command="sipgatecmd_sendFaxPDF" />
 			<menuitem label="&showhistory.menuitem;" accesskey="&showhistory.key;" hidden="true"
 				id="sipgateffx_showhistorymenuitem" command="sipgatecmd_showHistory" />
 			<menuitem label="&showcredit.menuitem;" accesskey="&showcredit.key;" hidden="true" 

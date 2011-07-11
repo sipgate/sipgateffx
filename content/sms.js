@@ -171,7 +171,7 @@ var sipgateffx_sms = {
 		sipgateffx_sms.sending = true;	
 		
 		document.getElementById("sipgate_sms").setAttribute('hidden', 'true');
-		document.getElementById("sipgate_sms_sipgateffx_sms.sending").setAttribute('hidden', 'false');
+		document.getElementById("sipgate_sms_sending").setAttribute('hidden', 'false');
 		
 		var remoteUri = '';
 		var apiFunction = '';
@@ -215,7 +215,7 @@ var sipgateffx_sms = {
 				window.close();
 			} else {
 				document.getElementById("sipgate_sms").setAttribute('hidden', 'false');
-				document.getElementById("sipgate_sms_sipgateffx_sms.sending").setAttribute('hidden', 'true');
+				document.getElementById("sipgate_sms_sending").setAttribute('hidden', 'true');
 				sipgateffx_sms.sending = false;
 				sipgateffx_sms.component.log((new XMLSerializer()).serializeToString(aXML));
 				sipgateffx_sms.promptService.alert(window, 'sipgateFFX', sipgateffx_sms.strings.getString('sipgateffxSmsSentFailed'));

@@ -104,7 +104,7 @@ var sipgateffx_fax = {
 		sipgateffx_fax.sending = true;	
 		
 		document.getElementById("sipgate_fax").setAttribute('hidden', 'true');
-		document.getElementById("sipgate_fax_sipgateffx_fax.sending").setAttribute('hidden', 'false');
+		document.getElementById("sipgate_fax_sending").setAttribute('hidden', 'false');
 		
 		var fileHandler = Components.classes["@mozilla.org/file/local;1"]
 		                                     .createInstance(Components.interfaces.nsILocalFile);
@@ -156,7 +156,7 @@ var sipgateffx_fax = {
 				window.close();
 			} else {
 				document.getElementById("sipgate_fax").setAttribute('hidden', 'false');
-				document.getElementById("sipgate_fax_sipgateffx_fax.sending").setAttribute('hidden', 'true');
+				document.getElementById("sipgate_fax_sending").setAttribute('hidden', 'true');
 				sipgateffx_fax.sending = false;
 				sipgateffx_fax.component.log((new XMLSerializer()).serializeToString(aXML));
 				sipgateffx_fax.promptService.alert(window, 'sipgateFFX', sipgateffx_fax.strings.getString('sipgateffxFaxSentFailed'));
