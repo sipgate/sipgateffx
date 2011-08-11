@@ -74,84 +74,12 @@ var sipgateffx = {
 		sipgateffx.componentDB.openDatabase();
 		
 		// set language:
-		try { 
-			var client_language = sipgateffx.component.getPref("general.useragent.locale", "char");
-			if (client_language.match(/de/) == "de") {
-				sipgateffx.component.language = "de";
-			} else {
-				sipgateffx.component.language = "en"; 
-			}
-		} catch (lang_ex) {
-			sipgateffx.component.log("Error in detecting language! Found: "+navigator.language.match(/de/)+". Falling back to 'en' ...\n");
-			sipgateffx.component.language = "en"; 
-		}
-		
+		this.detectClientLanguage();		
 		sipgateffx.component.strings = this.strings;
 		
-		var allElements = [
-			'sipgateffx-toolbar-button',
-			'sipgateContacts',
-			'sipgateffx_showcreditmenuitem',
-			'sipgateffx_pollbalance',
-			'sipgateffx_showvoicemailmenuitem',
-			'sipgateffx_showphonebookmenuitem',
-			'sipgateffx_showsmsformmenuitem',
-			'sipgateffx_showphonenumberformmenuitem',
-			'sipgateffx_showhistorymenuitem',
-			'sipgateffx_showfaxmenuitem',
-			'sipgateffx_sendfaxpdfmenuitem',
-			'sipgateffx_showitemizedmenuitem',
-			'sipgateffx_dialactivate',
-			'sipgateffx_item_logoff',
-			'sipgateffx_separator1',
-			'sipgateffx_separator2',
-			'sipgateffx_dialdeactivate',
-			'sipgateffx_item_logon',
-
-			'sipgateffx_loggedout',
-			'sipgateffx_loggedin',
-
-			'sipgateffx_BalanceText',
-
-			'sipgateffx_c2dStatus',
-			'sipgateffx_c2dStatusText',			
-			'sipgatecmd_c2dCancellCall',
-			
-			'sipgatenotificationPanel',
-			
-			'sipgateffxDND',
-			'sipgateffxDNDon',
-			'sipgateffxDNDoff',
-			
-			'sipgateffxEventsCall',
-			'sipgateffxEventsFax',
-			'sipgateffxEventsSMS'
-		];
-
-		for(var i = 0; i < allElements.length; i++)
-		{
-			sipgateffx.component.setXulObjectReference(allElements[i], document.getElementById(allElements[i]));
-		}
-
-		sipgateffx.component.setXulObjectVisibility('sipgateffx_showcreditmenuitem', 0);
-		sipgateffx.component.setXulObjectVisibility('sipgateffx_pollbalance', 0);
-		sipgateffx.component.setXulObjectVisibility('sipgateffx_showvoicemailmenuitem', 0);
-		sipgateffx.component.setXulObjectVisibility('sipgateffx_showphonebookmenuitem', 0);
-		sipgateffx.component.setXulObjectVisibility('sipgateffx_showsmsformmenuitem', 0);
-		sipgateffx.component.setXulObjectVisibility('sipgateffx_showphonenumberformmenuitem', 0);
-		sipgateffx.component.setXulObjectVisibility('sipgateffx_showhistorymenuitem', 0);
-		sipgateffx.component.setXulObjectVisibility('sipgateffx_showfaxmenuitem', 0);
-		sipgateffx.component.setXulObjectVisibility('sipgateffx_sendfaxpdfmenuitem', 0);
-		sipgateffx.component.setXulObjectVisibility('sipgateffx_showitemizedmenuitem', 0);
-		sipgateffx.component.setXulObjectVisibility('sipgateffx_item_logoff', 0);
-		sipgateffx.component.setXulObjectVisibility('sipgateffx_separator1', 0);
-		sipgateffx.component.setXulObjectVisibility('sipgateffx_separator2', 1);
+		this.announceWindowElementsToComponent();		
+		this.setInitialVisibility();
 		
-		sipgateffx.component.setXulObjectVisibility('sipgateffx_dialdeactivate', 0);
-		sipgateffx.component.setXulObjectVisibility('sipgateffx_dialactivate', 0);
-		
-		// sipgateffx.component.setXulObjectVisibility('sipgate-c2d-status-bar', 1);
-				
 		var contextMenuHolder = "contentAreaContextMenu";
 		if(sipgateffx.component.application == 'thunderbird') {
 			contextMenuHolder = "mailContext";
@@ -170,26 +98,8 @@ var sipgateffx = {
 			document.getElementById('sipgatemenu').openPopup( document.getElementById('sipgateffx_loggedout'), "before_end", 0, 0, true);
 		}, false);
 
-		if (sipgateffx.component.systemArea == 'team') {
-			document.getElementById('sipgateffxEventsCall').addEventListener("click", function(e){
-				if (e.button != 0) 
-					return;
-				sipgateffx.onStatusbarCommand('showSitePage', 'historycall');
-			}, false);
+		this.addEventsClickBinding();
 			
-			document.getElementById('sipgateffxEventsFax').addEventListener("click", function(e){
-				if (e.button != 0) 
-					return;
-				sipgateffx.onStatusbarCommand('showSitePage', 'historyfax');
-			}, false);
-			
-			document.getElementById('sipgateffxEventsSMS').addEventListener("click", function(e){
-				if (e.button != 0) 
-					return;
-				sipgateffx.onStatusbarCommand('showSitePage', 'historysms');
-			}, false);
-		}
-		
 		if(sipgateffx.component.getPref("extensions.sipgateffx.autologin","bool")) {
 			setTimeout(this.login);
 		}
@@ -268,6 +178,109 @@ var sipgateffx = {
 		
 	},
 	
+	detectClientLanguage: function detectClientLanguage() {
+		try { 
+			var client_language = sipgateffx.component.getPref("general.useragent.locale", "char");
+			if (client_language.match(/de/) == "de") {
+				sipgateffx.component.language = "de";
+			} else {
+				sipgateffx.component.language = "en"; 
+			}
+		} catch (lang_ex) {
+			sipgateffx.component.log("Error in detecting language! Found: "+navigator.language.match(/de/)+". Falling back to 'en' ...\n");
+			sipgateffx.component.language = "en"; 
+		}
+	},
+	
+	announceWindowElementsToComponent: function announceWindowElementsToComponent() {
+		var allElements = [
+		       			'sipgateffx-toolbar-button',
+		       			'sipgateContacts',
+		       			'sipgateffx_showcreditmenuitem',
+		       			'sipgateffx_pollbalance',
+		       			'sipgateffx_showvoicemailmenuitem',
+		       			'sipgateffx_showphonebookmenuitem',
+		       			'sipgateffx_showsmsformmenuitem',
+		       			'sipgateffx_showphonenumberformmenuitem',
+		       			'sipgateffx_showhistorymenuitem',
+		       			'sipgateffx_showfaxmenuitem',
+		       			'sipgateffx_sendfaxpdfmenuitem',
+		       			'sipgateffx_showitemizedmenuitem',
+		       			'sipgateffx_dialactivate',
+		       			'sipgateffx_item_logoff',
+		       			'sipgateffx_separator1',
+		       			'sipgateffx_separator2',
+		       			'sipgateffx_dialdeactivate',
+		       			'sipgateffx_item_logon',
+
+		       			'sipgateffx_loggedout',
+		       			'sipgateffx_loggedin',
+
+		       			'sipgateffx_BalanceText',
+
+		       			'sipgateffx_c2dStatus',
+		       			'sipgateffx_c2dStatusText',			
+		       			'sipgatecmd_c2dCancellCall',
+		       			
+		       			'sipgatenotificationPanel',
+		       			
+		       			'sipgateffxDND',
+		       			'sipgateffxDNDon',
+		       			'sipgateffxDNDoff',
+		       			
+		       			'sipgateffxEventsCall',
+		       			'sipgateffxEventsFax',
+		       			'sipgateffxEventsSMS'
+		       		];
+
+   		for(var i = 0; i < allElements.length; i++)
+   		{
+   			sipgateffx.component.setXulObjectReference(allElements[i], document.getElementById(allElements[i]));
+   		}
+		
+	},
+	
+	setInitialVisibility: function setInitialVisibility() {
+		sipgateffx.component.setXulObjectVisibility('sipgateffx_showcreditmenuitem', 0);
+		sipgateffx.component.setXulObjectVisibility('sipgateffx_pollbalance', 0);
+		sipgateffx.component.setXulObjectVisibility('sipgateffx_showvoicemailmenuitem', 0);
+		sipgateffx.component.setXulObjectVisibility('sipgateffx_showphonebookmenuitem', 0);
+		sipgateffx.component.setXulObjectVisibility('sipgateffx_showsmsformmenuitem', 0);
+		sipgateffx.component.setXulObjectVisibility('sipgateffx_showphonenumberformmenuitem', 0);
+		sipgateffx.component.setXulObjectVisibility('sipgateffx_showhistorymenuitem', 0);
+		sipgateffx.component.setXulObjectVisibility('sipgateffx_showfaxmenuitem', 0);
+		sipgateffx.component.setXulObjectVisibility('sipgateffx_sendfaxpdfmenuitem', 0);
+		sipgateffx.component.setXulObjectVisibility('sipgateffx_showitemizedmenuitem', 0);
+		sipgateffx.component.setXulObjectVisibility('sipgateffx_item_logoff', 0);
+		sipgateffx.component.setXulObjectVisibility('sipgateffx_separator1', 0);
+		sipgateffx.component.setXulObjectVisibility('sipgateffx_separator2', 1);
+		
+		sipgateffx.component.setXulObjectVisibility('sipgateffx_dialdeactivate', 0);
+		sipgateffx.component.setXulObjectVisibility('sipgateffx_dialactivate', 0);
+		
+		// sipgateffx.component.setXulObjectVisibility('sipgate-c2d-status-bar', 1);
+	},
+
+	addEventsClickBinding: function addEventsClickBinding() {
+		document.getElementById('sipgateffxEventsCall').addEventListener("click", function(e){
+			if (e.button != 0) 
+				return;
+			sipgateffx.onStatusbarCommand('showSitePage', 'historycall');
+		}, false);
+		
+		document.getElementById('sipgateffxEventsFax').addEventListener("click", function(e){
+			if (e.button != 0) 
+				return;
+			sipgateffx.onStatusbarCommand('showSitePage', 'historyfax');
+		}, false);
+		
+		document.getElementById('sipgateffxEventsSMS').addEventListener("click", function(e){
+			if (e.button != 0) 
+				return;
+			sipgateffx.onStatusbarCommand('showSitePage', 'historysms');
+		}, false);	
+	},
+
 	detectVersionChange: function() {
 		try {
 			if (sipgateffx.component.version != null && sipgateffx.component.version != "UNKNOWN" && sipgateffx.component.version != "NOTYETKNOWN" && sipgateffx.component.version != sipgateffx.component.getPref("extensions.sipgateffx.lastInstalledVersion", "char")) {
