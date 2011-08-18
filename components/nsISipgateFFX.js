@@ -565,11 +565,20 @@ SipgateFFX.prototype = {
 			_sgffx.setXulObjectVisibility('sipgateffx_item_logoff', 1);
 			_sgffx.setXulObjectVisibility('sipgateffx_separator1', 1);
 			_sgffx.setXulObjectVisibility('sipgateffx_separator2', 1);
+
+			// check for fax capability
+			if(_sgffx.tosList.indexOf('fax') !== -1) {
+				_sgffx.setXulObjectVisibility('sipgateffx_showfaxmenuitem', 1);
+				_sgffx.setXulObjectVisibility('sipgateffx_sendfaxpdfmenuitem', 1);
+			}
+			// check for text (sms) capability
+			if(_sgffx.tosList.indexOf('text') !== -1) {
+				_sgffx.setXulObjectVisibility('sipgateffx_showsmsformmenuitem', 1);
+			}
 			
 			if (!_sgffx.getPref("extensions.sipgateffx.parsenumbers", "bool")) {
 				_sgffx.setXulObjectVisibility('sipgateffx_dialactivate', 1);
 			}
-			
 			
 			_sgffx.setXulObjectVisibility('sipgateffx_item_logon', 0);
 			
