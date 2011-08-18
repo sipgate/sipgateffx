@@ -1554,20 +1554,31 @@ SipgateFFX.prototype = {
 		return this.mLogBuffer;
 	},
 
+	_getTime: function() {
+		var t = new Date();
+		return '['+	[
+		 t.getUTCFullYear(),
+		 t.getUTCMonth(),
+		 t.getUTCDate(),
+		 t.getUTCHours(),
+		 t.getUTCMinutes(),
+		 t.getUTCSeconds()].join('-')
+		 + ']';
+	},
+	
 	log: function (logMessage) {
 		try {
-			var jetzt = new Date();
-			var timestampFloat = jetzt.getTime() / 1000;
+			var message = this._getTime() + " " + logMessage;
 			var _CStringLogMessage = Components.classes["@mozilla.org/supports-cstring;1"].createInstance(Components.interfaces.nsISupportsCString);
-			_CStringLogMessage.data = "[" + timestampFloat.toFixed(3) + "] " + logMessage;
+			_CStringLogMessage.data = message;
 			this.mLogBuffer.AppendElement(_CStringLogMessage);
 			if(this.getPref("extensions.sipgateffx.debug","bool")) {
 					// create instance of console-service for logging to JS-console:
 					var _consoleService = Components.classes["@mozilla.org/consoleservice;1"].getService(Components.interfaces.nsIConsoleService);
 					if(this.getPref("extensions.sipgateffx.debug2terminal","bool")) {
-							dump("[" + timestampFloat.toFixed(3) + "] " + logMessage + "\n");
+							dump(message + "\n");
 					} else {
-							_consoleService.logStringMessage("[" + timestampFloat.toFixed(3) + "] " + logMessage + "\n");
+							_consoleService.logStringMessage(message + "\n");
 					}
 			}
 			while (this.mLogBuffer.Count() > this.mLogBufferMaxSize) {
