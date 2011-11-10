@@ -561,20 +561,9 @@ SipgateFFX.prototype = {
 			_sgffx.setXulObjectVisibility('sipgateffx_showhistorymenuitem', 1);
 			_sgffx.setXulObjectVisibility('sipgateffx_showitemizedmenuitem', 1);
 			_sgffx.setXulObjectVisibility('sipgateffx_pollbalance', 1);
-			_sgffx.setXulObjectVisibility('sipgateffx_showphonenumberformmenuitem', 1);
 			_sgffx.setXulObjectVisibility('sipgateffx_item_logoff', 1);
 			_sgffx.setXulObjectVisibility('sipgateffx_separator1', 1);
 			_sgffx.setXulObjectVisibility('sipgateffx_separator2', 1);
-
-			// check for fax capability
-			if(_sgffx.tosList.indexOf('fax') !== -1) {
-				_sgffx.setXulObjectVisibility('sipgateffx_showfaxmenuitem', 1);
-				_sgffx.setXulObjectVisibility('sipgateffx_sendfaxpdfmenuitem', 1);
-			}
-			// check for text (sms) capability
-			if(_sgffx.tosList.indexOf('text') !== -1) {
-				_sgffx.setXulObjectVisibility('sipgateffx_showsmsformmenuitem', 1);
-			}
 			
 			if (!_sgffx.getPref("extensions.sipgateffx.parsenumbers", "bool")) {
 				_sgffx.setXulObjectVisibility('sipgateffx_dialactivate', 1);
@@ -1181,15 +1170,27 @@ SipgateFFX.prototype = {
 				if(ourParsedResponse.TosList) {
 					_sgffx.tosList = ourParsedResponse.TosList; 
 				}
+				
+				var featuresForLog = [];
+
+				// check for voice capability
+				var voiceAvailable = (_sgffx.tosList.indexOf('voice') !== -1 ? 1 : 0);
+				_sgffx.setXulObjectVisibility('sipgateffx_showphonenumberformmenuitem', voiceAvailable);
+				featuresForLog.push("VOICE ("+(voiceAvailable==1 ? "yes" : "no")+")");
+				
 				// check for fax capability
-				if(_sgffx.tosList.indexOf('fax') !== -1) {
-					_sgffx.setXulObjectVisibility('sipgateffx_showfaxmenuitem', 1);
-					_sgffx.setXulObjectVisibility('sipgateffx_sendfaxpdfmenuitem', 1);
-				}
+				var faxAvailable = (_sgffx.tosList.indexOf('fax') !== -1 ? 1 : 0);
+				_sgffx.setXulObjectVisibility('sipgateffx_showfaxmenuitem', faxAvailable);
+				_sgffx.setXulObjectVisibility('sipgateffx_sendfaxpdfmenuitem', faxAvailable);
+				featuresForLog.push("FAX ("+(faxAvailable==1 ? "yes" : "no")+")");
+				
 				// check for text (sms) capability
-				if(_sgffx.tosList.indexOf('text') !== -1) {
-					_sgffx.setXulObjectVisibility('sipgateffx_showsmsformmenuitem', 1);
-				}
+				var smsAvailable = (_sgffx.tosList.indexOf('text') !== -1 ? 1 : 0);
+				_sgffx.setXulObjectVisibility('sipgateffx_showsmsformmenuitem', smsAvailable);
+				featuresForLog.push("SMS ("+(smsAvailable==1 ? "yes" : "no")+")");
+				
+				_sgffx.log("Result of TOS: " + featuresForLog.join(" / "));
+
             } else {
 				_sgffx.log("getTosList failed toSTRING: "+ aXML.toString());
 			}
