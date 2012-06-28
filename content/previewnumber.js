@@ -87,9 +87,9 @@ var sipgateffx_previewnumber = {
 		}
 		
 	    var niceNumber = sipgateffx_previewnumber.component.niceNumber(number);
-		sipgateffx_previewnumber.component.click2dial(niceNumber);
+		sipgateffx_previewnumber.component.click2dial(niceNumber, function() { window.close(); });
 		
-		return true;
+		return false;
 	},
 
 	doCancel: function() {

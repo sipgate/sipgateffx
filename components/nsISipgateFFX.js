@@ -346,7 +346,7 @@ SipgateFFX.prototype = {
 		}
 	},
 		
-	click2dial: function(to) {
+	click2dial: function(to, callbackOnSuccess) {
 		var _TOS = 'voice'; 
 		
 		if(this.tosList.indexOf(_TOS) == -1) {
@@ -417,6 +417,10 @@ SipgateFFX.prototype = {
 						}
 					}, 1000, Components.interfaces.nsITimer.TYPE_ONE_SHOT);
 					
+					if(typeof(callbackOnSuccess) == "function")
+					{
+						callbackOnSuccess();
+					}
 				}
 				else {
 					_sgffx.log('click2dial failed. Internal system error has occurred.');
@@ -1374,6 +1378,8 @@ SipgateFFX.prototype = {
 		req.data = request;
 		
 		req.onSuccess = function(aText, aXML) {
+			_sgffx.log('onSuccess for method: '+ method);
+			
 			var re = /(\<\?\xml[0-9A-Za-z\D]*\?\>)/;
 			var newstr = aText.replace(re, "");
 			
