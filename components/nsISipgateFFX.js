@@ -133,7 +133,7 @@ function SipgateFFX() {
 	this.windowMediator = Components.classes["@mozilla.org/appshell/window-mediator;1"].getService(Components.interfaces.nsIWindowMediator);
 	
 	// must be loaded here
-	Components.utils.import("resource://sipgateffx/xmlrpc.js");
+	Components.utils.import("resource://sipgateffx/mimic.js");
 }
 
 SipgateFFX.prototype = {
@@ -1367,8 +1367,14 @@ SipgateFFX.prototype = {
 			samuraiServer = _tmpSrv;
 		}		
 		
-		var request = bfXMLRPC.makeXML(method, [samuraiServer, params]);
-		
+		var msg = new XmlRpcRequest(samuraiServer, method);
+		if(typeof params != 'undefined' && params != null)
+		{
+			msg.addParam(params);
+		}
+
+		var request = msg.parseXML();
+
 		var req = new Request();
 		req.setHeader('User-Agent', 'sipgateFFX ' + this.version + '/' + this.windowMediator.getMostRecentWindow('').navigator.userAgent);
 		req.setHeader('Connection', 'close');
@@ -1380,32 +1386,7 @@ SipgateFFX.prototype = {
 		req.onSuccess = function(aText, aXML) {
 			_sgffx.log('onSuccess for method: '+ method);
 			
-			var re = /(\<\?\xml[0-9A-Za-z\D]*\?\>)/;
-			var newstr = aText.replace(re, "");
-			
-			try {
-				var e4xXMLObject = new XML(newstr);
-			} 
-			catch (e) {
-				dump("malformedXML");
-				return;
-			}
-
-			if (e4xXMLObject.name() != 'methodResponse' ||
-			!(e4xXMLObject.params.param.value.length() == 1 ||
-			e4xXMLObject.fault.value.struct.length() == 1)) {
-				if (aText != '') {
-					dump("XML Response:" + aText);
-				}
-			}
-			
-			if (e4xXMLObject.params.param.value.length() == 1) {
-				ourParsedResponse = bfXMLRPC.XMLToObject(e4xXMLObject.params.param.value.children()[0]);
-			}
-			
-			if (e4xXMLObject.fault.children().length() > 0) {
-				ourParsedResponse = bfXMLRPC.XMLToObject(e4xXMLObject.fault.value.children()[0]);
-			}
+			var ourParsedResponse = new XmlRpcResponse(aXML).parseXML();
 			
 			if (typeof(callbackResult) == 'function') {
 				if(typeof(ourParsedResponse) == 'undefined') {
@@ -1597,9 +1578,16 @@ SipgateFFX.prototype = {
 	},
 	
 	dumpJson: function (obj) {
-		var nativeJSON = Components.classes["@mozilla.org/dom/json;1"]
-		                 .createInstance(Components.interfaces.nsIJSON);
-		_sgffx.log(nativeJSON.encode(obj));
+		var text = "";
+		if(JSON && JSON.stringify)
+		{
+			text = JSON.stringify(obj);
+		} else {
+			var nativeJSON = Components.classes["@mozilla.org/dom/json;1"]
+			                 .createInstance(Components.interfaces.nsIJSON);
+			text = nativeJSON.encode(obj);
+		}
+		_sgffx.log(text);
 	},
 	
 	setXulObjectReference: function(id, obj) {
