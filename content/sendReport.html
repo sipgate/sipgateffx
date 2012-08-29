@@ -65,9 +65,9 @@ var page = {
 		this.appendToLog("SystemArea -> " + this.sfobj.systemArea + "\n");
 		this.appendToLog("AddOn-Version -> " + this.sfobj.addOnVersion + "\n");
 
-		oPrefService = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
-		countOfPrefServiceChildList = {};
-		prefServiceChildList = oPrefService.getChildList("extensions.sipgateffx", countOfPrefServiceChildList);
+		var oPrefService = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
+		var countOfPrefServiceChildList = {};
+		var prefServiceChildList = oPrefService.getChildList("extensions.sipgateffx", countOfPrefServiceChildList);
 		for (var j=0; j < countOfPrefServiceChildList.value; j++) {
 			var _prefName = prefServiceChildList[j];
 			var _prefTypeCode = oPrefService.getPrefType(_prefName);
@@ -121,10 +121,10 @@ var page = {
 		// create a temp-file:
 		var file = Components.classes["@mozilla.org/file/directory_service;1"].getService(Components.interfaces.nsIProperties).get("TmpD", Components.interfaces.nsIFile);
 		file.append("sipgateFFXstatusReport.txt");
-		file.createUnique(Components.interfaces.nsIFile.NORMAL_FILE_TYPE, 0664);
+		file.createUnique(Components.interfaces.nsIFile.NORMAL_FILE_TYPE, -1);
 		var foStream = Components.classes["@mozilla.org/network/file-output-stream;1"]
 	    	                     .createInstance(Components.interfaces.nsIFileOutputStream);
-		foStream.init(file, 0x02 | 0x08 | 0x20, 0664, 0); // write, create, truncate
+		foStream.init(file, 0x02 | 0x08 | 0x20, -1, 0); // write, create, truncate
 		foStream.write(this.logAsString, this.logAsString.length);
 		foStream.close();
 		this.filepath = file.path;

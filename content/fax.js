@@ -36,7 +36,7 @@ var sipgateffx_fax = {
 		} 
 		catch (anError) {
 			dump("ERROR: " + anError);
-			return;
+			return false;
 		}
 
 		sipgateffx_fax.strings = document.getElementById("sipgateffx_fax-strings");

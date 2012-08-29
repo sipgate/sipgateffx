@@ -23,6 +23,7 @@
 *****************************************************************************/
 var sipgateffx_previewnumber = {
 	component: null,
+	strings: null,
 		
 	onLoad: function() {
 
@@ -44,7 +45,7 @@ var sipgateffx_previewnumber = {
 			document.getElementById("sipgateffxPreviewnumberWindow").buttons = "accept,cancel";
 		}
 		
-		sipgateffxstrings = document.getElementById("sipgateffxPreviewnumber-strings");
+		this.strings = document.getElementById("sipgateffxPreviewnumber-strings");
 		
 		if(typeof(sipgateffx_previewnumber.component.contacts) != 'undefined') {
 			for(var i in sipgateffx_previewnumber.component.contacts) {
@@ -54,7 +55,7 @@ var sipgateffx_previewnumber = {
 					if(type.indexOf('FAX') !== -1) continue;
 					type.forEach(function(singletype, index) {
 						try {
-							type[index] = sipgateffxstrings.getString('sipgateffxContact' + singletype);
+							type[index] = sipgateffx_previewnumber.strings.getString('sipgateffxContact' + singletype);
 						} catch(e) {
 							type[index] = singletype;
 						}

@@ -111,6 +111,9 @@ function SipgateFFX() {
         'to': '',
         'from': ''
     };
+	this.curBalance = null;
+	this.isLoggedIn = false;
+    
 	this.clientLang = 'en';
 	this.userCountryPrefix = '49';
 	this.internationalPrefixes = {
@@ -126,8 +129,6 @@ function SipgateFFX() {
 	this.getEventSummaryTimer = Components.classes["@mozilla.org/timer;1"].createInstance(Components.interfaces.nsITimer);
 	this.getDoNotDisturbTimer = Components.classes["@mozilla.org/timer;1"].createInstance(Components.interfaces.nsITimer);
 	this.c2dTimer = Components.classes["@mozilla.org/timer;1"].createInstance(Components.interfaces.nsITimer);
-	this.curBalance = null;
-	this.isLoggedIn = false;
 	this.loggedOutByUser = false;
 	
 	this.windowMediator = Components.classes["@mozilla.org/appshell/window-mediator;1"].getService(Components.interfaces.nsIWindowMediator);
@@ -214,20 +215,6 @@ SipgateFFX.prototype = {
 			try {
 				var info = Components.classes["@mozilla.org/xre/app-info;1"].getService(Components.interfaces.nsIXULAppInfo);
 				this.addOnTarget = info.name.toLowerCase();
-				/*
-				var extensionManager = Components.classes["@mozilla.org/extensions/manager;1"].getService(Components.interfaces.nsIExtensionManager);
-				var item = extensionManager.getItemForID('sipgateffx@michael.rotmanov');
-				if(item) {
-					switch(item.targetAppID) {
-						case '{3550f703-e582-4d05-9a08-453d09bdfdc6}':
-							this.addOnTarget = 'thunderbird';
-							break;
-						default:
-							this.addOnTarget = 'firefox';
-							break;							
-					}
-				}
-				*/
 			} catch(except) {
 				this.log("get application ERROR: " + except);
 				this.addOnTarget = 'firefox';
@@ -499,8 +486,8 @@ SipgateFFX.prototype = {
 		
 				} else {
 					var msg = '### sipgateffx (click2dial): FAILED';
-					if(ourParsedResponse.faultCode && ourParsedResponse.faultString) {
-						msg = msg + ' (faultCode: '+ourParsedResponse.faultCode+' / faultString: '+ourParsedResponse.faultString+')';
+					if(ourParsedResponse.StatusCode && ourParsedResponse.StatusString) {
+						msg = msg + ' (faultCode: '+ourParsedResponse.StatusCode+' / faultString: '+ourParsedResponse.StatusString+')';
 						_sgffx.setXulObjectAttribute('sipgateffx_c2dStatusText', "value", ourParsedResponse.faultString);
 					}
 					_sgffx.log(msg);
@@ -548,6 +535,54 @@ SipgateFFX.prototype = {
 		}
 
 	},
+	
+	setVariablesToInitialValues: function()
+	{
+	    this.defaultExtension = {
+	        "voice": null,
+	        "text": null,
+	        "fax": null
+	    };
+	    this.ownUriList = {
+	        "voice": [],
+	        "text": [],
+	        "fax": []
+	    };
+		
+	    this.tosList = [
+	        "voice",
+	        "text",
+	        "fax",
+	    ];
+	    
+	    this.unreadEvents = {
+	        "voice": {
+	            'count': null,
+	            'time': null
+	        },
+	        "text": {
+	            'count': null,
+	            'time': null
+	        },
+	        "fax": {
+	            'count': null,
+	            'time': null
+	        }
+	    };
+	    
+		this.DND = null;
+		
+		this.contacts = {};
+		
+	    this.currentSessionID = null; // session for click2dial (must be NULL if there is no active session)
+	    this.currentSessionTime = null;
+	    this.currentSessionData = {
+	        'to': '',
+	        'from': ''
+	    };
+		this.curBalance = null;
+		this.isLoggedIn = false;				
+	},		
 	
 	login: function() {
 		this.log("*** sipgateffx: login *** BEGIN ***");
@@ -640,7 +675,6 @@ SipgateFFX.prototype = {
 		};
 		
 		try {
-			// this._rpcCall("samurai.serverInfo", {}, result);
 			this._rpcCall("samurai.ServerdataGet", {}, result);
 		} catch(e) {
 			this.log('Exception in xmlrpc-request: ' + e);
@@ -663,9 +697,7 @@ SipgateFFX.prototype = {
 		}
 		
 		// set to initial values
-		this.isLoggedIn = false;
-		this.curBalance = null;
-		this.contacts = {};
+		this.setVariablesToInitialValues();
 		
 		// close notification bubbles
 		this.runXulObjectCommand('sipgatenotificationPanel', 'hidePopup');
@@ -704,7 +736,7 @@ SipgateFFX.prototype = {
 		this.log("*** NOW logged off ***");
 
 	},
-	
+
 	websiteSessionLogout: function() {
 		var protocol = 'https://';
 		var httpServer = this.sipgateCredentials.HttpServer.replace(/^www/, 'secure');				
@@ -875,7 +907,8 @@ SipgateFFX.prototype = {
                     for (var i = 0; i < ourParsedResponse.OwnUriList.length; i++) {
 						uriList.push(ourParsedResponse.OwnUriList[i].SipUri);
                         for (var k = 0; k < ourParsedResponse.OwnUriList[i].TOS.length; k++) {
-							var tmp = bfXMLRPC.utf8decode(ourParsedResponse.OwnUriList[i].UriAlias);
+							//var tmp = bfXMLRPC.utf8decode(ourParsedResponse.OwnUriList[i].UriAlias);
+							var tmp = _sgffx.utf8decode(ourParsedResponse.OwnUriList[i].UriAlias);
                             var extensionInfo = {
                                 'UriAlias': tmp,
                                 'DefaultUri': ourParsedResponse.OwnUriList[i].DefaultUri,
@@ -1069,6 +1102,7 @@ SipgateFFX.prototype = {
 			var neededContacts = [];
 			if (ourParsedResponse.StatusCode && ourParsedResponse.StatusCode == 200) {
 				if (ourParsedResponse.PhonebookList && ourParsedResponse.PhonebookList.length > 0) {
+
 					for (var i = 0; i < ourParsedResponse.PhonebookList.length; i++) {
 						
 						var entryId = ourParsedResponse.PhonebookList[i].EntryID;
@@ -1120,15 +1154,10 @@ SipgateFFX.prototype = {
 		}
 		
         var result = function(ourParsedResponse, aXML){
-			
         	if (ourParsedResponse.StatusCode && ourParsedResponse.StatusCode == 200) {
-				
 				if (ourParsedResponse.EntryList && ourParsedResponse.EntryList.length > 0) {
-					
 					for (var i = 0; i < ourParsedResponse.EntryList.length; i++) {
-						
 						// dump(ourParsedResponse.EntryList[i].Entry +"\n");
-						
 						var entryId = ourParsedResponse.EntryList[i].EntryID;
 						var entryHash = ourParsedResponse.EntryList[i].EntryHash;
 						
@@ -1140,9 +1169,7 @@ SipgateFFX.prototype = {
 							'tel' : contact['tel']
 						}; 
 					}
-					
 				}
-				
             } else {
 				_sgffx.log("getPhonebookEntries failed toSTRING: "+ aXML.toString());
 			}
@@ -1513,7 +1540,6 @@ SipgateFFX.prototype = {
 				_number = natprefix + _number;
 			} else {
 				_number = _number.toString().replace(new RegExp(this.internationalPrefixes[natprefix].join('|')), "");
-//				_number = _number.toString().replace(/^00|^011|\+/, "");
 			}
 
 			// -----------------------------------------------------			
@@ -1546,12 +1572,17 @@ SipgateFFX.prototype = {
 		var t = new Date();
 		return '['+	[
 		 t.getUTCFullYear(),
-		 t.getUTCMonth(),
+		 t.getUTCMonth()+1,
 		 t.getUTCDate(),
 		 t.getUTCHours(),
 		 t.getUTCMinutes(),
 		 t.getUTCSeconds()].join('-')
 		 + ']';
+	},
+	
+	utf8decode: function( s )
+	{
+	  return decodeURIComponent( escape( s ) );
 	},
 	
 	log: function (logMessage) {

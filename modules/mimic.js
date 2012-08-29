@@ -396,7 +396,7 @@ XmlRpcResponse.prototype.unmarshal = function(node, parent) {
 				this.params[this.params.length - 1] = new Number(node.nodeValue);
 				break;
 			case "string":
-				this.params[this.params.length - 1] = new String(node.nodeValue);
+				this.params[this.params.length - 1] = node.nodeValue.toString();
 				break;
 			case "base64":
 				this.params[this.params.length - 1] = new Base64(node.nodeValue);

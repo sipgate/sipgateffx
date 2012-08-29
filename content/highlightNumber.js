@@ -239,7 +239,7 @@ var sipgateffx_highlightNumber = {
 	 */
 	_prepareArray: function _prepareArray() {
 		var tmp="/^XXX";
-		for(i in sipgateffx_highlightNumber.allCountries) {
+		for(var i in sipgateffx_highlightNumber.allCountries) {
 			tmp += "|^" + i;
 		}
 		tmp += "/";

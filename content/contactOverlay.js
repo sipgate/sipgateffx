@@ -191,7 +191,7 @@ var sipgateffx_contact = {
 			sipgateffx_contact.component.log("Something went wrong while requesting 11880.com.");
 			sipgateffx_contact.component.log("Request took " + ((new Date().getTime() / 1000)-now) + ' seconds');
 			
-		}
+		};
 
 		req.onSuccess = function(aText, aXML) {
 			sipgateffx_contact.component.log("Request succeeded.");
