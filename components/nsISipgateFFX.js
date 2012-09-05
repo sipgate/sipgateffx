@@ -1141,23 +1141,22 @@ SipgateFFX.prototype = {
 			return;
 		}
 		
+		if(typeof(entryList) == 'undefined') {
+			this.log("*** getPhonebookEntries *** entryList is undefined. exit. ***");
+		}
+		
 		var vcardModule = {};
 
 		Components.utils.import("resource://sipgateffx/vcard.js", vcardModule);
-		
+
 		var params = {
-			'EntryIDList': []
+			'EntryIDList': entryList
 		};
-		
-		if(typeof(entryList) != 'undefined') {
-			params.EntryIDList = entryList;
-		}
 		
         var result = function(ourParsedResponse, aXML){
         	if (ourParsedResponse.StatusCode && ourParsedResponse.StatusCode == 200) {
 				if (ourParsedResponse.EntryList && ourParsedResponse.EntryList.length > 0) {
 					for (var i = 0; i < ourParsedResponse.EntryList.length; i++) {
-						// dump(ourParsedResponse.EntryList[i].Entry +"\n");
 						var entryId = ourParsedResponse.EntryList[i].EntryID;
 						var entryHash = ourParsedResponse.EntryList[i].EntryHash;
 						

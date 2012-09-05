@@ -20,56 +20,56 @@ function XmlRpc() {
  * XML-RPC document prolog.
  * </p>
  */
-XmlRpc.PROLOG = "<?xml version=\"1.0\"?>\n";
+XmlRpc.PROLOG = "<?xml version=\"1.0\"?>";
 
 /**
  * <p>
  * XML-RPC methodCall node template.
  * </p>
  */
-XmlRpc.REQUEST = "<methodCall>\n<methodName>${METHOD}</methodName>\n<params>\n${DATA}</params>\n</methodCall>";
+XmlRpc.REQUEST = "<methodCall><methodName>${METHOD}</methodName><params>${DATA}</params></methodCall>";
 
 /**
  * <p>
  * XML-RPC param node template.
  * </p>
  */
-XmlRpc.PARAM = "<param>\n<value>\n${DATA}</value>\n</param>\n";
+XmlRpc.PARAM = "<param><value>${DATA}</value></param>";
 
 /**
  * <p>
  * XML-RPC array node template.
  * </p>
  */
-XmlRpc.ARRAY = "<array>\n<data>\n${DATA}</data>\n</array>\n";
+XmlRpc.ARRAY = "<array><data>${DATA}</data></array>";
 
 /**
  * <p>
  * XML-RPC struct node template.
  * </p>
  */
-XmlRpc.STRUCT = "<struct>\n${DATA}</struct>\n";
+XmlRpc.STRUCT = "<struct>${DATA}</struct>";
 
 /**
  * <p>
  * XML-RPC member node template.
  * </p>
  */
-XmlRpc.MEMBER = "<member>\n${DATA}</member>\n";
+XmlRpc.MEMBER = "<member>${DATA}</member>";
 
 /**
  * <p>
  * XML-RPC name node template.
  * </p>
  */
-XmlRpc.NAME = "<name>${DATA}</name>\n";
+XmlRpc.NAME = "<name>${DATA}</name>";
 
 /**
  * <p>
  * XML-RPC value node template.
  * </p>
  */
-XmlRpc.VALUE = "<value>\n${DATA}</value>\n";
+XmlRpc.VALUE = "<value>${DATA}</value>";
 
 /**
  * <p>
@@ -77,7 +77,7 @@ XmlRpc.VALUE = "<value>\n${DATA}</value>\n";
  * dateTime.iso8601).
  * </p>
  */
-XmlRpc.SCALAR = "<${TYPE}>${DATA}</${TYPE}>\n";
+XmlRpc.SCALAR = "<${TYPE}>${DATA}</${TYPE}>";
 
 /**
  * <p>
@@ -99,17 +99,17 @@ XmlRpc.getDataTag = function(data) {
 			tag = (Math.round(data) == data) ? "int" : "double";
 			break;
 		case "object":
-			if (data.constructor == Base64) {
+			if (data.constructor.name == "Base64") {
 				tag = "base64";
-			} else if (data.constructor == String) {
+			} else if (data.constructor.name == "String") {
 				tag = "string";
-			} else if (data.constructor == Boolean) {
+			} else if (data.constructor.name == "Boolean") {
 				tag = "boolean";
-			} else if (data.constructor == Array) {
+			} else if (data.constructor.name == "Array") {
 				tag = "array";
-			} else if (data.constructor == Date) {
+			} else if (data.constructor.name == "Date") {
 				tag = "dateTime.iso8601";
-			} else if (data.constructor == Number) {
+			} else if (data.constructor.name == "Number") {
 				tag = (Math.round(data) == data) ? "int" : "double";
 			} else {
 				tag = "struct";
