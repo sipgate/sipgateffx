@@ -24,6 +24,8 @@
 var sipgateffx = {
 	component: null,
 	componentDB: null,
+	
+	browserRef: null,
 		
 	url: {
 			'team': {
@@ -104,17 +106,19 @@ var sipgateffx = {
 			setTimeout(this.login);
 		}
 		
+		this.browserRef = gBrowser;
+		
 		if(sipgateffx.component.application == 'thunderbird') {
 			var threePane = Components.classes['@mozilla.org/appshell/window-mediator;1'].getService(Components.interfaces.nsIWindowMediator).getMostRecentWindow("mail:3pane");
-			gBrowser = threePane.document.getElementById("messagepane");
+			this.browserRef = threePane.document.getElementById("messagepane");
 		}
 		
-		gBrowser.addEventListener("DOMContentLoaded", this.parseClick2Dial, false);
-		gBrowser.addEventListener("DOMFrameContentLoaded", this.parseClick2DialFrame, false);
+		this.browserRef.addEventListener("DOMContentLoaded", this.parseClick2Dial, false);
+		this.browserRef.addEventListener("DOMFrameContentLoaded", this.parseClick2DialFrame, false);
 		sipgateffx_highlightNumber._prepareArray();
 		
 		if(sipgateffx.component.application != 'thunderbird') {
-			gBrowser.tabContainer.addEventListener("select", function(e) {
+			this.browserRef.tabContainer.addEventListener("select", function(e) {
 				try {
 					var host = content.document.location.host.toLowerCase();
 					if(sipgateffx.componentDB.isBlacklisted(host)) {
@@ -296,7 +300,7 @@ var sipgateffx = {
 	showUpdateInfo: function() {
 		var siteURL = 'chrome://sipgateffx/content/firststart/welcome_'+sipgateffx.component.language+'.html';
 		try {
-			gBrowser.selectedTab = gBrowser.addTab(siteURL);
+			sipgateffx.browserRef.selectedTab = sipgateffx.browserRef.addTab(siteURL);
 		} catch(e) {
 			window.open(siteURL,"What's new?","chrome,centerscreen,height=400px,width=820px"); 
 		}
@@ -623,11 +627,11 @@ var sipgateffx = {
 				}				
 				
 				// open new tab or use already opened (by extension) tab:
-				if ((typeof(gBrowser.selectedTab.id) != "undefined") && (gBrowser.selectedTab.id == "TabBySipgateFirefoxExtensionStatusbarShortcut")) {
-					gBrowser.loadURIWithFlags(siteURL, flags, referrer, null, postData);  
+				if ((typeof(sipgateffx.browserRef.selectedTab.id) != "undefined") && (sipgateffx.browserRef.selectedTab.id == "TabBySipgateFirefoxExtensionStatusbarShortcut")) {
+					sipgateffx.browserRef.loadURIWithFlags(siteURL, flags, referrer, null, postData);  
 				} else {
-					var theTab = gBrowser.addTab(siteURL, referrer, null, postData);
-					gBrowser.selectedTab = theTab;
+					var theTab = sipgateffx.browserRef.addTab(siteURL, referrer, null, postData);
+					sipgateffx.browserRef.selectedTab = theTab;
 					theTab.id = "TabBySipgateFirefoxExtensionStatusbarShortcut";
 				}
 				break;
@@ -706,7 +710,7 @@ var sipgateffx = {
 	
 	getBrowserSelection: function() {
 		if(typeof "getBrowserSelection" != "function") {
-			return gBrowser.contentWindow.getSelection().toString();
+			return sipgateffx.browserRef.contentWindow.getSelection().toString();
 		} else {
 			return getBrowserSelection();
 		}
