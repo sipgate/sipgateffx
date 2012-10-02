@@ -458,6 +458,9 @@ var sipgateffx = {
 	},
 	
 	onMenuItemDoNotDisturb: function(e, action) {
+        if(e.button != 0) //only trigger on leftclick
+            return;
+
 		try {
 			if(action == 'disable') {
 				sipgateffx.component.setDoNotDisturb(false);
