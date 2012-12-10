@@ -528,7 +528,7 @@ var sipgateffx_highlightNumber = {
 		var niceNumber = sipgateffx_highlightNumber.component.niceNumber(number);
 		e.preventDefault();
 
-		window.openDialog('chrome://sipgateffx/content/sms.xul', 'sipgateSMS', 'chrome,centerscreen,resizable=yes,titlebar=yes,alwaysRaised=yes', 'foobar', '+'+niceNumber);
+		window.openDialog('chrome://sipgateffx/content/sms.xul', 'sipgateSMS', 'chrome,centerscreen,resizable=yes,titlebar=yes,alwaysRaised=yes', '', '+'+niceNumber);
 		return;
 	}
 };

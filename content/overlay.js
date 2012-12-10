@@ -342,8 +342,10 @@ var sipgateffx = {
 		else {
 			document.getElementById("context-sipgateffx-sendTo").disabled = false;
 			document.getElementById("context-sipgateffx-sendTo").label = this.strings.getFormattedString("sipgateffxContextSendTo", [niceNumber]);
+			document.getElementById("context-sipgateffx-sendTo").number = niceNumber;
 			document.getElementById("context-sipgateffx-callTo").disabled = false;
 			document.getElementById("context-sipgateffx-callTo").label = this.strings.getFormattedString("sipgateffxContextCallTo", [niceNumber]);
+			document.getElementById("context-sipgateffx-callTo").number = niceNumber;
 		}
 		
 		try {
@@ -388,24 +390,32 @@ var sipgateffx = {
 	},
 
 	onMenuItemContextSendTo: function(e) {
-		// allow /,-,(,),.,whitespace and all numers in phonenumbers
-		var browserSelection = this.getBrowserSelection().match(/^[\/\(\)\ \-\.\[\]\d]+$/);
 		var niceNumber = '';
-
-		if(browserSelection !== null) {
-			niceNumber = sipgateffx.component.niceNumber(browserSelection);
+		if(e.target.number != null)
+		{
+			niceNumber = e.target.number;
+		} else {
+			// allow /,-,(,),.,whitespace and all numers in phonenumbers
+			var browserSelection = this.getBrowserSelection().match(/^\+?[\/\(\)\ \-\.\[\]\d]+$/);
+			if(browserSelection !== null) {
+				niceNumber = sipgateffx.component.niceNumber(browserSelection);
+			}
 		}
-		
 		window.openDialog('chrome://sipgateffx/content/sms.xul', 'sipgateSMS', 'chrome,centerscreen,resizable=yes,titlebar=yes,alwaysRaised=yes', '', '+'+niceNumber);
 	},
 
 	onMenuItemContextCallTo: function(e) {
-		// allow /,-,(,),.,whitespace and all numers in phonenumbers
-		var browserSelection = this.getBrowserSelection().match(/^[\/\(\)\ \-\.\[\]\d]+$/);
-		var niceNumber = '';
 
-		if(browserSelection !== null) {
-			niceNumber = sipgateffx.component.niceNumber(browserSelection);
+		var niceNumber = '';
+		if(e.target.number != null)
+		{
+			niceNumber = e.target.number;
+		} else {
+			// allow /,-,(,),.,whitespace and all numers in phonenumbers
+			var browserSelection = this.getBrowserSelection().match(/^\+?[\/\(\)\ \-\.\[\]\d]+$/);
+			if(browserSelection !== null) {
+				niceNumber = sipgateffx.component.niceNumber(browserSelection);
+			}
 		}
 		
 		sipgateffx.component.click2dial(niceNumber);
