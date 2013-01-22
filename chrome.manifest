@@ -4,7 +4,8 @@ locale	sipgateffx	de-DE	locale/de-DE/
 skin	sipgateffx	classic/1.0	skin/
 overlay	chrome://browser/content/browser.xul	chrome://sipgateffx/content/firefoxOverlay.xul
 overlay	chrome://messenger/content/messenger.xul	chrome://sipgateffx/content/thunderbirdOverlay.xul
-#overlay	chrome://messenger/content/addressbook/addressbook.xul	chrome://sipgateffx/content/addressbookOverlay.xul
+overlay chrome://messenger/content/addressbook/addressbook.xul chrome://sipgateffx/content/thunderbirdABOverlay.xul
+overlay chrome://messenger/content/addressbook/abEditCardDialog.xul chrome://sipgateffx/content/thunderbirdABEditOverlay.xul
 style	chrome://global/content/customizeToolbar.xul	chrome://sipgateffx/skin/overlay.css
 resource	sipgateffx	modules/
 

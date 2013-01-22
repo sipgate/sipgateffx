@@ -1,0 +1,33 @@
+button.call
+{
+  list-style-image: url("chrome://sipgateffx/skin/icon_click2dial.gif");
+  min-width: 20px;
+}
+
+/* remove label */
+button.call label.button-text {
+  display: none;
+}
+
+button.call[disabled=true]
+{
+  /* not using display:none or hidden=true, because these change the layout */
+  visibility: hidden;
+}
+
+/* animation when clicked */
+button.call[status=calling] .button-icon
+{
+  -moz-animation-name: spinnerRotate;
+  -moz-animation-duration: 5s;
+  -moz-animation-iteration-count: infinite;
+  -moz-animation-timing-function: linear;
+}
+@-moz-keyframes spinnerRotate {
+  from {
+    -moz-transform:rotate(0deg);
+  }
+  to {
+    -moz-transform:rotate(360deg);
+  }
+}
