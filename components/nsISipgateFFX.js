@@ -333,7 +333,7 @@ SipgateFFX.prototype = {
 		}
 	},
 		
-	click2dial: function(to, callbackOnSuccess) {
+	click2dial: function(to, callbackOnSuccess, callbackError) {
 		var _TOS = 'voice'; 
 		
 		if(this.tosList.indexOf(_TOS) == -1) {
@@ -410,6 +410,9 @@ SipgateFFX.prototype = {
 					}
 				}
 				else {
+          callbackError("click2dial failed. The server said: " +
+              ourParsedResponse.StatusCode + " " +
+              ourParsedResponse.StatusString);
 					_sgffx.log('click2dial failed. Internal system error has occurred.');
 					_sgffx.dumpJson(params);
 					_sgffx.dumpJson(ourParsedResponse);
@@ -421,7 +424,7 @@ SipgateFFX.prototype = {
 		};
 		
 		try {
-			this._rpcCall("samurai.SessionInitiate", params, result);
+			this._rpcCall("samurai.SessionInitiate", params, result, callbackError);
 		} catch(e) {
 			this.log('Exception in xmlrpc-request: ' + e);
 			this.log('Request sent: ' + request);
@@ -1431,7 +1434,7 @@ SipgateFFX.prototype = {
 			var errorMessage = '';
 			
 			if (typeof(callbackError) == 'function') {
-				callbackError(aStatusMsg, Msg);
+				callbackError(aStatusMsg + " " + Msg);
 				return;
 			}
 			
