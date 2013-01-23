@@ -6,6 +6,8 @@
     The original code is hosted at
     http://www.github.com/sipgate/sipgateffx
 
+    Alternatively, this file is available as MPL 1.1, MPL 2.0 or GPL 2.x.
+
     sipgateFFX is free software; you can redistribute it and/or modify
     it under the terms of version 2 of the GNU General Public License
     as published by the Free Software Foundation.
