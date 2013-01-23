@@ -36,11 +36,12 @@
 
   <script src="thunderbirdABOverlay.js"  type="application/x-javascript" />
 
- <!-- TODO not working -->
-  <commandset id="sipgateffx-addrbook-select"
+  <commandset id="addressBook">
+    <commandset id="sipgateffx-addrbook-select"
               commandupdater="true"
               events="addrbook-select"
               oncommandupdate="sipgateffx_ABOverlay.onContactOverviewLoad()"
               />
+  </commandset>
 
 </overlay>

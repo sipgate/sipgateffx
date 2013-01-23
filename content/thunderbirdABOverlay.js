@@ -52,23 +52,25 @@ var sipgateffx_ABOverlay =
    * based on whether each field has a value.
    *
    * Hookup:
-   * TODO this is not working, not being called
    * We listen to command update "addrbook-select" with our <commandset>.
    * called from http://mxr.mozilla.org/comm-central/source/mail/components/addrbook/content/addressbook.xul#630
    * <tree onselect="... updateCommands('addrbook-select');">
-   *
    *
    * The TB view update code is in
    * http://mxr.mozilla.org/comm-central/source/mail/components/addrbook/content/abCardViewOverlay.js#179
    * DisplayCardViewPane()
    * called from http://mxr.mozilla.org/comm-central/source/mail/components/addrbook/content/addressbook.js#113
    * called from http://mxr.mozilla.org/comm-central/source/mail/components/addrbook/content/addressbook.xul#630
-   * <tree onselect="this.view.selectionChanged(); ... updateComm...">
+   * <tree onselect="this.view.selectionChanged(); ... updateCommands('addrbook-select');">
+   *
+   * TB's card update empties the <description>s using .textContent = "foo",
+   * removing our buttons on each update, but
+   * luckily, the TB code runs from selectionChanged(), so we run afterward.
    */
   onContactOverviewLoad : function onContactOverviewLoad()
   {
-    alert("update");
     try {
+      // create UI
       const descrIDs = [
         "cvPhWork",
         "cvPhHome",
@@ -76,27 +78,20 @@ var sipgateffx_ABOverlay =
         "cvPhCellular",
         "cvPhPager",
       ];
-      // create UI
-      if ( !document.getElementById("call_" + descrIDs[0])) { // if not exists
-        for (let i = 0; i < descrIDs.length; i++) {
-          let descr = document.getElementById(descrIDs[i]);
-
-          let button = document.createElement("button");
-          button.id = "call_" + descrIDs[i];
-          button.classList.add("call");
-          button.setAttribute("label", this.strings.getString("call.label"));
-          button.setAttribute("tooltiptext", this.strings.getString("call.tooltip"));
-          button.addEventListener("command", function(e) { sipgateffx_ABOverlay.onClick(e); }, false);
-          descr.appendChild(button);
-        }
-      }
-      // update UI: hide/show buttons
+      // Thunderbird's cvSetNode() is doing descr.textContent = "foo", which
+      // removes the buttons on each update, so we have to re-create them.
       for (let i = 0; i < descrIDs.length; i++) {
         let descr = document.getElementById(descrIDs[i]);
-        let button = document.getElementById("call_" + descrID);
-
-        let hasContent = descr.firstChild.nodeName == "#text";
-        button.setAttribute("disabled", !hasContent);
+        let button = document.createElement("button");
+        button.id = "call_" + descrIDs[i];
+        button.classList.add("call");
+        button.setAttribute("label", this.strings.getString("call.label"));
+        button.setAttribute("tooltiptext", this.strings.getString("call.tooltip"));
+        button.addEventListener("command", function(e) { sipgateffx_ABOverlay.onClick(e); }, false);
+        descr.appendChild(button);
+        // disabling not necessary, because TB collapses unused <descr>s.
+        //let hasContent = descr.firstChild.nodeName == "#text";
+        //button.setAttribute("disabled", !hasContent);
       }
     } catch (e) { alert(e); }
   },
@@ -109,7 +104,8 @@ var sipgateffx_ABOverlay =
   {
     try {
       e.preventDefault();
-      var descr = e.target.parentNode.getElementsByTagName("description").item(0).textContent;
+      var button = e.target;
+      var descr = button.parentNode.firstChild.textContent;
       // descr is e.g. "Home: 1343"
       var number = descr.substr(descr.indexOf(":") + 2);
       button.setAttribute("status", "calling");
