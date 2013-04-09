@@ -324,6 +324,8 @@ var sipgateffx_highlightNumber = {
 		modifyAnchor: function(element, value)
 		{
 		    try {
+		    	value = decodeURIComponent(value);
+		    	
 	            var newNodeClick2DialIcon = this.document.createElement("IMG");
 	            newNodeClick2DialIcon.style.border = 0;
 	            newNodeClick2DialIcon.style.cursor = "pointer";
@@ -484,7 +486,6 @@ var sipgateffx_highlightNumber = {
 		        
 		        spanNode.addEventListener("click", sipgateffx_highlightNumber.callClick, true);
 		        spanNode.addEventListener("contextmenu", sipgateffx_highlightNumber.callRightClick, true);
-		        
 	        	spanNode.setAttribute("sipgateffx_number", number);
 
 	    	    text = text.substr(offset + number.length);

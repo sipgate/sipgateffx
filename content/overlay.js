@@ -81,37 +81,16 @@ var sipgateffx = {
 		
 		this.announceWindowElementsToComponent();		
 		this.setInitialVisibility();
-		
-		var contextMenuHolder = "contentAreaContextMenu";
-		if(sipgateffx.component.application == 'thunderbird') {
-			contextMenuHolder = "mailContext";
-		}
 
-		document.getElementById(contextMenuHolder)
-			.addEventListener("popupshowing", function(e) { sipgateffx.showContextMenu(e); }, false);
-		
-		document.getElementById('sipgateLogo').addEventListener("click", function(e) {
-			// more Info: https://developer.mozilla.org/en/XUL%3aMethod%3aopenPopup
-			document.getElementById('sipgatemenu').openPopup( document.getElementById('sipgateffx_loggedin'), "before_end", 0, 0, true);
-		}, false);
-
-		document.getElementById('sipgateLogoOff').addEventListener("click", function(e) {
-			// more Info: https://developer.mozilla.org/en/XUL%3aMethod%3aopenPopup
-			document.getElementById('sipgatemenu').openPopup( document.getElementById('sipgateffx_loggedout'), "before_end", 0, 0, true);
-		}, false);
-
+		this.addContextMenuShowBinding();
+		this.addLogoClickBinding();
 		this.addEventsClickBinding();
-			
+
 		if(sipgateffx.component.getPref("extensions.sipgateffx.autologin","bool")) {
 			setTimeout(this.login);
 		}
 		
-		this.browserRef = gBrowser;
-		
-		if(sipgateffx.component.application == 'thunderbird') {
-			var threePane = Components.classes['@mozilla.org/appshell/window-mediator;1'].getService(Components.interfaces.nsIWindowMediator).getMostRecentWindow("mail:3pane");
-			this.browserRef = threePane.document.getElementById("messagepane");
-		}
+		this.setBrowserReference();
 		
 		this.browserRef.addEventListener("DOMContentLoaded", this.parseClick2Dial, false);
 		this.browserRef.addEventListener("DOMFrameContentLoaded", this.parseClick2DialFrame, false);
@@ -193,6 +172,19 @@ var sipgateffx = {
 		} catch (lang_ex) {
 			sipgateffx.component.log("Error in detecting language! Found: "+navigator.language.match(/de/)+". Falling back to 'en' ...\n");
 			sipgateffx.component.language = "en"; 
+		}
+	},
+	
+	setBrowserReference: function()
+	{
+		if(typeof(gBrowser) != "undefined")
+		{
+			this.browserRef = gBrowser;
+		}
+		
+		if(sipgateffx.component.application == 'thunderbird') {
+			var threePane = Components.classes['@mozilla.org/appshell/window-mediator;1'].getService(Components.interfaces.nsIWindowMediator).getMostRecentWindow("mail:3pane");
+			this.browserRef = threePane.document.getElementById("messagepane");
 		}
 	},
 	
@@ -284,7 +276,34 @@ var sipgateffx = {
 			sipgateffx.onStatusbarCommand('showSitePage', 'historysms');
 		}, false);	
 	},
+	
+	addLogoClickBinding: function() 
+	{
+		document.getElementById('sipgateLogo').addEventListener("click", function(e) {
+			// more Info: https://developer.mozilla.org/en/XUL%3aMethod%3aopenPopup
+			document.getElementById('sipgatemenu').openPopup( document.getElementById('sipgateffx_loggedin'), "before_end", 0, 0, true);
+		}, false);
 
+		document.getElementById('sipgateLogoOff').addEventListener("click", function(e) {
+			// more Info: https://developer.mozilla.org/en/XUL%3aMethod%3aopenPopup
+			document.getElementById('sipgatemenu').openPopup( document.getElementById('sipgateffx_loggedout'), "before_end", 0, 0, true);
+		}, false);
+
+
+	},	
+	
+	addContextMenuShowBinding: function()
+	{
+		var contextMenuHolder = "contentAreaContextMenu";
+		if(sipgateffx.component.application == 'thunderbird')
+		{
+			contextMenuHolder = "mailContext";
+		}
+
+		document.getElementById(contextMenuHolder)
+			.addEventListener("popupshowing", function(e) { sipgateffx.showContextMenu(e); }, false);
+	},
+	
 	detectVersionChange: function() {
 		try {
 			if (sipgateffx.component.version != null && sipgateffx.component.version != "UNKNOWN" && sipgateffx.component.version != "NOTYETKNOWN" && sipgateffx.component.version != sipgateffx.component.getPref("extensions.sipgateffx.lastInstalledVersion", "char")) {

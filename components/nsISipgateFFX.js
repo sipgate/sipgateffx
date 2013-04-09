@@ -1547,12 +1547,12 @@ SipgateFFX.prototype = {
 			// -----------------------------------------------------			
 
 			var nationalPrefixCandidates = [
-				'^0([1-9]\\d+)'				// prefix like "0211 ..."
+   				'^('+natprefix+')?0([1-9]\\d+)'				// prefix like "0211 ..."
 			];
 
 			var nationalPrefixRegEx = new RegExp(nationalPrefixCandidates.join('|'));
 
-			_number = _number.toString().replace(nationalPrefixRegEx, natprefix + "$1");
+			_number = _number.toString().replace(nationalPrefixRegEx, natprefix + "$2");
 
 			// this.log("_niceNumber(): After nationalPrefixRegEx: " + _number);
 
