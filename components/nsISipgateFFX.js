@@ -910,19 +910,24 @@ SipgateFFX.prototype = {
                     for (var i = 0; i < ourParsedResponse.OwnUriList.length; i++) {
 						uriList.push(ourParsedResponse.OwnUriList[i].SipUri);
                         for (var k = 0; k < ourParsedResponse.OwnUriList[i].TOS.length; k++) {
-							//var tmp = bfXMLRPC.utf8decode(ourParsedResponse.OwnUriList[i].UriAlias);
-							var tmp = _sgffx.utf8decode(ourParsedResponse.OwnUriList[i].UriAlias);
+                        	
+                        	var alias = ourParsedResponse.OwnUriList[i].SipUri;
+                        	if(typeof(ourParsedResponse.OwnUriList[i].UriAlias) != "undefined" && ourParsedResponse.OwnUriList[i].UriAlias != "") {
+                        		alias = _sgffx.utf8decode(ourParsedResponse.OwnUriList[i].UriAlias);
+                        	}
+                        	
                             var extensionInfo = {
-                                'UriAlias': tmp,
+                                'UriAlias': alias,
                                 'DefaultUri': ourParsedResponse.OwnUriList[i].DefaultUri,
                                 'E164In': ourParsedResponse.OwnUriList[i].E164In,
                                 'E164Out': ourParsedResponse.OwnUriList[i].E164Out,
                                 'SipUri': ourParsedResponse.OwnUriList[i].SipUri
                             };
+                            
                             _sgffx.ownUriList[ourParsedResponse.OwnUriList[i].TOS[k]].push(extensionInfo);
                             if (ourParsedResponse.OwnUriList[i].DefaultUri === true) {
                                 _sgffx.defaultExtension[ourParsedResponse.OwnUriList[i].TOS[k]] = {
-                                    'alias': (ourParsedResponse.OwnUriList[i].UriAlias!='' ? ourParsedResponse.OwnUriList[i].UriAlias : ourParsedResponse.OwnUriList[i].SipUri),
+                                    'alias': alias,
                                     'extensionSipUri': ourParsedResponse.OwnUriList[i].SipUri
                                 };
                             }
@@ -1584,7 +1589,12 @@ SipgateFFX.prototype = {
 	
 	utf8decode: function( s )
 	{
-	  return decodeURIComponent( escape( s ) );
+		try {
+			return decodeURIComponent( escape( s ) );
+		} catch (e) {
+			_sgffx.log("Error: " + e + " for string '"+s+"'");
+			return s;
+		}
 	},
 	
 	log: function (logMessage) {
