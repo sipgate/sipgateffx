@@ -36,7 +36,7 @@ function SipgateFFXStorage() {
     
     this.blacklisted = [];
     
-    this.mLogBuffer = Components.classes["@mozilla.org/supports-array;1"].createInstance(Components.interfaces.nsISupportsArray);
+    this.mLogBuffer = Components.classes["@mozilla.org/array;1"].createInstance(Components.interfaces.nsIMutableArray);
 	this.mLogBufferMaxSize = 1000;
 }
 
@@ -206,7 +206,7 @@ SipgateFFXStorage.prototype = {
 			this.mLogBuffer.AppendElement(_CStringLogMessage);
 			dump("[" + timestampFloat.toFixed(3) + "] " + logMessage + "\n");
 			while (this.mLogBuffer.Count() > this.mLogBufferMaxSize) {
-				this.mLogBuffer.DeleteElementAt(0);
+				this.mLogBuffer.RemoveElementAt(0);
 			}
 		} catch (ex) {
 			dump("Error in _log(): "+ex+"\n");
