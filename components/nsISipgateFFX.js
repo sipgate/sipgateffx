@@ -122,7 +122,7 @@ function SipgateFFX() {
 			"44": ["^00","^\\+"],
 			"49": ["^00","^\\+"]
 	};
-	this.mLogBuffer = Components.classes["@mozilla.org/supports-array;1"].createInstance(Components.interfaces.nsISupportsArray);
+	this.mLogBuffer = Components.classes["@mozilla.org/array;1"].createInstance(Components.interfaces.nsIMutableArray);
 	this.mLogBufferMaxSize = 1000;
 	this.getBalanceTimer = Components.classes["@mozilla.org/timer;1"].createInstance(Components.interfaces.nsITimer);
 	this.getRecommendedIntervalsTimer = Components.classes["@mozilla.org/timer;1"].createInstance(Components.interfaces.nsITimer);
@@ -1613,7 +1613,7 @@ SipgateFFX.prototype = {
 					}
 			}
 			while (this.mLogBuffer.Count() > this.mLogBufferMaxSize) {
-				this.mLogBuffer.DeleteElementAt(0);
+				this.mLogBuffer.RemoveElementAt(0);
 			}
 		} catch (ex) {
 			dump("Error in _log(): "+ex+"\n");

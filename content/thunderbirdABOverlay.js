@@ -73,10 +73,12 @@ var sipgateffx_ABOverlay =
   {
     try {
       // create UI
+
+      // Call button
       const descrIDs = [
         "cvPhWork",
         "cvPhHome",
-        "cvPhFax",
+        //"cvPhFax",
         "cvPhCellular",
         "cvPhPager",
       ];
@@ -85,15 +87,28 @@ var sipgateffx_ABOverlay =
       for (let i = 0; i < descrIDs.length; i++) {
         let descr = document.getElementById(descrIDs[i]);
         let button = document.createElement("button");
-        button.id = "call_" + descrIDs[i];
+        button.id = "sipgateFFX_call_" + descrIDs[i];
         button.classList.add("call");
         button.setAttribute("label", this.strings.getString("call.label"));
         button.setAttribute("tooltiptext", this.strings.getString("call.tooltip"));
-        button.addEventListener("command", function(e) { sipgateffx_ABOverlay.onClick(e); }, false);
+        button.addEventListener("command", function(e) { sipgateffx_ABOverlay.onClickCall(e); }, false);
         descr.appendChild(button);
         // disabling not necessary, because TB collapses unused <descr>s.
         //let hasContent = descr.firstChild.nodeName == "#text";
         //button.setAttribute("disabled", !hasContent);
+      }
+
+      // SMS button
+      {
+        let descrID = "cvPhCellular";
+        let descr = document.getElementById(descrID);
+        let button = document.createElement("button");
+        button.id = "sipgateFFX_sms";
+        button.classList.add("sms");
+        button.setAttribute("label", this.strings.getString("sms.label"));
+        button.setAttribute("tooltiptext", this.strings.getString("sms.tooltip"));
+        button.addEventListener("command", function(e) { sipgateffx_ABOverlay.onClickSMS(e); }, false);
+        descr.appendChild(button);
       }
     } catch (e) { alert(e); }
   },
@@ -102,14 +117,12 @@ var sipgateffx_ABOverlay =
    * Called when the user clicks on the "Call" button inside the contact overview pane.
   * @param e {Event}
   */
-  onClick: function onClick(e)
+  onClickCall: function onClickCall(e)
   {
     try {
       e.preventDefault();
       var button = e.target;
-      var descr = button.parentNode.firstChild.textContent;
-      // descr is e.g. "Home: 1343"
-      var number = descr.substr(descr.indexOf(":") + 2);
+      var number = this._getNumber(button);
       button.setAttribute("status", "calling");
       var done = function() {
         button.removeAttribute("status");
@@ -126,7 +139,6 @@ var sipgateffx_ABOverlay =
    */
   call : function call(number, successCallback, errorCallback)
   {
-      number = this.component.niceNumber(number);
       if (this.component.getPref("extensions.sipgateffx.previewnumber", "bool")) {
           window.openDialog('chrome://sipgateffx/content/previewnumber.xul', 'sipgatePreviewnumber', 'chrome,centerscreen,resizable=no,titlebar=yes,alwaysRaised=yes', number);
       } else {
@@ -136,6 +148,28 @@ var sipgateffx_ABOverlay =
           });
       }
   },
+
+  /**
+   * Called when the user clicks on the "SMS" button inside the contact overview pane.
+  * @param e {Event}
+  */
+  onClickSMS: function onClickSMS(e)
+  {
+    try {
+      e.preventDefault();
+      var number = "+" + this._getNumber(e.target);
+      window.openDialog("chrome://sipgateffx/content/sms.xul", "sipgateSMS", "chrome,centerscreen,resizable=yes,titlebar=yes,alwaysRaised=yes", "", number);
+    } catch (e) { alert(e); }
+  },
+
+  _getNumber : function(button)
+  {
+    var descr = button.parentNode.firstChild.textContent;
+    // descr is e.g. "Home: 1343"
+    var number = descr.substr(descr.indexOf(":") + 2);
+    return  this.component.niceNumber(number); // without leading +
+  },
+
 };
 
 window.addEventListener("load", function () { sipgateffx_ABOverlay.onLoad(); }, false);

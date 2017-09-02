@@ -603,11 +603,11 @@ var sipgateffx = {
 		var httpServer = sipgateffx.component.sipgateCredentials.HttpServer.replace(/^www/, 'secure');
 		var urlSessionLogin = protocol + httpServer + "/user/slogin.php";
 
-		var oHttpRequest = Components.classes["@mozilla.org/xmlextras/xmlhttprequest;1"]
-																 .getService(Components.interfaces.nsIJSXMLHttpRequest);
+		var oHttpRequest = new XMLHttpRequest();
 		oHttpRequest.open("POST",urlSessionLogin,false);
 		oHttpRequest.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-		oHttpRequest.send("username="+user+"&password="+pass);
+		oHttpRequest.send("username=" + encodeURIComponent(user) +
+        "&password=" + encodeURIComponent(pass));
 		return oHttpRequest.responseText.match(/\d\d\d/).toString();
 	},
  
