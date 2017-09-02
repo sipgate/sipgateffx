@@ -4,12 +4,20 @@ button.call
   min-width: 20px;
 }
 
+button.sms
+{
+  list-style-image: url("chrome://sipgateffx/skin/icon_sms.gif");
+  min-width: 20px;
+}
+
 /* remove label */
-button.call label.button-text {
+button.call label.button-text,
+button.sms label.button-text {
   display: none;
 }
 
-button.call[disabled=true]
+button.call[disabled=true],
+button.sms[disabled=true]
 {
   /* not using display:none or hidden=true, because these change the layout */
   visibility: hidden;

@@ -86,6 +86,7 @@ var sipgateffx_sms = {
 			}
 			if(typeof window.arguments[1] != "undefined") {
 				document.getElementById("sipgate_sms_number").setAttribute('value', window.arguments[1]);
+				document.getElementById("sipgate_sms_text").focus();
 			}
 		}
 

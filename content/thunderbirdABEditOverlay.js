@@ -48,6 +48,7 @@ var sipgateffx_ABEditOverlay =
     this.strings = document.getElementById("sipgateffx-strings");
 
     // Create UI
+    // Call buttons
     const containerIDs = [
         "WorkPhoneContainer",
         "HomePhoneContainer",
@@ -59,17 +60,36 @@ var sipgateffx_ABEditOverlay =
         let container = document.getElementById(containerIDs[i]);
 
         let button = document.createElement("button");
-        button.id = "call_" + containerIDs[i];
+        button.id = "sipgateFFX_call_" + containerIDs[i];
         button.classList.add("call");
         button.setAttribute("label", this.strings.getString("call.label"));
         button.setAttribute("tooltiptext", this.strings.getString("call.tooltip"));
-        button.addEventListener("command", function(e) { sipgateffx_ABEditOverlay.onClick(e); }, false);
+        button.addEventListener("command", function(e) { sipgateffx_ABEditOverlay.onClickCall(e); }, false);
         container.appendChild(button);
+
+        let smsButton = document.createElement("button");
+        smsButton.id = "sipgateFFX_sms_" + containerIDs[i];
+        smsButton.classList.add("sms");
+        smsButton.setAttribute("label", this.strings.getString("sms.label"));
+        smsButton.setAttribute("tooltiptext", this.strings.getString("sms.tooltip"));
+        if (containerIDs[i] == "CellularNumberContainer") {
+          smsButton.addEventListener("command", function(e) { sipgateffx_ABEditOverlay.onClickSMS(e); }, false);
+        } else {
+          smsButton.setAttribute("disabled", true);
+        }
+        container.appendChild(smsButton);
 
         var textbox = container.getElementsByTagName("textbox").item(0);
         textbox.addEventListener("change", function(e) { this.onPhoneChanged(e); }, false);
         textbox.addEventListener("blur", function(e) { this.onPhoneChanged(e); }, false);
         this.onPhoneChanged({ target : textbox }); // update right now
+      }
+
+      // SMS button
+      {
+        let containerID = "CellularNumberContainer";
+        let container = document.getElementById(containerID);
+
       }
     } catch (e) { alert(e); }
   },
@@ -86,23 +106,25 @@ var sipgateffx_ABEditOverlay =
     var textbox = e.target;
     var button = textbox.parentNode.getElementsByClassName("call").item(0);
     if ( !button) throw "button not found";
-
     button.setAttribute("disabled", !textbox.value);
+
+    var smsButton = textbox.parentNode.getElementsByClassName("sms").item(0);
+    if ( !smsButton) throw "button not found";
+    if (smsButton.id == "sipgateFFX_sms_CellularNumberContainer") {
+      smsButton.setAttribute("disabled", !textbox.value);
+    }
   },
 
   /**
    * Called when the user clicks on the "Call" button inside the contact overview pane.
-   * @param e {Event}
-   */
-  onClick: function onClick(e)
+  * @param e {Event}
+  */
+  onClickCall: function onClickCall(e)
   {
     try {
       e.preventDefault();
       var button = e.target;
-      var textbox = button.parentNode.getElementsByTagName("textbox").item(0);
-      if ( !textbox) throw "textfield not found";
-
-      var number = textbox.value;
+      var number = this._getNumber(button);
       button.setAttribute("status", "calling");
       var done = function() {
         button.removeAttribute("status");
@@ -119,7 +141,6 @@ var sipgateffx_ABEditOverlay =
    */
   call : function call(number, successCallback, errorCallback)
   {
-      number = this.component.niceNumber(number);
       if (this.component.getPref("extensions.sipgateffx.previewnumber", "bool")) {
           window.openDialog('chrome://sipgateffx/content/previewnumber.xul', 'sipgatePreviewnumber', 'chrome,centerscreen,resizable=no,titlebar=yes,alwaysRaised=yes', number);
       } else {
@@ -129,6 +150,28 @@ var sipgateffx_ABEditOverlay =
           });
       }
   },
+
+  /**
+   * Called when the user clicks on the "SMS" button inside the contact overview pane.
+  * @param e {Event}
+  */
+  onClickSMS: function onClickSMS(e)
+  {
+    try {
+      e.preventDefault();
+      var number = "+" + this._getNumber(e.target);
+      window.openDialog("chrome://sipgateffx/content/sms.xul", "sipgateSMS", "chrome,centerscreen,resizable=yes,titlebar=yes,alwaysRaised=yes", "", number);
+    } catch (e) { alert(e); }
+  },
+
+  _getNumber : function(button)
+  {
+    var textbox = button.parentNode.getElementsByTagName("textbox").item(0);
+    if ( !textbox) throw "textfield not found";
+    var number = textbox.value;
+    return  this.component.niceNumber(number); // without leading +
+  },
+
 };
 
 window.addEventListener("load", function () { sipgateffx_ABEditOverlay.onLoad(); }, false);
